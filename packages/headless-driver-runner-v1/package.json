@@ -1,0 +1,35 @@
+{
+  "name": "@akashic/headless-driver-runner-v1",
+  "version": "0.2.0",
+  "description": "A runner module for contents using Akashic Engine v1",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "rimraf ./lib && tsc -p ./tsconfig.json && npm run formatter",
+    "formatter": "prettier --write \"src/**/*.ts\" --config ../prettier.config.js",
+    "test": "npm run build && npm run lint",
+    "lint": "tslint -c ../tslint.json src/**/*.ts -p tsconfig.json -e \"**/node_modules/**\""
+  },
+  "publishConfig": {
+    "@akashic:registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "lib",
+    "!lib/**/__tests__"
+  ],
+  "author": "DWANGO Co., Ltd.",
+  "license": "MIT",
+  "typings": "lib/index.d.ts",
+  "dependencies": {
+    "@akashic/engine-files": "1.1.6",
+    "@akashic/headless-driver-runner": "^0.2.0",
+    "node-fetch": "2.3.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "2.1.2",
+    "prettier": "1.14.3",
+    "rimraf": "2.6.3",
+    "tslint": "5.11.0",
+    "typescript": "3.0.3"
+  }
+}

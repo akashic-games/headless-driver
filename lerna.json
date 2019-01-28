@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "command": {
+    "publish": {
+      "ignoreChanges": [
+        "*.md",
+        "*.json"
+      ],
+      "allowBranch": [
+        "master"
+      ]
+    },
+    "version": {
+      "exact": true
+    },
+    "bootstrap": {
+      "npmClientArgs": [
+        "--no-package-lock"
+      ]
+    }
+  },
+  "packages": [
+    "packages/*"
+  ]
+}
