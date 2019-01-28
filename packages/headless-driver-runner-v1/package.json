@@ -11,6 +11,7 @@
     "lint": "tslint -c ../tslint.json src/**/*.ts -p tsconfig.json -e \"**/node_modules/**\""
   },
   "publishConfig": {
+    "access": "public",
     "@akashic:registry": "https://registry.npmjs.org/"
   },
   "files": [
