@@ -9,6 +9,10 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
+    "publish:patch": "lerna publish patch --yes",
+    "publish:minor": "lerna publish minor --yes",
+    "publish:major": "lerna publish major --yes",
+    "publish:from_git": "lerna publish from-git --yes",
     "build": "lerna run build",
     "test": "lerna run test && npm run lint:md",
     "lint:md": "remark ./*.md --frail --no-stdout --quiet --rc-path ./.remarkrc"

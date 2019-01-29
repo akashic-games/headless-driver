@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import cloneDeep = require("lodash.clonedeep");
 import { Permission, StartPoint, GetStartPointOptions } from "@akashic/amflow";
 import { Tick, TickList, Event } from "@akashic/playlog";
 import { Trigger } from "@akashic/trigger";
@@ -37,7 +37,7 @@ export class AMFlowStore {
 			this.tickList = [tick[0], tick[0], []];
 		}
 		if (tick[1] || tick[2]) {
-			tick = this.deepCopy(tick);
+			tick = this.cloneDeep<Tick>(tick);
 			this.tickList[2].push(tick);
 		}
 		this.sendTickTrigger.fire(tick);
@@ -45,7 +45,7 @@ export class AMFlowStore {
 
 	sendEvent(event: Event): void {
 		// TODO: イベントのスタック化
-		this.sendEventTrigger.fire(this.deepCopy(event));
+		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
 	}
 
 	getTickList(from: number, to: number): TickList | null {
@@ -82,7 +82,7 @@ export class AMFlowStore {
 		this.amflowClientManager = null;
 	}
 
-	private deepCopy(target: any): any {
-		return _.cloneDeep(target);
+	private cloneDeep<T>(target: T): T {
+		return cloneDeep(target);
 	}
 }
