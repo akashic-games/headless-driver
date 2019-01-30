@@ -78,6 +78,9 @@ export class AMFlowClient implements AMFlow {
 		if (this.state !== "open") {
 			throw new Error("Client is not open");
 		}
+		if (this.permission == null) {
+			throw new Error("Not authenticated");
+		}
 		if (!this.permission.writeTick) {
 			throw new Error("Permission denied");
 		}
@@ -87,6 +90,9 @@ export class AMFlowClient implements AMFlow {
 	onTick(handler: (tick: Tick) => void): void {
 		if (this.state !== "open") {
 			throw new Error("Client is not open");
+		}
+		if (this.permission == null) {
+			throw new Error("Not authenticated");
 		}
 		if (!this.permission.subscribeTick) {
 			throw new Error("Permission denied");
@@ -98,12 +104,18 @@ export class AMFlowClient implements AMFlow {
 		if (this.state !== "open") {
 			throw new Error("Client is not open");
 		}
+		if (this.permission == null) {
+			throw new Error("Not authenticated");
+		}
 		this.tickHandlers = this.tickHandlers.filter(h => h !== handler);
 	}
 
 	sendEvent(event: Event): void {
 		if (this.state !== "open") {
 			throw new Error("Client is not open");
+		}
+		if (this.permission == null) {
+			throw new Error("Not authenticated");
 		}
 		if (!this.permission.sendEvent) {
 			throw new Error("Permission denied");
@@ -117,6 +129,9 @@ export class AMFlowClient implements AMFlow {
 		if (this.state !== "open") {
 			throw new Error("Client is not open");
 		}
+		if (this.permission == null) {
+			throw new Error("Not authenticated");
+		}
 		if (!this.permission.subscribeEvent) {
 			throw new Error("Permission denied");
 		}
@@ -127,6 +142,9 @@ export class AMFlowClient implements AMFlow {
 		if (this.state !== "open") {
 			throw new Error("Client is not open");
 		}
+		if (this.permission == null) {
+			throw new Error("Not authenticated");
+		}
 		this.eventHandlers = this.eventHandlers.filter(h => h !== handler);
 	}
 
@@ -134,6 +152,10 @@ export class AMFlowClient implements AMFlow {
 		setImmediate(() => {
 			if (this.state !== "open") {
 				callback(new Error("Client is not open"), null);
+				return;
+			}
+			if (this.permission == null) {
+				callback(new Error("Not authenticated"), null);
 				return;
 			}
 			if (!this.permission.readTick) {
@@ -155,6 +177,10 @@ export class AMFlowClient implements AMFlow {
 				callback(new Error("Client is not open"));
 				return;
 			}
+			if (this.permission == null) {
+				callback(new Error("Not authenticated"));
+				return;
+			}
 			if (!this.permission.writeTick) {
 				callback(new Error("Permission denied"));
 				return;
@@ -168,6 +194,10 @@ export class AMFlowClient implements AMFlow {
 		setImmediate(() => {
 			if (this.state !== "open") {
 				callback(new Error("Client is not open"), null);
+				return;
+			}
+			if (this.permission == null) {
+				callback(new Error("Not authenticated"), null);
 				return;
 			}
 			if (!this.permission.readTick) {
