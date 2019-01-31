@@ -412,9 +412,10 @@ describe("AMFlow の動作テスト", () => {
 				// no startPoint
 				try {
 					await getStartPoint({ timestamp: 0 });
+					assert.fail("Must throw error");
 				} catch (e) {
 					// no startPoint found
-					assert.equal(e != null, true);
+					assert.notEqual(e instanceof assert.AssertionError, true);
 				}
 
 				done();
