@@ -66,19 +66,16 @@ export class AMFlowStore {
 		this.startPoints.push(startPoint);
 	}
 
-	getStartPoint(opts?: GetStartPointOptions): StartPoint | null {
+	getStartPoint(opts: GetStartPointOptions): StartPoint | null {
 		if (!this.startPoints.length) {
 			return null;
 		}
-		if (opts != null) {
-			if (opts.frame != null) {
-				return this.startPoints.filter(s => s.frame <= opts.frame).sort((a, b) => (a.frame < b.frame ? 1 : -1))[0] || null;
-			} else if (opts.timestamp != null) {
-				return (
-					this.startPoints.filter(s => s.timestamp <= opts.timestamp).sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1))[0] ||
-					null
-				);
-			}
+		if (opts.frame != null) {
+			return this.startPoints.filter(s => s.frame <= opts.frame).sort((a, b) => (a.frame < b.frame ? 1 : -1))[0] || null;
+		} else if (opts.timestamp != null) {
+			return (
+				this.startPoints.filter(s => s.timestamp <= opts.timestamp).sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1))[0] || null
+			);
 		}
 		return this.startPoints.find(s => s.frame === 0) || null;
 	}

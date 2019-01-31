@@ -376,7 +376,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 
 				// default: frame === 0
-				const frame = await getStartPoint();
+				const frame = await getStartPoint({});
 				assert.equal(frame.data, "frame0");
 
 				// frame and timestamp
