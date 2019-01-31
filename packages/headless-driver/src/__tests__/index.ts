@@ -345,7 +345,7 @@ describe("AMFlow の動作テスト", () => {
 		amflowClient.open("0", () => {
 			const token = amflowClientManager.createPlayToken("0", activePermission);
 			amflowClient.authenticate(token, async () => {
-				const getStartPoint: (opts?: GetStartPointOptions) => Promise<StartPoint> = opts =>
+				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint> = opts =>
 					new Promise<StartPoint>((resolve, reject) => {
 						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data)));
 					});
