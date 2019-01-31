@@ -379,17 +379,6 @@ describe("AMFlow の動作テスト", () => {
 				const frame = await getStartPoint({});
 				assert.equal(frame.data, "frame0");
 
-				// frame and timestamp
-				const sp1 = await getStartPoint({ frame: 0, timestamp: 100 });
-				const sp2 = await getStartPoint({ frame: 50, timestamp: 500 });
-				const sp3 = await getStartPoint({ frame: 100, timestamp: 1000 });
-				const sp4 = await getStartPoint({ frame: 1000, timestamp: 10000 });
-
-				assert.equal(sp1.data, "frame0");
-				assert.equal(sp2.data, "frame0");
-				assert.equal(sp3.data, "frame100");
-				assert.equal(sp4.data, "frame500");
-
 				// only frame
 				const frame0 = await getStartPoint({ frame: 0 });
 				const frame100 = await getStartPoint({ frame: 100 });
@@ -407,6 +396,18 @@ describe("AMFlow の動作テスト", () => {
 				assert.equal(timestamp10000.data, "frame100");
 				assert.equal(timestamp30000.data, "frame200");
 				assert.equal(timestamp60000.data, "frame500");
+
+				// frame and timestamp
+				const sp1 = await getStartPoint({ frame: 0, timestamp: 100 });
+				const sp2 = await getStartPoint({ frame: 50, timestamp: 500 });
+				const sp3 = await getStartPoint({ frame: 100, timestamp: 1000 });
+				const sp4 = await getStartPoint({ frame: 1000, timestamp: 10000 });
+
+				// 内容は関知しないが、エラーが発生しないことを確認
+				assert.equal(sp1 != null, true);
+				assert.equal(sp2 != null, true);
+				assert.equal(sp3 != null, true);
+				assert.equal(sp4 != null, true);
 
 				// no startPoint
 				try {
