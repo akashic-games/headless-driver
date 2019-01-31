@@ -5,7 +5,7 @@ import * as getPort from "get-port";
 import * as url from "url";
 import fetch from "node-fetch";
 
-import { Permission } from "@akashic/amflow";
+import { Permission, StartPoint, GetStartPointOptions } from "@akashic/amflow";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 
@@ -335,6 +335,90 @@ describe("run-test", () => {
 			})
 			.then(done)
 			.catch(e => done(e));
+	});
+});
+
+describe("AMFlow の動作テスト", () => {
+	it("getStartPoint で正しく startPoint が取得できる", done => {
+		const amflowClientManager = new AMFlowClientManager();
+		const amflowClient = amflowClientManager.createAMFlow("0");
+		amflowClient.open("0", () => {
+			const token = amflowClientManager.createPlayToken("0", activePermission);
+			amflowClient.authenticate(token, async () => {
+				const getStartPoint: (opts?: GetStartPointOptions) => Promise<StartPoint> = opts =>
+					new Promise<StartPoint>((resolve, reject) => {
+						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data)));
+					});
+				const putStartPoint: (sp: StartPoint) => Promise<StartPoint> = sp =>
+					new Promise((resolve, reject) => {
+						amflowClient.putStartPoint(sp, e => (e ? reject(e) : resolve()));
+					});
+
+				await putStartPoint({
+					frame: 0,
+					timestamp: 100,
+					data: "frame0"
+				});
+				await putStartPoint({
+					frame: 100,
+					timestamp: 10000,
+					data: "frame100"
+				});
+				await putStartPoint({
+					frame: 500,
+					timestamp: 50000,
+					data: "frame500"
+				});
+				await putStartPoint({
+					frame: 200,
+					timestamp: 20000,
+					data: "frame200"
+				});
+
+				// default: frame === 0
+				const frame = await getStartPoint();
+				assert.equal(frame.data, "frame0");
+
+				// frame and timestamp
+				const sp1 = await getStartPoint({ frame: 0, timestamp: 100 });
+				const sp2 = await getStartPoint({ frame: 50, timestamp: 500 });
+				const sp3 = await getStartPoint({ frame: 100, timestamp: 1000 });
+				const sp4 = await getStartPoint({ frame: 1000, timestamp: 10000 });
+
+				assert.equal(sp1.data, "frame0");
+				assert.equal(sp2.data, "frame0");
+				assert.equal(sp3.data, "frame100");
+				assert.equal(sp4.data, "frame500");
+
+				// only frame
+				const frame0 = await getStartPoint({ frame: 0 });
+				const frame100 = await getStartPoint({ frame: 100 });
+				const frame700 = await getStartPoint({ frame: 700 });
+
+				assert.equal(frame0.data, "frame0");
+				assert.equal(frame100.data, "frame100");
+				assert.equal(frame700.data, "frame500");
+
+				// only timestamp
+				const timestamp10000 = await getStartPoint({ timestamp: 10000 });
+				const timestamp30000 = await getStartPoint({ timestamp: 30000 });
+				const timestamp60000 = await getStartPoint({ timestamp: 60000 });
+
+				assert.equal(timestamp10000.data, "frame100");
+				assert.equal(timestamp30000.data, "frame200");
+				assert.equal(timestamp60000.data, "frame500");
+
+				// no startPoint
+				try {
+					await getStartPoint({ timestamp: 0 });
+				} catch (e) {
+					// no startPoint found
+					assert.equal(e != null, true);
+				}
+
+				done();
+			});
+		});
 	});
 });
 

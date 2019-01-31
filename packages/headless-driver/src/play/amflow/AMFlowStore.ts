@@ -15,7 +15,7 @@ export class AMFlowStore {
 	private playId: string;
 	private amflowClientManager: AMFlowClientManager;
 
-	private startPoint: StartPoint = null;
+	private startPoints: StartPoint[] = [];
 	private tickList: TickList = null;
 
 	constructor(playId: string, amflowClientManager: AMFlowClientManager) {
@@ -63,15 +63,21 @@ export class AMFlowStore {
 	}
 
 	putStartPoint(startPoint: StartPoint): void {
-		// TODO: frame:0 以外の保存
-		if (startPoint.frame === 0) {
-			this.startPoint = startPoint;
-		}
+		this.startPoints.push(startPoint);
 	}
 
-	getStartPoint(opts: GetStartPointOptions): StartPoint {
-		// TODO: opts の指定
-		return this.startPoint;
+	getStartPoint(opts?: GetStartPointOptions): StartPoint | null {
+		if (!this.startPoints.length) {
+			return null;
+		}
+		if (opts != null) {
+			if (opts.frame != null) {
+				return this.startPoints.filter(s => s.frame <= opts.frame).sort((a, b) => (a.frame < b.frame ? 1 : -1))[0];
+			} else if (opts.timestamp != null) {
+				return this.startPoints.filter(s => s.timestamp <= opts.timestamp).sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1))[0];
+			}
+		}
+		return this.startPoints.find(s => s.frame === 0) || null;
 	}
 
 	destroy(): void {
