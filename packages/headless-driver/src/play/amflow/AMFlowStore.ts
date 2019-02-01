@@ -63,7 +63,7 @@ export class AMFlowStore {
 	}
 
 	putStartPoint(startPoint: StartPoint): void {
-		// NOTE: frame: 0 のみ別に保持する
+		// NOTE: frame: 0 のみ第0要素に保持する
 		if (startPoint.frame === 0) {
 			this.startPoints = [startPoint];
 			return;
@@ -81,9 +81,19 @@ export class AMFlowStore {
 			return null;
 		}
 		if (opts.timestamp != null) {
-			return this.startPoints.filter(s => s.timestamp <= opts.timestamp).pop() || null;
+			for (let i = 0; i < this.startPoints.length; i++) {
+				if (opts.timestamp < this.startPoints[i].timestamp) {
+					return this.startPoints[i - 1] || null;
+				}
+			}
+			return this.startPoints[this.startPoints.length - 1];
 		} else if (opts.frame != null) {
-			return this.startPoints.filter(s => s.frame <= opts.frame).pop() || null;
+			for (let i = 0; i < this.startPoints.length; i++) {
+				if (opts.frame < this.startPoints[i].frame) {
+					return this.startPoints[i - 1] || null;
+				}
+			}
+			return this.startPoints[this.startPoints.length - 1];
 		}
 		return this.startPoints[0] || null;
 	}
