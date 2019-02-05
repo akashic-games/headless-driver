@@ -15,7 +15,7 @@ export class AMFlowStore {
 	private playId: string;
 	private amflowClientManager: AMFlowClientManager;
 
-	private startPoint: StartPoint = null;
+	private startPoints: StartPoint[] | null = [];
 	private tickList: TickList = null;
 
 	constructor(playId: string, amflowClientManager: AMFlowClientManager) {
@@ -63,15 +63,39 @@ export class AMFlowStore {
 	}
 
 	putStartPoint(startPoint: StartPoint): void {
-		// TODO: frame:0 以外の保存
+		// NOTE: frame: 0 のみ第0要素に保持する
 		if (startPoint.frame === 0) {
-			this.startPoint = startPoint;
+			this.startPoints = [startPoint];
+			return;
 		}
+		this.startPoints.push(startPoint);
+		// timestamp をもとに昇順で並び替え
+		this.startPoints.sort((a, b) => a.timestamp - b.timestamp);
 	}
 
-	getStartPoint(opts: GetStartPointOptions): StartPoint {
-		// TODO: opts の指定
-		return this.startPoint;
+	getStartPoint(opts: GetStartPointOptions): StartPoint | null {
+		if (opts.frame === 0) {
+			return this.startPoints[0] || null;
+		}
+		if (!this.startPoints.length) {
+			return null;
+		}
+		if (opts.timestamp != null) {
+			for (let i = 0; i < this.startPoints.length; i++) {
+				if (opts.timestamp < this.startPoints[i].timestamp) {
+					return this.startPoints[i - 1] || null;
+				}
+			}
+			return this.startPoints[this.startPoints.length - 1];
+		} else if (opts.frame != null) {
+			for (let i = 0; i < this.startPoints.length; i++) {
+				if (opts.frame < this.startPoints[i].frame) {
+					return this.startPoints[i - 1] || null;
+				}
+			}
+			return this.startPoints[this.startPoints.length - 1];
+		}
+		return this.startPoints[0] || null;
 	}
 
 	destroy(): void {
@@ -80,6 +104,7 @@ export class AMFlowStore {
 		this.sendEventTrigger = null;
 		this.sendTickTrigger = null;
 		this.amflowClientManager = null;
+		this.startPoints = null;
 	}
 
 	private cloneDeep<T>(target: T): T {
