@@ -26,7 +26,7 @@ export class PlatformV1 extends Platform implements pdi.Platform {
 	}
 
 	setPlatformEventHandler(handler: pdi.PlatformEventHandler): void {
-		// TODO
+		// do noting
 	}
 
 	getPrimarySurface(): g.Surface {

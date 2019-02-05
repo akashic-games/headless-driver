@@ -450,22 +450,22 @@ describe("コンテンツ動作テスト", () => {
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV1Game;
 		assert.equal(game.playId, playId);
 
-		const handleLog = () =>
+		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
-				// コンテンツ側での g.Game#logger の出力を捕捉できる
-				runner.logTrigger.handle((l: any) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.handle((l: any) => {
 					resolve(l);
 					return true;
 				});
 			});
 
-		const log = await handleLog();
-		assert.equal(log.message, "reached right");
+		const data = await handleData();
+		assert.equal(data, "reached right");
 
 		const handleError = () =>
 			new Promise<any>((resolve, reject) => {
-				// コンテンツ側での g.Game#logger の出力を捕捉できる
-				runner.logTrigger.handle((l: any) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.handle((l: any) => {
 					resolve(l);
 					return true;
 				});
@@ -474,10 +474,10 @@ describe("コンテンツ動作テスト", () => {
 		// AMFlow 経由でイベントを送信でき、それをコンテンツで捕捉できる
 		activeAMFlow.sendEvent([0x20, null, ":akashic", { hoge: "fuga" }]);
 
-		// 読み込んだコンテンツ側で受信したメッセージイベントをログに出力しているので、ここで内容を取得する
+		// 読み込んだコンテンツ側で受信したメッセージイベントを出力しているので、ここで内容を取得する
 		const event = await handleError();
-		assert.deepEqual(event.message.data, { hoge: "fuga" });
-		assert.equal(event.message.player.id, ":akashic");
+		assert.deepEqual(event.data, { hoge: "fuga" });
+		assert.equal(event.player.id, ":akashic");
 
 		runner.stop();
 	});
@@ -507,21 +507,21 @@ describe("コンテンツ動作テスト", () => {
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV2Game;
 		assert.equal(game.playId, playId);
 
-		const handleLog = () =>
+		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
-				// コンテンツ側での g.Game#logger の出力を捕捉できる
-				runner.logTrigger.addOnce(l => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.addOnce(l => {
 					resolve(l);
 				});
 			});
 
-		const log = await handleLog();
-		assert.equal(log.message, "reached right");
+		const data = await handleData();
+		assert.equal(data, "reached right");
 
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
-				// コンテンツ側での g.Game#logger の出力を捕捉できる
-				runner.logTrigger.addOnce(l => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.addOnce(l => {
 					resolve(l);
 				});
 			});
@@ -529,10 +529,10 @@ describe("コンテンツ動作テスト", () => {
 		// AMFlow 経由でイベントを送信でき、それをコンテンツで捕捉できる
 		activeAMFlow.sendEvent([0x20, null, ":akashic", { hoge: "fuga" }]);
 
-		// 読み込んだコンテンツで受信したメッセージイベントをログに出力しているので、ここで内容を取得する
+		// 読み込んだコンテンツで受信したメッセージイベントを出力しているので、ここで内容を取得する
 		const event = await handleEvent();
-		assert.deepEqual(event.message.data, { hoge: "fuga" });
-		assert.equal(event.message.player.id, ":akashic");
+		assert.deepEqual(event.data, { hoge: "fuga" });
+		assert.equal(event.player.id, ":akashic");
 		runner.stop();
 	});
 
@@ -572,18 +572,18 @@ describe("コンテンツ動作テスト", () => {
 		passiveAMFlow.sendEvent([0x20, null, ":akashic", "send_event"]);
 
 		// (2) (1) 送信後に Active 側のメッセージ受信ハンドラを登録
-		// NOTE: "data_from_content" 以外のメッセージイベントの捕捉を防ぐため、このタイミングでログをハンドルする
-		const handleLog = () =>
+		// NOTE: "data_from_content" 以外のメッセージイベントの捕捉を防ぐため、このタイミングで出力をハンドルする
+		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
-				// NOTE: 読み込んだコンテンツ側で受信したメッセージイベントをログ出力しているので、ここで内容を取得する
-				activeRunner.logTrigger.addOnce(l => {
+				// NOTE: 読み込んだコンテンツ側で受信したメッセージイベントを出力しているので、ここで内容を取得する
+				activeRunner.sendToExternalTrigger.addOnce(l => {
 					resolve(l);
 				});
 			});
 
 		// (3) 受け取ったメッセージイベントの内容を確認
-		const event = await handleLog();
-		assert.equal(event.message.data.text, "data_from_content");
+		const event = await handleData();
+		assert.equal(event.data.text, "data_from_content");
 
 		activeRunner.stop();
 		passiveRunner.stop();
@@ -607,18 +607,18 @@ describe("コンテンツ動作テスト", () => {
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 
-		const handleLog = () =>
+		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
-				// コンテンツ側での g.Game#logger の出力を捕捉できる
-				runner.logTrigger.addOnce(l => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.addOnce(l => {
 					resolve(l);
 				});
 			});
 
 		await runner.start();
 
-		const log = await handleLog();
-		assert.equal(log.message, "reached right");
+		const data = await handleData();
+		assert.equal(data, "reached right");
 		runner.stop();
 	});
 });

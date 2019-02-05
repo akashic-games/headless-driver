@@ -22,38 +22,10 @@ export interface RunnerPlayer {
 	name: string;
 }
 
-/**
- * ログレベル。
- *
- * - Error: サーバ側でも収集される、ゲーム続行不可能なクリティカルなエラーログ
- * - Warn: サーバ側でも収集される、ゲーム続行可能だが危険な状態であることを示す警告ログ
- * - Info: クライアントでのみ収集される情報ログ
- * - Debug: サンドボックス環境でのみ収集される開発時限定のログ。リリース時には本処理をすべて消してリリースすることが望ましい
- */
-export type RunnerLogLevel = "error" | "warn" | "info" | "debug";
-
-/**
- * ログ出力情報。
- */
-export interface RunnerLog {
-	/**
-	 * ログレベル。
-	 */
-	level: RunnerLogLevel;
-	/**
-	 * ログ内容。
-	 */
-	message: string;
-	/**
-	 * ゲーム開発者が任意に利用できる、汎用のログ補助情報。
-	 */
-	cause?: any;
-}
-
 export abstract class Runner {
 	engineVersion: string;
 	errorTrigger: Trigger<any> = new Trigger();
-	logTrigger: Trigger<RunnerLog> = new Trigger();
+	sendToExternalTrigger: Trigger<any> = new Trigger();
 
 	private params: RunnerParameters;
 
@@ -111,9 +83,5 @@ export abstract class Runner {
 	protected onError(error: Error): void {
 		this.stop();
 		this.errorTrigger.fire(error);
-	}
-
-	protected onLogging(log: RunnerLog): void {
-		this.logTrigger.fire(log);
 	}
 }

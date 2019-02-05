@@ -17,7 +17,7 @@ function main(param) {
 			// 以下のコードは毎フレーム実行されます。
 			rect.x += 10;
 			if (rect.x > game.width) {
-				game.logger.info("reached right");
+				game.external.send("reached right");
 				rect.x = 0;
 			}
 			rect.modified();
@@ -34,7 +34,7 @@ function main(param) {
 			}));
 			return;
 		}
-		game.logger.info(message);
+		game.external.send(message);
 	});
 	game.pushScene(scene);
 }
