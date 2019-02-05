@@ -1,5 +1,5 @@
 import { akashicEngine as g, gameDriver as gdr } from "@akashic/engine-files";
-import { Runner, RunnerLogLevel } from "@akashic/headless-driver-runner";
+import { Runner } from "@akashic/headless-driver-runner";
 import { PlatformV2 } from "./platform/PlatformV2";
 
 export type RunnerV2Game = g.Game;
@@ -59,6 +59,7 @@ export class RunnerV2 extends Runner {
 				configurationBaseUrl: this.configurationBaseUrl,
 				assetBaseUrl: this.assetBaseUrl,
 				amflow: this.amflow,
+				sendToExternalHandler: (data: any) => this.onSendedToExternal(data),
 				errorHandler: (e: any) => this.onError(e)
 			});
 
@@ -96,29 +97,12 @@ export class RunnerV2 extends Runner {
 			);
 
 			driver.gameCreatedTrigger.addOnce((game: RunnerV2Game) => {
-				game.logger.logging.remove(this.convertLog, this);
-				game.logger.logging.add(this.convertLog, this);
 				game._started.addOnce(() => resolve(game));
 			});
 		});
 	}
 
-	private convertLog(log: g.Log): void {
-		let level: RunnerLogLevel;
-		if (log.level === g.LogLevel.Debug) {
-			level = "debug";
-		} else if (log.level === g.LogLevel.Warn) {
-			level = "warn";
-		} else if (log.level === g.LogLevel.Error) {
-			level = "error";
-		} else {
-			level = "info";
-		}
-
-		this.onLogging({
-			level,
-			message: log.message,
-			cause: log.cause
-		});
+	private onSendedToExternal(data: any): void {
+		this.sendToExternalTrigger.fire(data);
 	}
 }
