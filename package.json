@@ -16,7 +16,7 @@
     "build": "lerna run build",
     "test": "lerna run test && npm run lint:md",
     "lint:md": "remark ./*.md --frail --no-stdout --quiet --rc-path ./.remarkrc",
-    "update:chagelog": "node build/updateChangelog"
+    "update:changelog": "node build/updateChangelog"
   },
   "author": "DWANGO Co., Ltd.",
   "license": "MIT",
