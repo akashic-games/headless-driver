@@ -78,49 +78,49 @@ export class AMFlowClient implements AMFlow {
 
 	sendTick(tick: Tick): void {
 		if (this.state !== "open") {
-			return;
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			return;
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.writeTick) {
-			return;
+			throw createError("permission_error", "Permission denied");
 		}
 		this.store.sendTick(tick);
 	}
 
 	onTick(handler: (tick: Tick) => void): void {
 		if (this.state !== "open") {
-			return;
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			return;
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.subscribeTick) {
-			return;
+			throw createError("permission_error", "Permission denied");
 		}
 		this.tickHandlers.push(handler);
 	}
 
 	offTick(handler: (tick: Tick) => void): void {
 		if (this.state !== "open") {
-			return;
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			return;
+			throw createError("invalid_status", "Not authenticated");
 		}
 		this.tickHandlers = this.tickHandlers.filter(h => h !== handler);
 	}
 
 	sendEvent(event: Event): void {
 		if (this.state !== "open") {
-			return;
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			return;
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.sendEvent) {
-			return;
+			throw createError("permission_error", "Permission denied");
 		}
 		// Max Priority
 		event[1] = Math.min(event[1], this.permission.maxEventPriority);
@@ -129,13 +129,13 @@ export class AMFlowClient implements AMFlow {
 
 	onEvent(handler: (event: Event) => void): void {
 		if (this.state !== "open") {
-			return;
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			return;
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.subscribeEvent) {
-			return;
+			throw createError("permission_error", "Permission denied");
 		}
 		this.eventHandlers.push(handler);
 
@@ -147,10 +147,10 @@ export class AMFlowClient implements AMFlow {
 
 	offEvent(handler: (event: Event) => void): void {
 		if (this.state !== "open") {
-			return;
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			return;
+			throw createError("invalid_status", "Not authenticated");
 		}
 		this.eventHandlers = this.eventHandlers.filter(h => h !== handler);
 	}
