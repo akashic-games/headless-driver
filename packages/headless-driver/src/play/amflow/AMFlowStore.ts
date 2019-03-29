@@ -30,7 +30,8 @@ export class AMFlowStore {
 	sendTick(tick: Tick): void {
 		if (this.tickList) {
 			if (this.tickList[0] <= tick[0] && tick[0] <= this.tickList[1]) {
-				throw new Error("illegal age tick");
+				// illegal age tick
+				return;
 			}
 			this.tickList[1] = tick[0];
 		} else {
@@ -44,7 +45,6 @@ export class AMFlowStore {
 	}
 
 	sendEvent(event: Event): void {
-		// TODO: イベントのスタック化
 		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
 	}
 
@@ -99,12 +99,19 @@ export class AMFlowStore {
 	}
 
 	destroy(): void {
+		if (this.isDestroyed()) {
+			return;
+		}
 		this.sendEventTrigger.destroy();
 		this.sendTickTrigger.destroy();
 		this.sendEventTrigger = null;
 		this.sendTickTrigger = null;
 		this.amflowClientManager = null;
 		this.startPoints = null;
+	}
+
+	isDestroyed(): boolean {
+		return this.amflowClientManager == null;
 	}
 
 	private cloneDeep<T>(target: T): T {

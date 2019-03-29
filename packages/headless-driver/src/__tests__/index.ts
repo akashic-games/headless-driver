@@ -6,6 +6,7 @@ import * as url from "url";
 import fetch from "node-fetch";
 
 import { Permission, StartPoint, GetStartPointOptions } from "@akashic/amflow";
+import { Event } from "@akashic/playlog";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 
@@ -248,6 +249,7 @@ describe("run-test", () => {
 						if (err) {
 							assert.equal(err instanceof Error, true);
 							assert.equal(permission == null, true);
+							assert.strictEqual(err.name, "InvalidStatus");
 							resolve();
 							return;
 						}
@@ -298,10 +300,6 @@ describe("run-test", () => {
 				});
 			})
 			.then(() => {
-				activeAMFlow.open(playId);
-				passiveAMFlow.open(playId);
-			})
-			.then(() => {
 				return new Promise((resolve, reject) => {
 					// Tick を送信できる
 					activeAMFlow.sendTick([0]);
@@ -331,6 +329,13 @@ describe("run-test", () => {
 
 					// Event を送信できる
 					passiveAMFlow.sendEvent([0, 5, "dummy-player-id"]);
+				});
+			})
+			.then(() => playManager.stopPlay(playId))
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// すでに stop したプレーの AMFlowClient に対して close() を呼び出しても問題ない
+					passiveAMFlow.close(err => (err ? reject(err) : resolve()));
 				});
 			})
 			.then(done)
@@ -421,6 +426,91 @@ describe("AMFlow の動作テスト", () => {
 				done();
 			});
 		});
+	});
+
+	it("AMFlow#onEvent が登録されるより以前の Event を正しく取得できる", done => {
+		const playManager = new PlayManager();
+		let activeAMFlow: AMFlowClient;
+		let passiveAMFlow: AMFlowClient;
+		const playId = "0";
+		const events: Event[] = [];
+
+		Promise.resolve()
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					activeAMFlow = playManager.createAMFlow(playId);
+					activeAMFlow.open(playId, err => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					passiveAMFlow = playManager.createAMFlow(playId);
+					passiveAMFlow.open(playId, err => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// 認証できる
+					const playToken = playManager.createPlayToken(playId, passivePermission);
+					passiveAMFlow.authenticate(playToken, err => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				// active の AMFlow#authenticate(), AMFlow#onEvent() 呼び出し前にイベントを送信
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 1, hoge: "fuga" }]);
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 2, foo: "bar" }]);
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// Active の認証
+					const playToken = playManager.createPlayToken(playId, activePermission);
+					activeAMFlow.authenticate(playToken, err => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				activeAMFlow.onEvent(event => {
+					events.push(event);
+				});
+			})
+			.then(() => {
+				// active の AMFlow#onEvent() 呼び出し後にイベントを送信
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 3 }]);
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 4 }]);
+			})
+			.then(() => {
+				assert.deepStrictEqual(events, [
+					[0x20, 0, null, { ordinal: 1, hoge: "fuga" }],
+					[0x20, 0, null, { ordinal: 2, foo: "bar" }],
+					[0x20, 0, null, { ordinal: 3 }],
+					[0x20, 0, null, { ordinal: 4 }]
+				]);
+			})
+			.then(done)
+			.catch(e => done(e));
 	});
 });
 
