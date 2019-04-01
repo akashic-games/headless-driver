@@ -248,6 +248,7 @@ export class AMFlowClient implements AMFlow {
 		this.permission = null;
 		this.tickHandlers = null;
 		this.eventHandlers = null;
+		this.unconsumedEvents = null;
 	}
 
 	isDestroyed(): boolean {
