@@ -2,6 +2,7 @@ import { Permission, StartPoint, AMFlow, GetStartPointOptions } from "@akashic/a
 import { Tick, TickList, Event, StorageData, StorageKey, StorageValue, StorageReadKey } from "@akashic/playlog";
 import { getSystemLogger } from "../../Logger";
 import { AMFlowStore } from "./AMFlowStore";
+import { createError } from "./ErrorFactory";
 
 export type AMFlowState = "connecting" | "open" | "closing" | "closed";
 
@@ -17,6 +18,7 @@ export class AMFlowClient implements AMFlow {
 	private permission: Permission = null;
 	private tickHandlers: ((tick: Tick) => void)[] = [];
 	private eventHandlers: ((event: Event) => void)[] = [];
+	private unconsumedEvents: Event[] = [];
 
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
@@ -33,7 +35,7 @@ export class AMFlowClient implements AMFlow {
 		if (callback) {
 			setImmediate(() => {
 				if (this.playId !== playId) {
-					callback(new Error("Invalid PlayID"));
+					callback(createError("runtime_error", "Invalid PlayID"));
 				} else {
 					callback();
 				}
@@ -44,7 +46,7 @@ export class AMFlowClient implements AMFlow {
 	close(callback?: (error?: Error) => void): void {
 		getSystemLogger().info("AMFlowClient#close()");
 		if (this.state !== "open") {
-			callback(new Error("Client is not open"));
+			callback(createError("invalid_status", "Client is not open"));
 			return;
 		}
 
@@ -59,7 +61,7 @@ export class AMFlowClient implements AMFlow {
 	authenticate(token: string, callback: (error: Error, permission: Permission) => void): void {
 		setImmediate(() => {
 			if (this.state !== "open") {
-				callback(new Error("Client is not open"), null);
+				callback(createError("invalid_status", "Client is not open"), null);
 				return;
 			}
 			const permission = this.store.authenticate(token);
@@ -69,56 +71,56 @@ export class AMFlowClient implements AMFlow {
 			if (permission) {
 				callback(null, permission);
 			} else {
-				callback(new Error("Invalid playToken"), null);
+				callback(createError("invalid_status", "Invalid playToken"), null);
 			}
 		});
 	}
 
 	sendTick(tick: Tick): void {
 		if (this.state !== "open") {
-			throw new Error("Client is not open");
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			throw new Error("Not authenticated");
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.writeTick) {
-			throw new Error("Permission denied");
+			throw createError("permission_error", "Permission denied");
 		}
 		this.store.sendTick(tick);
 	}
 
 	onTick(handler: (tick: Tick) => void): void {
 		if (this.state !== "open") {
-			throw new Error("Client is not open");
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			throw new Error("Not authenticated");
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.subscribeTick) {
-			throw new Error("Permission denied");
+			throw createError("permission_error", "Permission denied");
 		}
 		this.tickHandlers.push(handler);
 	}
 
 	offTick(handler: (tick: Tick) => void): void {
 		if (this.state !== "open") {
-			throw new Error("Client is not open");
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			throw new Error("Not authenticated");
+			throw createError("invalid_status", "Not authenticated");
 		}
 		this.tickHandlers = this.tickHandlers.filter(h => h !== handler);
 	}
 
 	sendEvent(event: Event): void {
 		if (this.state !== "open") {
-			throw new Error("Client is not open");
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			throw new Error("Not authenticated");
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.sendEvent) {
-			throw new Error("Permission denied");
+			throw createError("permission_error", "Permission denied");
 		}
 		// Max Priority
 		event[1] = Math.min(event[1], this.permission.maxEventPriority);
@@ -127,23 +129,28 @@ export class AMFlowClient implements AMFlow {
 
 	onEvent(handler: (event: Event) => void): void {
 		if (this.state !== "open") {
-			throw new Error("Client is not open");
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			throw new Error("Not authenticated");
+			throw createError("invalid_status", "Not authenticated");
 		}
 		if (!this.permission.subscribeEvent) {
-			throw new Error("Permission denied");
+			throw createError("permission_error", "Permission denied");
 		}
 		this.eventHandlers.push(handler);
+
+		if (0 < this.unconsumedEvents.length) {
+			this.eventHandlers.forEach(h => this.unconsumedEvents.forEach(ev => h(ev)));
+			this.unconsumedEvents = [];
+		}
 	}
 
 	offEvent(handler: (event: Event) => void): void {
 		if (this.state !== "open") {
-			throw new Error("Client is not open");
+			throw createError("invalid_status", "Client is not open");
 		}
 		if (this.permission == null) {
-			throw new Error("Not authenticated");
+			throw createError("invalid_status", "Not authenticated");
 		}
 		this.eventHandlers = this.eventHandlers.filter(h => h !== handler);
 	}
@@ -151,22 +158,22 @@ export class AMFlowClient implements AMFlow {
 	getTickList(from: number, to: number, callback: (error: Error, tickList: TickList) => void): void {
 		setImmediate(() => {
 			if (this.state !== "open") {
-				callback(new Error("Client is not open"), null);
+				callback(createError("invalid_status", "Client is not open"), null);
 				return;
 			}
 			if (this.permission == null) {
-				callback(new Error("Not authenticated"), null);
+				callback(createError("invalid_status", "Not authenticated"), null);
 				return;
 			}
 			if (!this.permission.readTick) {
-				callback(new Error("Permission denied"), null);
+				callback(createError("permission_error", "Permission denied"), null);
 				return;
 			}
 			const tickList = this.store.getTickList(from, to);
 			if (tickList) {
 				callback(null, tickList);
 			} else {
-				callback(new Error("No tick list"), null);
+				callback(createError("runtime_error", "No tick list"), null);
 			}
 		});
 	}
@@ -174,15 +181,15 @@ export class AMFlowClient implements AMFlow {
 	putStartPoint(startPoint: StartPoint, callback: (err: Error) => void): void {
 		setImmediate(() => {
 			if (this.state !== "open") {
-				callback(new Error("Client is not open"));
+				callback(createError("invalid_status", "Client is not open"));
 				return;
 			}
 			if (this.permission == null) {
-				callback(new Error("Not authenticated"));
+				callback(createError("invalid_status", "Not authenticated"));
 				return;
 			}
 			if (!this.permission.writeTick) {
-				callback(new Error("Permission denied"));
+				callback(createError("permission_error", "Permission denied"));
 				return;
 			}
 			this.store.putStartPoint(startPoint);
@@ -193,35 +200,35 @@ export class AMFlowClient implements AMFlow {
 	getStartPoint(opts: GetStartPointOptions, callback: (error: Error, startPoint: StartPoint) => void): void {
 		setImmediate(() => {
 			if (this.state !== "open") {
-				callback(new Error("Client is not open"), null);
+				callback(createError("invalid_status", "Client is not open"), null);
 				return;
 			}
 			if (this.permission == null) {
-				callback(new Error("Not authenticated"), null);
+				callback(createError("invalid_status", "Not authenticated"), null);
 				return;
 			}
 			if (!this.permission.readTick) {
-				callback(new Error("Permission denied"), null);
+				callback(createError("permission_error", "Permission denied"), null);
 				return;
 			}
 			const startPoint = this.store.getStartPoint(opts);
 			if (startPoint) {
 				callback(null, startPoint);
 			} else {
-				callback(new Error("No start point"), null);
+				callback(createError("runtime_error", "No start point"), null);
 			}
 		});
 	}
 
 	putStorageData(key: StorageKey, value: StorageValue, options: any, callback: (err: Error) => void): void {
 		setImmediate(() => {
-			callback(new Error("Not implemented"));
+			callback(createError("not_implemented", "Not implemented"));
 		});
 	}
 
 	getStorageData(keys: StorageReadKey[], callback: (error: Error, values: StorageData[]) => void): void {
 		setImmediate(() => {
-			callback(new Error("Not implemented"), null);
+			callback(createError("not_implemented", "Not implemented"), null);
 		});
 	}
 
@@ -230,12 +237,22 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	destroy(): void {
-		this.store.sendEventTrigger.remove(this.onEventSended, this);
-		this.store.sendTickTrigger.remove(this.onTickSended, this);
+		if (this.isDestroyed()) {
+			return;
+		}
+		if (!this.store.isDestroyed()) {
+			this.store.sendEventTrigger.remove(this.onEventSended, this);
+			this.store.sendTickTrigger.remove(this.onTickSended, this);
+		}
 		this.store = null;
 		this.permission = null;
 		this.tickHandlers = null;
 		this.eventHandlers = null;
+		this.unconsumedEvents = null;
+	}
+
+	isDestroyed(): boolean {
+		return this.store == null;
 	}
 
 	private onTickSended(tick: Tick): void {
@@ -243,6 +260,10 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	private onEventSended(event: Event): void {
+		if (this.eventHandlers.length <= 0) {
+			this.unconsumedEvents.push(event);
+			return;
+		}
 		this.eventHandlers.forEach(h => h(event));
 	}
 }
