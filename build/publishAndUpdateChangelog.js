@@ -8,7 +8,7 @@ if (process.argv.length < 3) {
 }
 
 // どのバージョンを上げるのかを取得
-var target = process.argv[2];
+const target = process.argv[2];
 if (! /^patch|minor|major$/.test(target)) {
 	console.error("Please specify patch, minor or major.");
 	process.exit(1);
@@ -30,17 +30,19 @@ if (process.env.GITHUB_AUTH == null) {
 
 // publish処理
 console.log("start to publish");
-const beforeVersion = require(path.join(__dirname, "..", "lerna.json")).version; // CHANGELOG作成時に必要になるのでpublish前のバージョンを保持しておく
+// CHANGELOG作成時に必要になるのでpublish前のバージョンを保持しておく
+const beforeVersion = require(path.join(__dirname, "..", "lerna.json")).version;
 execSync(`${lernaPath} publish ${target} --yes`);
 console.log("end to publish");
 
 // 現在のCHANGELOGに次バージョンのログを追加
 console.log("start to update changelog");
-const currentVersion = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "lerna.json")).toString()).version;
-const currentChangeLog = fs.readFileSync(path.join(__dirname, "..", "CHANGELOG.md")).toString();
 const lernaChangeLogPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna-changelog");
-const addedLog = execSync(`${lernaChangeLogPath} --from v${beforeVersion} --next-version ${currentVersion}`).toString();
+const addedLog = execSync(`${lernaChangeLogPath} --from v${beforeVersion}`).toString();
+const currentChangeLog = fs.readFileSync(path.join(__dirname, "..", "CHANGELOG.md")).toString();
 const nextChangeLog = currentChangeLog.replace("# CHANGELOG\n\n", "# CHANGELOG\n" + addedLog + "\n");
 fs.writeFileSync(path.join(__dirname, "..", "CHANGELOG.md"), nextChangeLog);
-execSync("git add ./CHANGELOG.md && git commit -m 'Update Changelog' && git push origin master");
+execSync("git add ./CHANGELOG.md");
+execSync("git commit -m 'Update Changelog'");
+execSync("git push origin master");
 console.log("end to update changelog");
