@@ -9,18 +9,29 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap --no-ci",
-    "publish:patch": "lerna publish patch --yes",
-    "publish:minor": "lerna publish minor --yes",
-    "publish:major": "lerna publish major --yes",
+    "publish:patch": "node build/publishAndUpdateChangelog.js patch",
+    "publish:minor": "node build/publishAndUpdateChangelog.js minor",
+    "publish:major": "node build/publishAndUpdateChangelog.js major",
     "publish:from_git": "lerna publish from-git --yes",
     "build": "lerna run build",
     "test": "lerna run test && npm run lint:md",
-    "lint:md": "remark ./*.md --frail --no-stdout --quiet --rc-path ./.remarkrc"
+    "lint:md": "remark . --frail --no-stdout --quiet --rc-path ./.remarkrc"
   },
   "author": "DWANGO Co., Ltd.",
   "license": "MIT",
+  "changelog": {
+    "repo": "akashic-games/headless-driver",
+    "labels": {
+      "breaking": "Breaking Change",
+      "enhancement": "Enhancement",
+      "bug": "Bug Fix",
+      "documentation": "Documentation",
+      "other": "Other Change"
+    }
+  },
   "devDependencies": {
     "lerna": "^3.13.1",
+    "lerna-changelog": "^0.8.2",
     "remark-cli": "^6.0.1",
     "remark-lint": "^6.0.4",
     "remark-preset-lint-markdown-style-guide": "^2.1.2"
