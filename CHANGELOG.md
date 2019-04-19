@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.3.8 (2019-04-19)
+
+#### Enhancement
+* [#12](https://github.com/akashic-games/headless-driver/pull/12) Enabled to update CHANGELOG.md ([@dera-](https://github.com/dera-))
+
+#### Other Change
+* [#16](https://github.com/akashic-games/headless-driver/pull/16) Add CHANGELOG.md ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 3
+- [@dera-](https://github.com/dera-)
+- [@yu-ogi](https://github.com/yu-ogi)
+- xnv ([@xnv](https://github.com/xnv))
+
 
 ## v0.3.7 (2019-04-09)
 
