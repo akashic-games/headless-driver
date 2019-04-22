@@ -40,3 +40,5 @@ function main(param) {
 }
 
 module.exports = main;
+
+// test for trailing newline

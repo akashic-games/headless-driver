@@ -2,8 +2,8 @@ import { akashicEngine as g } from "@akashic/engine-files";
 import fetch from "node-fetch";
 
 export class NodeScriptAsset extends g.ScriptAsset {
-	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {";
-	static POST_SCRIPT: string = "})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
+	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
+	static POST_SCRIPT: string = "\n})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
 	private errorHandler: (err: any) => void;
 
 	constructor(id: string, path: string, errorHandler: (err: any) => void) {
