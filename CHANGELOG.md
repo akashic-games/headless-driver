@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v0.3.9 (2019-04-22)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`
+  * [#20](https://github.com/akashic-games/headless-driver/pull/20) 内部コンポーネントの更新 ([@xnv](https://github.com/xnv))
+
+#### Bug Fix
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver`
+  * [#19](https://github.com/akashic-games/headless-driver/pull/19) Fix to execute script when trailing line comment ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 2
+- [@yu-ogi](https://github.com/yu-ogi)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.3.8 (2019-04-19)
 
 #### Enhancement
