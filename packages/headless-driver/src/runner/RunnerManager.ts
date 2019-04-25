@@ -163,7 +163,7 @@ export class RunnerManager {
 	 * @param runnerId RunnerID
 	 */
 	getRunner(runnerId: string): (RunnerV1 | RunnerV2) | null {
-		return this.runners.find(runner => runner.runnerId === runnerId);
+		return this.runners.find(runner => runner.runnerId === runnerId) || null;
 	}
 
 	/**
