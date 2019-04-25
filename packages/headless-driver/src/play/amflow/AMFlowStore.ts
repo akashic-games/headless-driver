@@ -18,24 +18,24 @@ export class AMFlowStore {
 
 	private startPoints: StartPoint[] | null = [];
 	private tickList: TickList = null;
-	private freezed: boolean;
+	private suspended: boolean;
 
 	constructor(playId: string, amflowClientManager: AMFlowClientManager) {
 		this.playId = playId;
-		this.freezed = false;
+		this.suspended = false;
 		this.amflowClientManager = amflowClientManager;
 	}
 
 	authenticate(token: string, revoke?: boolean): Permission {
 		const permission = this.amflowClientManager.authenticatePlayToken(this.playId, token, revoke);
-		if (this.isFreezed() && permission && (permission.sendEvent || permission.writeTick)) {
+		if (this.isSuspended() && permission && (permission.sendEvent || permission.writeTick)) {
 			throw createError("permission_error", "Play may be suspended");
 		}
 		return permission;
 	}
 
 	sendTick(tick: Tick): void {
-		if (this.isFreezed()) {
+		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		if (this.tickList) {
@@ -55,7 +55,7 @@ export class AMFlowStore {
 	}
 
 	sendEvent(event: Event): void {
-		if (this.isFreezed()) {
+		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
@@ -76,7 +76,7 @@ export class AMFlowStore {
 	}
 
 	putStartPoint(startPoint: StartPoint): void {
-		if (this.isFreezed()) {
+		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		// NOTE: frame: 0 のみ第0要素に保持する
@@ -115,28 +115,28 @@ export class AMFlowStore {
 	}
 
 	/**
-	 * この AMFlowStore がフリーズ状態かどうか。
+	 * この AMFlowStore が停止しているかどうか。
 	 */
-	isFreezed(): boolean {
-		return this.freezed;
+	isSuspended(): boolean {
+		return this.suspended;
 	}
 
 	/**
-	 * この AMFlowStore をフリーズ状態にする。
-	 * フリーズ状態の場合、次の機能の呼び出し時に例外が発される。
+	 * この AMFlowStore を停止する。
+	 * 停止状態の場合、次の機能の呼び出し時に例外が発される。
 	 * * `this.putStartPoint()` による start point の書き込み
 	 * * `this.sendTick()` による tick の書き込み
 	 * * `this.sendEvent()` による event の送信
 	 */
-	freeze(): void {
-		this.freezed = true;
+	suspend(): void {
+		this.suspended = true;
 	}
 
 	/**
-	 * この AMFlowStore のフリーズ状態を解除する。
+	 * この AMFlowStore を再開する。
 	 */
-	unfreeze(): void {
-		this.freezed = false;
+	resume(): void {
+		this.suspended = false;
 	}
 
 	destroy(): void {

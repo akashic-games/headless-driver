@@ -60,7 +60,7 @@ export class PlayManager {
 		}
 		play.status = "suspending";
 		play.lastSuspendedAt = Date.now();
-		this.amflowClientManager.freezeAMFlowStore(playId);
+		this.amflowClientManager.suspendAMFlowStore(playId);
 	}
 
 	/**
@@ -74,7 +74,7 @@ export class PlayManager {
 		}
 		play.status = "running";
 		play.lastSuspendedAt = null;
-		this.amflowClientManager.unfreezeAMFlowStore(playId);
+		this.amflowClientManager.resumeAMFlowStore(playId);
 	}
 
 	/**

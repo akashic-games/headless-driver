@@ -100,24 +100,24 @@ export class AMFlowClientManager {
 	}
 
 	/**
-	 * 対象の PlayID に対する AMFlowStore をフリーズする。
+	 * 対象の PlayID に対する AMFlowStore を停止する。
 	 * @param playId PlayID
 	 */
-	freezeAMFlowStore(playId: string): void {
+	suspendAMFlowStore(playId: string): void {
 		const store = this.storeMap.get(playId);
 		if (store) {
-			store.freeze();
+			store.suspend();
 		}
 	}
 
 	/**
-	 * 対象の PlayID に対する AMFlowStore のフリーズを解除する。
+	 * 対象の PlayID に対する AMFlowStore を再開する。
 	 * @param playId PlayID
 	 */
-	unfreezeAMFlowStore(playId: string): void {
+	resumeAMFlowStore(playId: string): void {
 		const store = this.storeMap.get(playId);
 		if (store) {
-			store.unfreeze();
+			store.resume();
 		}
 	}
 
