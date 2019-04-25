@@ -5,5 +5,5 @@ export interface Play {
 	status: PlayStatus;
 	contentUrl: string;
 	createdAt: number;
-	suspendedAt: number | null;
+	lastSuspendedAt: number | null;
 }

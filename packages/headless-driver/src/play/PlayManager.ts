@@ -30,7 +30,7 @@ export class PlayManager {
 			status: "running",
 			contentUrl: params.contentUrl,
 			createdAt: Date.now(),
-			suspendedAt: null
+			lastSuspendedAt: null
 		});
 		return playId;
 	}
@@ -59,7 +59,7 @@ export class PlayManager {
 			throw new Error("Play is not found");
 		}
 		play.status = "suspending";
-		play.suspendedAt = Date.now();
+		play.lastSuspendedAt = Date.now();
 		this.amflowClientManager.freezeAMFlowStore(playId);
 	}
 
@@ -73,7 +73,7 @@ export class PlayManager {
 			throw new Error("Play is not found");
 		}
 		play.status = "running";
-		play.suspendedAt = null;
+		play.lastSuspendedAt = null;
 		this.amflowClientManager.unfreezeAMFlowStore(playId);
 	}
 
