@@ -1,11 +1,14 @@
 import { Permission } from "@akashic/amflow";
-import { Play } from "./Play";
-import { AMFlowClientManager } from "./AMFlowClientManager";
-import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "./amflow/AMFlowClient";
+import { AMFlowClientManager } from "./AMFlowClientManager";
+import { Play, PlayStatus } from "./Play";
 
 export interface PlayManagerParameters {
 	contentUrl: string;
+}
+
+export interface PlayFilter {
+	status: PlayStatus;
 }
 
 /**
@@ -21,47 +24,79 @@ export class PlayManager {
 	 * @param params パラメータ
 	 */
 	async createPlay(params: PlayManagerParameters): Promise<string> {
-		try {
-			const playId = `${this.nextPlayId++}`;
-			this.plays.push({
-				playId,
-				contentUrl: params.contentUrl
-			});
-			return playId;
-		} catch (e) {
-			getSystemLogger().error(e);
-		}
+		const playId = `${this.nextPlayId++}`;
+		this.plays.push({
+			playId,
+			status: "running",
+			contentUrl: params.contentUrl,
+			createdAt: Date.now(),
+			suspendedAt: null
+		});
+		return playId;
 	}
 
 	/**
-	 * Play を停止する。
+	 * Play を削除する。
 	 * @param playID PlayID
 	 */
-	async stopPlay(playId: string): Promise<void> {
+	async deletePlay(playId: string): Promise<void> {
 		const play = this.getPlay(playId);
-
 		if (!play) {
 			throw new Error("Play is not found");
 		}
-
 		this.amflowClientManager.deleteAllPlayTokens(playId);
 		this.amflowClientManager.deleteAMFlowStore(playId);
 		this.plays = this.plays.filter(p => p !== play);
 	}
 
 	/**
-	 * Play の情報を取得する。
-	 * @param playId PlayID
+	 * Play を停止する。
+	 * @param playID PlayID
 	 */
-	getPlay(playId: string): Play {
-		return this.plays.find(play => play.playId === playId);
+	async suspendPlay(playId: string): Promise<void> {
+		const play = this.getPlay(playId);
+		if (!play) {
+			throw new Error("Play is not found");
+		}
+		play.status = "suspending";
+		play.suspendedAt = Date.now();
+		this.amflowClientManager.freezeAMFlowStore(playId);
 	}
 
 	/**
-	 * 現在作成されている Play の情報の一覧を取得する。
+	 * 停止中の Play を再開する。
+	 * @param playId PlayID
 	 */
-	getPlays(): Play[] {
+	async resumePlay(playId: string): Promise<void> {
+		const play = this.getPlay(playId);
+		if (!play) {
+			throw new Error("Play is not found");
+		}
+		play.status = "running";
+		play.suspendedAt = null;
+		this.amflowClientManager.unfreezeAMFlowStore(playId);
+	}
+
+	/**
+	 * Play の情報を取得する。
+	 * @param playId PlayID
+	 */
+	getPlay(playId: string): Play | null {
+		return this.plays.find(play => play.playId === playId) || null;
+	}
+
+	/**
+	 * 現在作成されているすべての Play の情報の一覧を取得する。
+	 */
+	getAllPlays(): Play[] {
 		return this.plays;
+	}
+
+	/**
+	 * 与えられた引数の条件に一致する Play の情報の一覧を取得する。
+	 */
+	getPlays(filter: PlayFilter): Play[] {
+		return this.plays.filter(play => play.status === filter.status);
 	}
 
 	/**
@@ -69,6 +104,13 @@ export class PlayManager {
 	 * @param playId PlayID
 	 */
 	createAMFlow(playId: string): AMFlowClient {
+		const play = this.getPlay(playId);
+		if (!play) {
+			throw new Error("Play is not found");
+		}
+		if (play.status === "broken") {
+			throw new Error("Play is broken");
+		}
 		return this.amflowClientManager.createAMFlow(playId);
 	}
 
@@ -78,6 +120,10 @@ export class PlayManager {
 	 * @param permission Permission
 	 */
 	createPlayToken(playId: string, permission: Permission): string {
+		const play = this.getPlay(playId);
+		if (!play) {
+			throw new Error("Play is not found");
+		}
 		return this.amflowClientManager.createPlayToken(playId, permission);
 	}
 

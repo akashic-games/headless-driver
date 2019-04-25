@@ -1,21 +1,21 @@
 import * as assert from "assert";
-import * as path from "path";
-import * as http from "http-server";
 import * as getPort from "get-port";
-import * as url from "url";
+import * as http from "http-server";
 import fetch from "node-fetch";
+import * as path from "path";
+import * as url from "url";
 
-import { Permission, StartPoint, GetStartPointOptions } from "@akashic/amflow";
-import { Event } from "@akashic/playlog";
+import { GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
-
-import { RunnerManager } from "../runner/RunnerManager";
-import { PlayManager } from "../play/PlayManager";
-import { AMFlowClient } from "../play/amflow/AMFlowClient";
+import { Event } from "@akashic/playlog";
 import { setSystemLogger, SystemLogger } from "../Logger";
-import { AMFlowClientManager } from "../play/AMFlowClientManager";
+import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { AMFlowStore } from "../play/amflow/AMFlowStore";
+import { BadRequestError, PermissionError } from "../play/amflow/ErrorFactory";
+import { AMFlowClientManager } from "../play/AMFlowClientManager";
+import { PlayManager } from "../play/PlayManager";
+import { RunnerManager } from "../runner/RunnerManager";
 
 const host = "localhost";
 
@@ -157,7 +157,7 @@ describe("run-test", () => {
 		await runnerManager.stopRunner("0");
 		assert.equal(runnerManager.getRunner("0") == null, true);
 
-		playManager.stopPlay("0");
+		playManager.deletePlay("0");
 		assert.equal(playManager.getPlay("0") == null, true);
 
 		const playId2 = await playManager.createPlay({
@@ -206,11 +206,58 @@ describe("run-test", () => {
 		assert.equal(storeMap.get("0") == null, true);
 	});
 
+	it("Play の管理ができる", async () => {
+		const playManager = new PlayManager();
+		const playId1 = await playManager.createPlay({ contentUrl: contentUrlV2 });
+		const playId2 = await playManager.createPlay({ contentUrl: contentUrlV2 });
+		const playId3 = await playManager.createPlay({ contentUrl: contentUrlV2 });
+
+		let playIds = playManager.getAllPlays().map(play => play.playId);
+		assert.deepEqual(playIds, [playId1, playId2, playId3]);
+
+		playManager.suspendPlay(playId1);
+
+		// すべてのPlay
+		playIds = playManager.getAllPlays().map(play => play.playId);
+		assert.deepEqual(playIds, [playId1, playId2, playId3]);
+		// running の Play
+		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
+		assert.deepEqual(playIds, [playId2, playId3]);
+		// suspend の Play
+		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
+		assert.deepEqual(playIds, [playId1]);
+
+		playManager.deletePlay(playId2);
+
+		// すべてのPlay
+		playIds = playManager.getAllPlays().map(play => play.playId);
+		assert.deepEqual(playIds, [playId1, playId3]);
+		// running の Play
+		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
+		assert.deepEqual(playIds, [playId3]);
+		// suspend の Play
+		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
+		assert.deepEqual(playIds, [playId1]);
+
+		playManager.resumePlay(playId1);
+
+		// すべてのPlay
+		playIds = playManager.getAllPlays().map(play => play.playId);
+		assert.deepEqual(playIds, [playId1, playId3]);
+		// running の Play
+		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
+		assert.deepEqual(playIds, [playId1, playId3]);
+		// suspend の Play
+		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
+		assert.deepEqual(playIds, []);
+	});
+
 	it("AMFlow通信ができる", done => {
 		const playManager = new PlayManager();
 		let playId: string;
 		let activeAMFlow: AMFlowClient;
 		let passiveAMFlow: AMFlowClient;
+		let failureAMFlow: AMFlowClient;
 		playManager
 			.createPlay({
 				contentUrl: contentUrlV2
@@ -234,6 +281,18 @@ describe("run-test", () => {
 				return new Promise((resolve, reject) => {
 					passiveAMFlow = playManager.createAMFlow(playId);
 					passiveAMFlow.open(playId, err => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					failureAMFlow = playManager.createAMFlow(playId);
+					failureAMFlow.open(playId, err => {
 						if (err) {
 							reject(err);
 							return;
@@ -331,10 +390,125 @@ describe("run-test", () => {
 					passiveAMFlow.sendEvent([0, 5, "dummy-player-id"]);
 				});
 			})
-			.then(() => playManager.stopPlay(playId))
+			.then(() => {
+				return playManager.suspendPlay(playId);
+			})
 			.then(() => {
 				return new Promise((resolve, reject) => {
-					// すでに stop したプレーの AMFlowClient に対して close() を呼び出しても問題ない
+					// suspend 時に write, send 権限を含む permission は認証できない
+					const playToken = playManager.createPlayToken(playId, activePermission);
+					failureAMFlow.authenticate(playToken, (err, permission) => {
+						if (err) {
+							assert.equal(err instanceof PermissionError, true);
+							resolve();
+							return;
+						}
+						reject(new Error("認証できないはず"));
+					});
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// Play を suspend した後でも TickList を取得できる
+					passiveAMFlow.getTickList(0, 1, (err, tickList) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						assert.deepEqual(tickList, [0, 0, []]);
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// Play を suspend した後に sendTick することはできない
+					try {
+						activeAMFlow.sendTick([1]);
+						reject("Must throw error");
+					} catch (e) {
+						assert.equal(e instanceof BadRequestError, true);
+					}
+					// Play を suspend した後に sendEvent することはできない
+					try {
+						passiveAMFlow.sendEvent([0, 1, "dummy-player-id"]);
+						reject("Must throw error");
+					} catch (e) {
+						assert.equal(e instanceof BadRequestError, true);
+					}
+					// Play を suspend した後に putStartPoint することはできない
+					activeAMFlow.putStartPoint(
+						{
+							frame: 10,
+							timestamp: 1000,
+							data: "hoge"
+						},
+						e => {
+							if (e) {
+								assert.equal(e instanceof BadRequestError, true);
+								resolve();
+							}
+							reject("Must throw error");
+						}
+					);
+				});
+			})
+			.then(() => {
+				return playManager.resumePlay(playId);
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// Play を resume した後に sendTick できる
+					activeAMFlow.sendTick([1]);
+					// Play を resume した後に sendEvent できる
+					passiveAMFlow.sendEvent([0, 1, "dummy-player-id"]);
+					// Play を resume した後に putStartPoint できる
+					activeAMFlow.putStartPoint(
+						{
+							frame: 10,
+							timestamp: 1000,
+							data: "hoge"
+						},
+						e => {
+							if (e) {
+								reject(e);
+								return;
+							}
+							resolve();
+						}
+					);
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// Play を resume した後に TickList を取得できる
+					passiveAMFlow.getTickList(0, 1, (err, tickList) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						assert.deepEqual(tickList, [0, 1, []]);
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// resume 後に write, send 権限を含む permission が認証できる
+					const playToken = playManager.createPlayToken(playId, activePermission);
+					failureAMFlow.authenticate(playToken, (err, permission) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => playManager.deletePlay(playId))
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// すでに delete したプレーの AMFlowClient に対して close() を呼び出しても問題ない
 					passiveAMFlow.close(err => (err ? reject(err) : resolve()));
 				});
 			})
@@ -432,12 +606,15 @@ describe("AMFlow の動作テスト", () => {
 		const playManager = new PlayManager();
 		let activeAMFlow: AMFlowClient;
 		let passiveAMFlow: AMFlowClient;
-		const playId = "0";
+		let playId: string;
 		const events: Event[] = [];
-
-		Promise.resolve()
-			.then(() => {
+		playManager
+			.createPlay({
+				contentUrl: contentUrlV2
+			})
+			.then(p => {
 				return new Promise((resolve, reject) => {
+					playId = p;
 					activeAMFlow = playManager.createAMFlow(playId);
 					activeAMFlow.open(playId, err => {
 						if (err) {

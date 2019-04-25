@@ -74,7 +74,7 @@
       "check-whitespace"
     ],
     "only-arrow-functions": false,
-    "ordered-imports": [false],
+    "ordered-imports": [true],
     "arrow-parens": false,
     "quotemark": [true, "double"],
     "radix": true,

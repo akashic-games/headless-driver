@@ -1,5 +1,5 @@
-import { Permission, StartPoint, AMFlow, GetStartPointOptions } from "@akashic/amflow";
-import { Tick, TickList, Event, StorageData, StorageKey, StorageValue, StorageReadKey } from "@akashic/playlog";
+import { AMFlow, GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
+import { Event, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
 import { getSystemLogger } from "../../Logger";
 import { AMFlowStore } from "./AMFlowStore";
 import { createError } from "./ErrorFactory";
@@ -64,10 +64,15 @@ export class AMFlowClient implements AMFlow {
 				callback(createError("invalid_status", "Client is not open"), null);
 				return;
 			}
-			const permission = this.store.authenticate(token);
+			let permission: Permission;
+			try {
+				permission = this.store.authenticate(token);
+			} catch (e) {
+				callback(e, null);
+				return;
+			}
 			this.permission = permission;
 			getSystemLogger().info("AMFlowClient#authenticate()", this.playId, token, permission);
-
 			if (permission) {
 				callback(null, permission);
 			} else {
@@ -192,7 +197,12 @@ export class AMFlowClient implements AMFlow {
 				callback(createError("permission_error", "Permission denied"));
 				return;
 			}
-			this.store.putStartPoint(startPoint);
+			try {
+				this.store.putStartPoint(startPoint);
+			} catch (e) {
+				callback(e);
+				return;
+			}
 			callback(null);
 		});
 	}

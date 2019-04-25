@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
 import { AMFlow } from "@akashic/amflow";
+import fetch from "node-fetch";
 
 export interface PlatformParameters {
 	assetBaseUrl: string;

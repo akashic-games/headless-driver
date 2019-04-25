@@ -1,8 +1,8 @@
 import { akashicEngine as g, pdi } from "@akashic/engine-files";
 import { Looper, Platform, PlatformParameters } from "@akashic/headless-driver-runner";
 
-import { ResourceFactory } from "./ResourceFactory";
 import { NullSurface } from "./NullSurface";
+import { ResourceFactory } from "./ResourceFactory";
 
 export class PlatformV2 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
