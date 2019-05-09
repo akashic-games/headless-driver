@@ -1,13 +1,12 @@
-import * as getPort from "get-port";
-import * as http from "http-server";
-import fetch from "node-fetch";
-import * as path from "path";
-import * as url from "url";
-
 import { GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import { Event } from "@akashic/playlog";
+import * as getPort from "get-port";
+import * as http from "http";
+import fetch from "node-fetch";
+import * as path from "path";
+import * as url from "url";
 import { setSystemLogger, SystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { AMFlowStore } from "../play/amflow/AMFlowStore";
@@ -16,6 +15,7 @@ import { AMFlowClientManager } from "../play/AMFlowClientManager";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
 
+const handler = require("serve-handler"); // tslint:disable-line:no-var-requires
 const host = "localhost";
 
 // NOTE: テスト実行直前に動的に決定する
@@ -24,12 +24,14 @@ let contentUrlV1 = "";
 let contentUrlV2 = "";
 let contentUrlV2Cascade = "";
 
-const mockServer = http.createServer({
-	root: path.resolve(__dirname, "contents"),
-	headers: {
-		"Access-Control-Allow-Origin": "*",
-		"Access-Control-Allow-Credentials": "true"
-	}
+const mockServer = http.createServer((request, response) => {
+	return handler(request, response, {
+		public: path.resolve(__dirname, "contents"),
+		headers: {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Credentials": "true"
+		}
+	});
 });
 
 const activePermission: Permission = {
