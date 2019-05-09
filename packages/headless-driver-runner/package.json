@@ -15,8 +15,7 @@
     "@akashic:registry": "https://registry.npmjs.org/"
   },
   "files": [
-    "lib",
-    "!lib/**/__tests__"
+    "lib"
   ],
   "author": "DWANGO Co., Ltd.",
   "license": "MIT",
@@ -28,9 +27,9 @@
   },
   "devDependencies": {
     "@types/node-fetch": "2.1.2",
-    "prettier": "1.14.3",
+    "prettier": "^1.16.0",
     "rimraf": "2.6.3",
-    "tslint": "5.11.0",
-    "typescript": "3.0.3"
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }

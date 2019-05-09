@@ -1,4 +1,3 @@
-import * as assert from "assert";
 import * as getPort from "get-port";
 import * as http from "http-server";
 import fetch from "node-fetch";
@@ -26,8 +25,7 @@ let contentUrlV2 = "";
 let contentUrlV2Cascade = "";
 
 const mockServer = http.createServer({
-	// TODO: src 以下から読み取っているのを何とかする
-	root: path.resolve(__dirname, "..", "..", "src", "__tests__", "contents"),
+	root: path.resolve(__dirname, "contents"),
 	headers: {
 		"Access-Control-Allow-Origin": "*",
 		"Access-Control-Allow-Credentials": "true"
@@ -94,7 +92,7 @@ class MockRunnerManager extends RunnerManager {
 	}
 }
 
-before(async () => {
+beforeAll(async () => {
 	const port = await getPort();
 	baseUrl = `http://${host}:${port}`;
 	contentUrlV1 = url.resolve(baseUrl, "content-v1/content.json");
@@ -103,7 +101,7 @@ before(async () => {
 	mockServer.listen(port, host);
 });
 
-after(() => {
+afterAll(() => {
 	mockServer.close();
 });
 
@@ -113,10 +111,10 @@ describe("run-test", () => {
 		const playId0 = await playManager.createPlay({
 			contentUrl: contentUrlV2
 		});
-		assert.equal(playId0, "0");
+		expect(playId0).toBe("0");
 
 		const amflow0 = playManager.createAMFlow(playId0);
-		assert.equal(amflow0.playId, "0");
+		expect(amflow0.playId).toBe("0");
 
 		const playToken0 = playManager.createPlayToken("0", activePermission);
 
@@ -129,16 +127,16 @@ describe("run-test", () => {
 		});
 		const runner0 = runnerManager.getRunner(runnerId0);
 
-		assert.equal(runner0.runnerId, "0");
-		assert.equal(runner0.engineVersion, "2");
+		expect(runner0.runnerId).toBe("0");
+		expect(runner0.engineVersion).toBe("2");
 
 		const playId1 = await playManager.createPlay({
 			contentUrl: contentUrlV2
 		});
-		assert.equal(playId1, "1");
+		expect(playId1).toBe("1");
 
 		const amflow1 = playManager.createAMFlow(playId1);
-		assert.equal(amflow1.playId, "1");
+		expect(amflow1.playId).toBe("1");
 
 		const playToken1 = playManager.createPlayToken("1", activePermission);
 
@@ -150,23 +148,23 @@ describe("run-test", () => {
 		});
 		const runner1 = runnerManager.getRunner(runnerId1);
 
-		assert.equal(runner1.runnerId, "1");
-		assert.equal(runner0.engineVersion, "2");
+		expect(runner1.runnerId).toBe("1");
+		expect(runner0.engineVersion).toBe("2");
 
 		await runnerManager.startRunner("0");
 		await runnerManager.stopRunner("0");
-		assert.equal(runnerManager.getRunner("0") == null, true);
+		expect(runnerManager.getRunner("0")).toBe(null);
 
 		playManager.deletePlay("0");
-		assert.equal(playManager.getPlay("0") == null, true);
+		expect(playManager.getPlay("0")).toBe(null);
 
 		const playId2 = await playManager.createPlay({
 			contentUrl: contentUrlV2
 		});
-		assert.equal(playId2, "2");
+		expect(playId2).toBe("2");
 
 		const amflow2 = playManager.createAMFlow(playId2);
-		assert.equal(amflow2.playId, "2");
+		expect(amflow2.playId).toBe("2");
 
 		const playToken2 = playManager.createPlayToken("2", activePermission);
 
@@ -177,8 +175,8 @@ describe("run-test", () => {
 			executionMode: "active"
 		});
 		const runner2 = runnerManager.getRunner(runnerId2);
-		assert.equal(runner2.runnerId, "2");
-		assert.equal(runner2.engineVersion, "2");
+		expect(runner2.runnerId).toBe("2");
+		expect(runner2.engineVersion).toBe("2");
 	});
 
 	it("AMFlow, playTokenの管理ができる", () => {
@@ -186,24 +184,24 @@ describe("run-test", () => {
 
 		const token1 = amflowClientManager.createPlayToken("0", activePermission);
 		const authenticated1 = amflowClientManager.authenticatePlayToken("0", token1);
-		assert.deepEqual(authenticated1, activePermission);
-		assert.equal((amflowClientManager as any).playTokenMap["0"] != null, true);
+		expect(authenticated1).toEqual(activePermission);
+		expect((amflowClientManager as any).playTokenMap["0"]).not.toBe(null);
 
 		amflowClientManager.createAMFlow("0");
 		const storeMap: Map<string, AMFlowStore> = (amflowClientManager as any).storeMap;
-		assert.equal(storeMap.get("0") != null, true);
+		expect(storeMap.get("0")).not.toBe(null);
 
 		const token2 = amflowClientManager.createPlayToken("1", activePermission);
 		const authenticated2 = amflowClientManager.authenticatePlayToken("1", token2, true);
-		assert.deepEqual(authenticated2, activePermission);
+		expect(authenticated2).toEqual(activePermission);
 
 		amflowClientManager.createAMFlow("1");
-		assert.equal(storeMap.get("1") != null, true);
+		expect(storeMap.get("1")).not.toBe(null);
 
 		amflowClientManager.deleteAllPlayTokens("0");
 		amflowClientManager.deleteAMFlowStore("0");
-		assert.equal((amflowClientManager as any).playTokenMap["0"] == null, true);
-		assert.equal(storeMap.get("0") == null, true);
+		expect((amflowClientManager as any).playTokenMap["0"]).toBeUndefined();
+		expect(storeMap.get("0")).toBeUndefined();
 	});
 
 	it("Play の管理ができる", async () => {
@@ -213,43 +211,43 @@ describe("run-test", () => {
 		const playId3 = await playManager.createPlay({ contentUrl: contentUrlV2 });
 
 		let playIds = playManager.getAllPlays().map(play => play.playId);
-		assert.deepEqual(playIds, [playId1, playId2, playId3]);
+		expect(playIds).toEqual([playId1, playId2, playId3]);
 
 		playManager.suspendPlay(playId1);
 
 		// すべてのPlay
 		playIds = playManager.getAllPlays().map(play => play.playId);
-		assert.deepEqual(playIds, [playId1, playId2, playId3]);
+		expect(playIds).toEqual([playId1, playId2, playId3]);
 		// running の Play
 		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
-		assert.deepEqual(playIds, [playId2, playId3]);
+		expect(playIds).toEqual([playId2, playId3]);
 		// suspend の Play
 		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
-		assert.deepEqual(playIds, [playId1]);
+		expect(playIds).toEqual([playId1]);
 
 		playManager.deletePlay(playId2);
 
 		// すべてのPlay
 		playIds = playManager.getAllPlays().map(play => play.playId);
-		assert.deepEqual(playIds, [playId1, playId3]);
+		expect(playIds).toEqual([playId1, playId3]);
 		// running の Play
 		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
-		assert.deepEqual(playIds, [playId3]);
+		expect(playIds).toEqual([playId3]);
 		// suspend の Play
 		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
-		assert.deepEqual(playIds, [playId1]);
+		expect(playIds).toEqual([playId1]);
 
 		playManager.resumePlay(playId1);
 
 		// すべてのPlay
 		playIds = playManager.getAllPlays().map(play => play.playId);
-		assert.deepEqual(playIds, [playId1, playId3]);
+		expect(playIds).toEqual([playId1, playId3]);
 		// running の Play
 		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
-		assert.deepEqual(playIds, [playId1, playId3]);
+		expect(playIds).toEqual([playId1, playId3]);
 		// suspend の Play
 		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
-		assert.deepEqual(playIds, []);
+		expect(playIds).toEqual([]);
 	});
 
 	it("AMFlow通信ができる", done => {
@@ -306,9 +304,9 @@ describe("run-test", () => {
 					// 認証できない
 					passiveAMFlow.authenticate("dummy-token", (err, permission) => {
 						if (err) {
-							assert.equal(err instanceof Error, true);
-							assert.equal(permission == null, true);
-							assert.strictEqual(err.name, "InvalidStatus");
+							expect(err instanceof Error).toBe(true);
+							expect(permission).toBe(null);
+							expect(err.name).toBe("InvalidStatus");
 							resolve();
 							return;
 						}
@@ -325,7 +323,7 @@ describe("run-test", () => {
 							reject(err);
 							return;
 						}
-						assert.deepEqual(permission, {
+						expect(permission).toEqual({
 							readTick: true,
 							writeTick: false,
 							sendEvent: true,
@@ -346,7 +344,7 @@ describe("run-test", () => {
 							reject(err);
 							return;
 						}
-						assert.deepEqual(permission, {
+						expect(permission).toEqual({
 							readTick: true,
 							writeTick: true,
 							sendEvent: true,
@@ -369,8 +367,8 @@ describe("run-test", () => {
 							reject(err);
 							return;
 						}
-						assert.equal(err == null, true);
-						assert.deepEqual(tickList, [0, 0, []]);
+						expect(err).toBe(null);
+						expect(tickList).toEqual([0, 0, []]);
 						resolve();
 					});
 				});
@@ -380,7 +378,7 @@ describe("run-test", () => {
 					// Event の受信ハンドラを登録できる
 					const eventHandler = (event: number[]) => {
 						// Max Priority の確認
-						assert.deepEqual(event, [0, 2, "dummy-player-id"]);
+						expect(event).toEqual([0, 2, "dummy-player-id"]);
 						activeAMFlow.offEvent(eventHandler);
 						resolve();
 					};
@@ -399,7 +397,7 @@ describe("run-test", () => {
 					const playToken = playManager.createPlayToken(playId, activePermission);
 					failureAMFlow.authenticate(playToken, (err, permission) => {
 						if (err) {
-							assert.equal(err instanceof PermissionError, true);
+							expect(err instanceof PermissionError).toBe(true);
 							resolve();
 							return;
 						}
@@ -415,7 +413,7 @@ describe("run-test", () => {
 							reject(err);
 							return;
 						}
-						assert.deepEqual(tickList, [0, 0, []]);
+						expect(tickList).toEqual([0, 0, []]);
 						resolve();
 					});
 				});
@@ -427,14 +425,14 @@ describe("run-test", () => {
 						activeAMFlow.sendTick([1]);
 						reject("Must throw error");
 					} catch (e) {
-						assert.equal(e instanceof BadRequestError, true);
+						expect(e instanceof BadRequestError).toBe(true);
 					}
 					// Play を suspend した後に sendEvent することはできない
 					try {
 						passiveAMFlow.sendEvent([0, 1, "dummy-player-id"]);
 						reject("Must throw error");
 					} catch (e) {
-						assert.equal(e instanceof BadRequestError, true);
+						expect(e instanceof BadRequestError).toBe(true);
 					}
 					// Play を suspend した後に putStartPoint することはできない
 					activeAMFlow.putStartPoint(
@@ -445,7 +443,7 @@ describe("run-test", () => {
 						},
 						e => {
 							if (e) {
-								assert.equal(e instanceof BadRequestError, true);
+								expect(e instanceof BadRequestError).toBe(true);
 								resolve();
 							}
 							reject("Must throw error");
@@ -487,7 +485,7 @@ describe("run-test", () => {
 							reject(err);
 							return;
 						}
-						assert.deepEqual(tickList, [0, 1, []]);
+						expect(tickList).toEqual([0, 1, []]);
 						resolve();
 					});
 				});
@@ -556,25 +554,25 @@ describe("AMFlow の動作テスト", () => {
 
 				// default: frame === 0
 				const frame = await getStartPoint({});
-				assert.equal(frame.data, "frame0");
+				expect(frame.data).toBe("frame0");
 
 				// only frame
 				const frame0 = await getStartPoint({ frame: 0 });
 				const frame100 = await getStartPoint({ frame: 100 });
 				const frame700 = await getStartPoint({ frame: 700 });
 
-				assert.equal(frame0.data, "frame0");
-				assert.equal(frame100.data, "frame100");
-				assert.equal(frame700.data, "frame500");
+				expect(frame0.data).toBe("frame0");
+				expect(frame100.data).toBe("frame100");
+				expect(frame700.data).toBe("frame500");
 
 				// only timestamp
 				const timestamp10000 = await getStartPoint({ timestamp: 10000 });
 				const timestamp30000 = await getStartPoint({ timestamp: 30000 });
 				const timestamp60000 = await getStartPoint({ timestamp: 60000 });
 
-				assert.equal(timestamp10000.data, "frame100");
-				assert.equal(timestamp30000.data, "frame200");
-				assert.equal(timestamp60000.data, "frame500");
+				expect(timestamp10000.data).toBe("frame100");
+				expect(timestamp30000.data).toBe("frame200");
+				expect(timestamp60000.data).toBe("frame500");
 
 				// frame and timestamp
 				const sp1 = await getStartPoint({ frame: 0, timestamp: 100 });
@@ -583,18 +581,18 @@ describe("AMFlow の動作テスト", () => {
 				const sp4 = await getStartPoint({ frame: 1000, timestamp: 10000 });
 
 				// 内容は関知しないが、エラーが発生しないことを確認
-				assert.equal(sp1 != null, true);
-				assert.equal(sp2 != null, true);
-				assert.equal(sp3 != null, true);
-				assert.equal(sp4 != null, true);
+				expect(sp1).not.toBe(null);
+				expect(sp2).not.toBe(null);
+				expect(sp3).not.toBe(null);
+				expect(sp4).not.toBe(null);
 
 				// no startPoint
 				try {
 					await getStartPoint({ timestamp: 0 });
-					assert.fail("Must throw error");
+					fail("Must throw error");
 				} catch (e) {
 					// no startPoint found
-					assert.notEqual(e instanceof assert.AssertionError, true);
+					expect(e.message).toBe("No start point");
 				}
 
 				done();
@@ -679,7 +677,7 @@ describe("AMFlow の動作テスト", () => {
 				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 4 }]);
 			})
 			.then(() => {
-				assert.deepStrictEqual(events, [
+				expect(events).toEqual([
 					[0x20, 0, null, { ordinal: 1, hoge: "fuga" }],
 					[0x20, 0, null, { ordinal: 2, foo: "bar" }],
 					[0x20, 0, null, { ordinal: 3 }],
@@ -699,7 +697,7 @@ describe("コンテンツ動作テスト", () => {
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
-		assert.equal(activeAMFlow.playId, playId);
+		expect(activeAMFlow.playId).toBe(playId);
 
 		const playToken = playManager.createPlayToken(playId, activePermission);
 
@@ -711,11 +709,11 @@ describe("コンテンツ動作テスト", () => {
 			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
-		assert.equal(runner.runnerId, "0");
-		assert.equal(runner.engineVersion, "1");
+		expect(runner.runnerId).toBe("0");
+		expect(runner.engineVersion).toBe("1");
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV1Game;
-		assert.equal(game.playId, playId);
+		expect(game.playId).toBe(playId);
 
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
@@ -727,7 +725,7 @@ describe("コンテンツ動作テスト", () => {
 			});
 
 		const data = await handleData();
-		assert.equal(data, "reached right");
+		expect(data).toBe("reached right");
 
 		const handleError = () =>
 			new Promise<any>((resolve, reject) => {
@@ -743,8 +741,8 @@ describe("コンテンツ動作テスト", () => {
 
 		// 読み込んだコンテンツ側で受信したメッセージイベントを出力しているので、ここで内容を取得する
 		const event = await handleError();
-		assert.deepEqual(event.data, { hoge: "fuga" });
-		assert.equal(event.player.id, ":akashic");
+		expect(event.data).toEqual({ hoge: "fuga" });
+		expect(event.player.id).toBe(":akashic");
 
 		runner.stop();
 	});
@@ -756,7 +754,7 @@ describe("コンテンツ動作テスト", () => {
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
-		assert.equal(activeAMFlow.playId, playId);
+		expect(activeAMFlow.playId).toBe(playId);
 
 		const playToken = playManager.createPlayToken(playId, activePermission);
 
@@ -768,11 +766,11 @@ describe("コンテンツ動作テスト", () => {
 			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
-		assert.equal(runner.runnerId, "0");
-		assert.equal(runner.engineVersion, "2");
+		expect(runner.runnerId).toBe("0");
+		expect(runner.engineVersion).toBe("2");
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV2Game;
-		assert.equal(game.playId, playId);
+		expect(game.playId).toBe(playId);
 
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
@@ -783,7 +781,7 @@ describe("コンテンツ動作テスト", () => {
 			});
 
 		const data = await handleData();
-		assert.equal(data, "reached right");
+		expect(data).toBe("reached right");
 
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
@@ -798,8 +796,8 @@ describe("コンテンツ動作テスト", () => {
 
 		// 読み込んだコンテンツで受信したメッセージイベントを出力しているので、ここで内容を取得する
 		const event = await handleEvent();
-		assert.deepEqual(event.data, { hoge: "fuga" });
-		assert.equal(event.player.id, ":akashic");
+		expect(event.data).toEqual({ hoge: "fuga" });
+		expect(event.player.id).toBe(":akashic");
 		runner.stop();
 	});
 
@@ -850,7 +848,7 @@ describe("コンテンツ動作テスト", () => {
 
 		// (3) 受け取ったメッセージイベントの内容を確認
 		const event = await handleData();
-		assert.equal(event.data.text, "data_from_content");
+		expect(event.data.text).toBe("data_from_content");
 
 		activeRunner.stop();
 		passiveRunner.stop();
@@ -885,7 +883,7 @@ describe("コンテンツ動作テスト", () => {
 		await runner.start();
 
 		const data = await handleData();
-		assert.equal(data, "reached right");
+		expect(data).toBe("reached right");
 		runner.stop();
 	});
 });
@@ -896,10 +894,10 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const playId = await playManager.createPlay({
 			contentUrl: "dummy-url"
 		});
-		assert.equal(playId, "0");
+		expect(playId).toBe("0");
 
 		const activeAMFlow = playManager.createAMFlow(playId);
-		assert.equal(activeAMFlow.playId, "0");
+		expect(activeAMFlow.playId).toBe("0");
 
 		const playToken = playManager.createPlayToken(playId, activePermission);
 
@@ -912,9 +910,9 @@ describe("コンテンツ動作テスト: 異常系", () => {
 				playToken,
 				executionMode: "active"
 			});
-			assert.fail();
+			fail();
 		} catch (e) {
-			assert.equal(e != null, true);
+			expect(e).not.toBe(null);
 		}
 	});
 
@@ -925,7 +923,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
-		assert.equal(activeAMFlow.playId, playId);
+		expect(activeAMFlow.playId).toBe(playId);
 
 		const playToken = playManager.createPlayToken(playId, activePermission);
 
@@ -952,7 +950,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		activeAMFlow.sendEvent([0x20, null, ":akashic", "throw_error"]);
 
 		const error = await handleError();
-		assert.equal(error.message, "unknown error");
+		expect(error.message).toBe("unknown error");
 		runner.stop();
 	});
 
@@ -963,7 +961,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
-		assert.equal(activeAMFlow.playId, playId);
+		expect(activeAMFlow.playId).toBe(playId);
 
 		const playToken = playManager.createPlayToken(playId, activePermission);
 
@@ -990,7 +988,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		activeAMFlow.sendEvent([0x20, null, ":akashic", "throw_error"]);
 
 		const error = await handleError();
-		assert.equal(error.message, "unknown error");
+		expect(error.message).toBe("unknown error");
 
 		runner.stop();
 	});
