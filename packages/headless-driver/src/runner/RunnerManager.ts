@@ -1,11 +1,11 @@
-import fetch from "node-fetch";
-import * as url from "url";
+import { RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
-import { RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
+import fetch from "node-fetch";
+import * as url from "url";
 import { getSystemLogger } from "../Logger";
-import { PlayManager } from "../play/PlayManager";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
+import { PlayManager } from "../play/PlayManager";
 
 export interface CreateRunnerParameters {
 	playId: string;
@@ -96,7 +96,7 @@ export class RunnerManager {
 					player: params.player
 				});
 				runner.errorTrigger.addOnce((err: any) => {
-					getSystemLogger().info(err);
+					getSystemLogger().error(err);
 					this.stopRunner(runnerId);
 				});
 			} else {
@@ -115,7 +115,7 @@ export class RunnerManager {
 					player: params.player
 				});
 				runner.errorTrigger.handle((err: any) => {
-					getSystemLogger().info(err);
+					getSystemLogger().error(err);
 					this.stopRunner(runnerId);
 					return true;
 				});
@@ -162,8 +162,8 @@ export class RunnerManager {
 	 * Runner の情報を取得する。
 	 * @param runnerId RunnerID
 	 */
-	getRunner(runnerId: string): RunnerV1 | RunnerV2 {
-		return this.runners.find(runner => runner.runnerId === runnerId);
+	getRunner(runnerId: string): (RunnerV1 | RunnerV2) | null {
+		return this.runners.find(runner => runner.runnerId === runnerId) || null;
 	}
 
 	/**

@@ -1,4 +1,5 @@
 import { Permission } from "@akashic/amflow";
+import { sha256 } from "js-sha256";
 import { AMFlowClient } from "./amflow/AMFlowClient";
 import { AMFlowStore } from "./amflow/AMFlowStore";
 
@@ -32,12 +33,12 @@ export class AMFlowClientManager {
 	 * @param playId PlayID
 	 */
 	createPlayToken(playId: string, permission: Permission): string {
-		const token = this.createRandomString(10);
+		const str = this.createRandomString(10);
+		const token = sha256(str);
 		if (this.playTokenMap[playId] == null) {
 			this.playTokenMap[playId] = new Map();
 		}
 		this.playTokenMap[playId].set(token, permission);
-
 		return token;
 	}
 
@@ -96,6 +97,28 @@ export class AMFlowClientManager {
 			store.destroy();
 		}
 		this.storeMap.delete(playId);
+	}
+
+	/**
+	 * 対象の PlayID に対する AMFlowStore を停止する。
+	 * @param playId PlayID
+	 */
+	suspendAMFlowStore(playId: string): void {
+		const store = this.storeMap.get(playId);
+		if (store) {
+			store.suspend();
+		}
+	}
+
+	/**
+	 * 対象の PlayID に対する AMFlowStore を再開する。
+	 * @param playId PlayID
+	 */
+	resumeAMFlowStore(playId: string): void {
+		const store = this.storeMap.get(playId);
+		if (store) {
+			store.resume();
+		}
 	}
 
 	private createRandomString(length: number): string {

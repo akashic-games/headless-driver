@@ -13,7 +13,7 @@ export type AMFlowErrorName =
 	| "permission_error"
 	| "not_implemented"
 	| "timeout"
-	| "bad_reequest"
+	| "bad_request"
 	| "runtime_error"
 	| "token_revoked";
 
@@ -75,7 +75,7 @@ export function createError(type: AMFlowErrorName, message?: any): Error {
 		return new NotImplementedError(message);
 	} else if (type === "timeout") {
 		return new TimeoutError(message);
-	} else if (type === "bad_reequest") {
+	} else if (type === "bad_request") {
 		return new BadRequestError(message);
 	} else if (type === "token_revoked") {
 		return new TokenRevokedError(message);

@@ -1,8 +1,9 @@
-import cloneDeep = require("lodash.clonedeep");
-import { Permission, StartPoint, GetStartPointOptions } from "@akashic/amflow";
-import { Tick, TickList, Event } from "@akashic/playlog";
+import { GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
+import { Event, Tick, TickList } from "@akashic/playlog";
 import { Trigger } from "@akashic/trigger";
+import cloneDeep = require("lodash.clonedeep");
 import { AMFlowClientManager } from "../AMFlowClientManager";
+import { createError } from "./ErrorFactory";
 
 /**
  * AMFlow のストア。
@@ -17,17 +18,26 @@ export class AMFlowStore {
 
 	private startPoints: StartPoint[] | null = [];
 	private tickList: TickList = null;
+	private suspended: boolean;
 
 	constructor(playId: string, amflowClientManager: AMFlowClientManager) {
 		this.playId = playId;
+		this.suspended = false;
 		this.amflowClientManager = amflowClientManager;
 	}
 
 	authenticate(token: string, revoke?: boolean): Permission {
-		return this.amflowClientManager.authenticatePlayToken(this.playId, token, revoke);
+		const permission = this.amflowClientManager.authenticatePlayToken(this.playId, token, revoke);
+		if (this.isSuspended() && permission && (permission.sendEvent || permission.writeTick)) {
+			throw createError("permission_error", "Play may be suspended");
+		}
+		return permission;
 	}
 
 	sendTick(tick: Tick): void {
+		if (this.isSuspended()) {
+			throw createError("bad_request", "Play may be suspended");
+		}
 		if (this.tickList) {
 			if (this.tickList[0] <= tick[0] && tick[0] <= this.tickList[1]) {
 				// illegal age tick
@@ -45,6 +55,9 @@ export class AMFlowStore {
 	}
 
 	sendEvent(event: Event): void {
+		if (this.isSuspended()) {
+			throw createError("bad_request", "Play may be suspended");
+		}
 		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
 	}
 
@@ -63,6 +76,9 @@ export class AMFlowStore {
 	}
 
 	putStartPoint(startPoint: StartPoint): void {
+		if (this.isSuspended()) {
+			throw createError("bad_request", "Play may be suspended");
+		}
 		// NOTE: frame: 0 のみ第0要素に保持する
 		if (startPoint.frame === 0) {
 			this.startPoints = [startPoint];
@@ -96,6 +112,31 @@ export class AMFlowStore {
 			return this.startPoints[this.startPoints.length - 1];
 		}
 		return this.startPoints[0] || null;
+	}
+
+	/**
+	 * この AMFlowStore が停止しているかどうか。
+	 */
+	isSuspended(): boolean {
+		return this.suspended;
+	}
+
+	/**
+	 * この AMFlowStore を停止する。
+	 * 停止状態の場合、次の機能の呼び出し時に例外が発される。
+	 * * `this.putStartPoint()` による start point の書き込み
+	 * * `this.sendTick()` による tick の書き込み
+	 * * `this.sendEvent()` による event の送信
+	 */
+	suspend(): void {
+		this.suspended = true;
+	}
+
+	/**
+	 * この AMFlowStore を再開する。
+	 */
+	resume(): void {
+		this.suspended = false;
 	}
 
 	destroy(): void {
