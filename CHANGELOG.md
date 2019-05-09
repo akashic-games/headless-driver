@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.4.0 (2019-05-09)
+
+#### Breaking Change
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#21](https://github.com/akashic-games/headless-driver/pull/21) Support play status ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v0.3.9 (2019-04-22)
 
 #### Enhancement
