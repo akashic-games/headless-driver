@@ -32,7 +32,7 @@ export const initialize = async () => {
 
 	const server = http.createServer((request, response) => {
 		handler(request, response, {
-			public: path.resolve(__dirname, "contents"),
+			public: path.resolve(__dirname, "fixtures"),
 			headers: {
 				"Access-Control-Allow-Origin": "*",
 				"Access-Control-Allow-Credentials": "true"
