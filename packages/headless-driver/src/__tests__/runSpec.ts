@@ -2,11 +2,7 @@ import { GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import { Event } from "@akashic/playlog";
-import * as getPort from "get-port";
-import * as http from "http";
 import fetch from "node-fetch";
-import * as path from "path";
-import * as url from "url";
 import { setSystemLogger, SystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { AMFlowStore } from "../play/amflow/AMFlowStore";
@@ -15,24 +11,14 @@ import { AMFlowClientManager } from "../play/AMFlowClientManager";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
 
-const handler = require("serve-handler"); // tslint:disable-line:no-var-requires
-const host = "localhost";
-
-// NOTE: テスト実行直前に動的に決定する
-let baseUrl = "";
-let contentUrlV1 = "";
-let contentUrlV2 = "";
-let contentUrlV2Cascade = "";
-
-const mockServer = http.createServer((request, response) => {
-	return handler(request, response, {
-		public: path.resolve(__dirname, "contents"),
-		headers: {
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Credentials": "true"
-		}
-	});
-});
+const contentUrlV1 = process.env.CONTENT_URL_V1;
+const contentUrlV2 = process.env.CONTENT_URL_V2;
+const gameJsonUrlV1 = process.env.GAME_JSON_URL_V1;
+const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2;
+const assetBaseUrlV1 = process.env.ASSET_BASE_URL_V1;
+const assetBaseUrlV2 = process.env.ASSET_BASE_URL_V2;
+const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2;
+const cascadeGameJsonUrlV2 = process.env.CASCADE_GAME_JSON_URL_V2;
 
 const activePermission: Permission = {
 	readTick: true,
@@ -76,16 +62,16 @@ class MockRunnerManager extends RunnerManager {
 				.then(res => res.json())
 				.then((config: any) => {
 					if (config.content_url === "v1_content_url") {
-						config.content_url = url.resolve(baseUrl, "content-v1/game.json");
+						config.content_url = gameJsonUrlV1;
 					} else if (config.content_url === "v2_content_url") {
-						config.content_url = url.resolve(baseUrl, "content-v2/game.json");
+						config.content_url = gameJsonUrlV2;
 					} else if (config.content_url === "v2_content_cascade_url") {
-						config.content_url = url.resolve(baseUrl, "content-v2/game.definitions.json");
+						config.content_url = cascadeGameJsonUrlV2;
 					}
 					if (config.asset_base_url === "v1_asset_base_url") {
-						config.asset_base_url = url.resolve(baseUrl, "content-v1/");
+						config.asset_base_url = assetBaseUrlV1;
 					} else if (config.asset_base_url === "v2_asset_base_url") {
-						config.asset_base_url = url.resolve(baseUrl, "content-v2/");
+						config.asset_base_url = assetBaseUrlV2;
 					}
 					resolve(config);
 				})
@@ -93,19 +79,6 @@ class MockRunnerManager extends RunnerManager {
 		});
 	}
 }
-
-beforeAll(async () => {
-	const port = await getPort();
-	baseUrl = `http://${host}:${port}`;
-	contentUrlV1 = url.resolve(baseUrl, "content-v1/content.json");
-	contentUrlV2 = url.resolve(baseUrl, "content-v2/content.json");
-	contentUrlV2Cascade = url.resolve(baseUrl, "content-v2/content.cascade.json");
-	mockServer.listen(port, host);
-});
-
-afterAll(() => {
-	mockServer.close();
-});
 
 describe("run-test", () => {
 	it("各インスタンスを生成できる", async () => {
@@ -859,7 +832,7 @@ describe("コンテンツ動作テスト", () => {
 	it("akashic-sandbox のカスケードが正しく解釈できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2Cascade
+			contentUrl: cascadeContentUrlV2
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);

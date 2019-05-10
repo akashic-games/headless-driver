@@ -60,7 +60,9 @@
       }
     },
     "testMatch": [
-      "**/__tests__/*.ts"
-    ]
+      "**/__tests__/**/*Spec.ts"
+    ],
+    "globalSetup": "<rootDir>/src/__tests__/setup.ts",
+    "globalTeardown": "<rootDir>/src/__tests__/teardown.ts"
   }
 }
