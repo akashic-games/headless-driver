@@ -1,5 +1,5 @@
 import { akashicEngine as g } from "@akashic/engine-files";
-import fetch from "node-fetch";
+import { loadFile } from "@akashic/headless-driver-runner";
 
 export class NodeScriptAsset extends g.ScriptAsset {
 	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
@@ -12,13 +12,14 @@ export class NodeScriptAsset extends g.ScriptAsset {
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
-		fetch(this.path, { method: "GET" })
-			.then(res => res.text())
+		loadFile<string>(this.path, {json: false})
 			.then(text => {
 				this.script = text;
 				return loader._onAssetLoad(this);
 			})
-			.catch(e => loader._onAssetError(this, e));
+			.catch(e => {
+				loader._onAssetError(this, e);
+			});
 	}
 
 	execute(execEnv: g.ScriptAssetExecuteEnvironment): any {

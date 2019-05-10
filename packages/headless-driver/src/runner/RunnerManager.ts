@@ -1,7 +1,7 @@
-import { RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { loadFile, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
-import fetch from "node-fetch";
+import * as path from "path";
 import * as url from "url";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
@@ -55,11 +55,26 @@ export class RunnerManager {
 		}
 
 		try {
-			const contentUrl = play.contentUrl;
+			let engineConfiguration: EngineConfiguration;
+			let gameConfiguration: GameConfiguration;
+			let contentUrl: string;
+			if ("contentUrl" in play) {
+				contentUrl = play.contentUrl;
+				engineConfiguration = await this.resolveContent(contentUrl);
+				gameConfiguration = await this.resolveGameConfiguration(engineConfiguration.content_url);
+			} else {
+				contentUrl = path.resolve(play.contentDir, "game.json");
+				const config = play.contentConfig;
+				engineConfiguration = {
+					external: config != null && config.externals != null ? config.externals : [],
+					content_url: contentUrl,
+					asset_base_url: play.contentDir,
+					engine_urls: []
+				};
+				gameConfiguration = await this.resolveGameConfiguration(contentUrl);
+			}
 			const amflow = params.amflow;
 
-			const engineConfiguration = await this.fetchContentUrl(play.contentUrl);
-			const gameConfiguration = await this.loadJson<GameConfiguration>(engineConfiguration.content_url);
 			let configurationBaseUrl: string | null = null;
 			let version: "1" | "2" = "1";
 
@@ -69,7 +84,7 @@ export class RunnerManager {
 				const defs: GameConfiguration[] = [];
 				for (let i = 0; i < gameConfiguration.definitions.length; i++) {
 					const _url = url.resolve(engineConfiguration.asset_base_url, gameConfiguration.definitions[i]);
-					const _def = await this.loadJson<any>(_url);
+					const _def = await this.loadJSON(_url);
 					defs.push(_def);
 				}
 				version = defs.reduce((acc, def) => (def.environment && def.environment["sandbox-runtime"]) || acc, version);
@@ -173,20 +188,15 @@ export class RunnerManager {
 		return this.runners;
 	}
 
-	protected fetchContentUrl(contentUrl: string): Promise<EngineConfiguration> {
-		return new Promise<EngineConfiguration>((resolve, reject) => {
-			fetch(contentUrl, { method: "GET" })
-				.then(res => res.json())
-				.then((config: EngineConfiguration) => resolve(config))
-				.catch(e => reject(e));
-		});
+	protected async resolveContent(contentUrl: string): Promise<EngineConfiguration> {
+		return await this.loadJSON(contentUrl);
 	}
 
-	protected loadJson<T>(jsonUrl: string): Promise<T> {
-		return new Promise<T>((resolve, reject) => {
-			fetch(jsonUrl, { method: "GET" })
-				.then(res => resolve(res.json()))
-				.catch(e => reject(e));
-		});
+	protected async resolveGameConfiguration<T>(gameJsonUrl: string): Promise<T> {
+		return await this.loadJSON(gameJsonUrl);
+	}
+
+	protected async loadJSON<T>(contentUrl: string): Promise<T> {
+		return await loadFile<T>(contentUrl, { json: true });
 	}
 }

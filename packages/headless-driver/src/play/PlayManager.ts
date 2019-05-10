@@ -1,11 +1,9 @@
 import { Permission } from "@akashic/amflow";
 import { AMFlowClient } from "./amflow/AMFlowClient";
 import { AMFlowClientManager } from "./AMFlowClientManager";
-import { Play, PlayStatus } from "./Play";
+import { Play, PlayStatus, PlayWithContentDir, PlayWithContentUrl } from "./Play";
 
-export interface PlayManagerParameters {
-	contentUrl: string;
-}
+export type PlayManagerParameters = PlayWithContentUrl | PlayWithContentDir;
 
 export interface PlayFilter {
 	status: PlayStatus;
@@ -28,9 +26,9 @@ export class PlayManager {
 		this.plays.push({
 			playId,
 			status: "running",
-			contentUrl: params.contentUrl,
 			createdAt: Date.now(),
-			lastSuspendedAt: null
+			lastSuspendedAt: null,
+			...params
 		});
 		return playId;
 	}
