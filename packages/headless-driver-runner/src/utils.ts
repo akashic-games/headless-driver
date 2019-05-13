@@ -1,6 +1,5 @@
 import { readFileSync } from "fs";
 import fetch from "node-fetch";
-import * as path from "path";
 
 export interface ReadFileOption {
 	encoding?: string;
@@ -27,7 +26,7 @@ export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>
 		const res = await fetch(url, { method: "GET" });
 		return opt.json ? res.json() : res.text();
 	} else {
-		const str = readFileSync(path.resolve(this.assetBaseUrl, url), { encoding: opt.encoding ? opt.encoding : "utf8" });
+		const str = readFileSync(url, { encoding: opt.encoding ? opt.encoding : "utf8" });
 		return opt.json ? JSON.parse(str) : str;
 	}
 }

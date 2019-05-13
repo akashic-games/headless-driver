@@ -20,6 +20,5 @@ export interface PlayWithContentDir {
 	contentDir: string;
 	contentConfig?: {
 		externals?: string[];
-		assetBasePath?: string;
 	};
 }
