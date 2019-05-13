@@ -12,7 +12,7 @@ export class NodeScriptAsset extends g.ScriptAsset {
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
-		loadFile<string>(this.path, {json: false})
+		loadFile<string>(this.path, { json: false })
 			.then(text => {
 				this.script = text;
 				return loader._onAssetLoad(this);

@@ -3,7 +3,7 @@ import { loadFile } from "@akashic/headless-driver-runner";
 
 export class NodeTextAsset extends g.TextAsset {
 	_load(loader: g.AssetLoadHandler): void {
-		loadFile<string>(this.path, {json: false})
+		loadFile<string>(this.path, { json: false })
 			.then(text => {
 				this.data = text;
 				return loader._onAssetLoad(this);
