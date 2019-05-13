@@ -8,7 +8,7 @@
     "url": "https://github.com/akashic-games/headless-driver.git"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap --no-ci",
+    "postinstall": "lerna bootstrap --ci",
     "publish:patch": "node build/publishAndUpdateChangelog.js patch",
     "publish:minor": "node build/publishAndUpdateChangelog.js minor",
     "publish:major": "node build/publishAndUpdateChangelog.js major",
@@ -30,7 +30,7 @@
     }
   },
   "devDependencies": {
-    "lerna": "^3.13.1",
+    "lerna": "^3.13.4",
     "lerna-changelog": "^0.8.2",
     "remark-cli": "^6.0.1",
     "remark-lint": "^6.0.4",
