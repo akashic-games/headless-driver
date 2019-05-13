@@ -36,6 +36,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		expect(runner.runnerId).toBe("0");
 		expect(runner.engineVersion).toBe("1");
+		expect(runner.external).toEqual({});
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV1Game;
 		expect(game.playId).toBe(playId);
@@ -93,6 +94,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.runnerId).toBe("0");
 		expect(runner.engineVersion).toBe("2");
+		expect(runner.external).toEqual({ext: "0"});
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV2Game;
 		expect(game.playId).toBe(playId);
@@ -217,8 +219,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 	it("ローカルの game.json から V1 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentDir: path.resolve(__dirname, "fixtures", "content-v1"),
-			contentConfig: {}
+			contentDir: path.resolve(__dirname, "fixtures", "content-v1")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -230,6 +231,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+		expect(runner.external).toEqual({});
 
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
@@ -251,10 +253,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 	it("ローカルの game.json から V2 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentDir: path.resolve(__dirname, "fixtures", "content-v2"),
-			contentConfig: {
-				externals: ["hoge"]
-			}
+			contentDir: path.resolve(__dirname, "fixtures", "content-v2")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -266,6 +265,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+		expect(runner.external).toEqual({ext: "0"});
 
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {

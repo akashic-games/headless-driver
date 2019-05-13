@@ -18,7 +18,4 @@ export interface PlayWithContentDir {
 	 * game.json を含むディレクトリ。
 	 */
 	contentDir: string;
-	contentConfig?: {
-		externals?: string[];
-	};
 }

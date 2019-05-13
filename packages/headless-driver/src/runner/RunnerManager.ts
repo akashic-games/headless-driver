@@ -27,6 +27,7 @@ interface GameConfiguration {
 	definitions?: string[];
 	environment?: {
 		"sandbox-runtime"?: "1" | "2";
+		external: {[key: string]: string};
 	};
 }
 
@@ -58,20 +59,30 @@ export class RunnerManager {
 			let engineConfiguration: EngineConfiguration;
 			let gameConfiguration: GameConfiguration;
 			let contentUrl: string;
+			let external: {[name: string]: string} = {};
+
 			if ("contentUrl" in play) {
 				contentUrl = play.contentUrl;
 				engineConfiguration = await this.resolveContent(contentUrl);
 				gameConfiguration = await this.resolveGameConfiguration(engineConfiguration.content_url);
+				for (let i = 0; i < engineConfiguration.external.length; i++) {
+					const name = engineConfiguration.external[i];
+					external[name] = "0"; // NOTE: "0" 扱いとする
+				}
 			} else {
 				contentUrl = path.resolve(play.contentDir, "game.json");
-				const config = play.contentConfig;
+				gameConfiguration = await this.resolveGameConfiguration(contentUrl);
+				let ext: string[] = [];
+				if (gameConfiguration.environment != null && gameConfiguration.environment.external != null) {
+					external = gameConfiguration.environment.external;
+					ext = Object.keys(gameConfiguration.environment.external);
+				}
 				engineConfiguration = {
-					external: config != null && config.externals != null ? config.externals : [],
+					external: ext,
 					content_url: contentUrl,
 					asset_base_url: play.contentDir,
 					engine_urls: []
 				};
-				gameConfiguration = await this.resolveGameConfiguration(contentUrl);
 			}
 			const amflow = params.amflow;
 
@@ -107,6 +118,7 @@ export class RunnerManager {
 					playToken: params.playToken,
 					amflow,
 					executionMode: params.executionMode,
+					external,
 					gameArgs: params.gameArgs,
 					player: params.player
 				});
@@ -126,6 +138,7 @@ export class RunnerManager {
 					playToken: params.playToken,
 					amflow,
 					executionMode: params.executionMode,
+					external,
 					gameArgs: params.gameArgs,
 					player: params.player
 				});
