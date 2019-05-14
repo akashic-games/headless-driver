@@ -202,11 +202,11 @@ export class RunnerManager {
 	}
 
 	protected async resolveContent(contentUrl: string): Promise<EngineConfiguration> {
-		return await this.loadJSON(contentUrl);
+		return await this.loadJSON<EngineConfiguration>(contentUrl);
 	}
 
-	protected async resolveGameConfiguration<T>(gameJsonUrl: string): Promise<T> {
-		return await this.loadJSON(gameJsonUrl);
+	protected async resolveGameConfiguration(gameJsonUrl: string): Promise<GameConfiguration> {
+		return await this.loadJSON<GameConfiguration>(gameJsonUrl);
 	}
 
 	protected async loadJSON<T>(contentUrl: string): Promise<T> {
