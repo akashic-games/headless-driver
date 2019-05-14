@@ -1,6 +1,8 @@
 export type PlayStatus = "preparing" | "running" | "suspending" | "broken";
 
-export type Play = (PlayWithContentUrl | PlayWithContentDir) & BasePlay;
+export type Play = PlayLocating & BasePlay;
+
+export type PlayLocating = (PlayWithContentUrl | PlayWithGameJsonPath);
 
 export interface BasePlay {
 	playId: string;
@@ -10,12 +12,15 @@ export interface BasePlay {
 }
 
 export interface PlayWithContentUrl {
+	/**
+	 * content.json の URL。
+	 */
 	contentUrl: string;
 }
 
-export interface PlayWithContentDir {
+export interface PlayWithGameJsonPath {
 	/**
-	 * game.json を含むディレクトリ。
+	 * game.json のディレクトリ。
 	 */
-	contentDir: string;
+	gameJsonPath: string;
 }

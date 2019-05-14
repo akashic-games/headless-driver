@@ -1,9 +1,9 @@
 import { Permission } from "@akashic/amflow";
 import { AMFlowClient } from "./amflow/AMFlowClient";
 import { AMFlowClientManager } from "./AMFlowClientManager";
-import { Play, PlayStatus, PlayWithContentDir, PlayWithContentUrl } from "./Play";
+import { Play, PlayLocating, PlayStatus } from "./Play";
 
-export type PlayManagerParameters = PlayWithContentUrl | PlayWithContentDir;
+export type PlayManagerParameters = PlayLocating;
 
 export interface PlayFilter {
 	status: PlayStatus;

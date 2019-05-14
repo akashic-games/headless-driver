@@ -219,7 +219,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 	it("ローカルの game.json から V1 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentDir: path.resolve(__dirname, "fixtures", "content-v1")
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.json")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -253,7 +253,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 	it("ローカルの game.json から V2 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentDir: path.resolve(__dirname, "fixtures", "content-v2")
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.json")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);

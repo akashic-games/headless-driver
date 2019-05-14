@@ -70,7 +70,7 @@ export class RunnerManager {
 					external[name] = "0"; // NOTE: "0" 扱いとする
 				}
 			} else {
-				contentUrl = path.resolve(play.contentDir, "game.json");
+				contentUrl = play.gameJsonPath;
 				gameConfiguration = await this.resolveGameConfiguration(contentUrl);
 				let ext: string[] = [];
 				if (gameConfiguration.environment != null && gameConfiguration.environment.external != null) {
@@ -80,7 +80,7 @@ export class RunnerManager {
 				engineConfiguration = {
 					external: ext,
 					content_url: contentUrl,
-					asset_base_url: play.contentDir,
+					asset_base_url: path.dirname(play.gameJsonPath),
 					engine_urls: []
 				};
 			}
