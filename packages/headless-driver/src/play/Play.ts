@@ -1,8 +1,8 @@
 export type PlayStatus = "preparing" | "running" | "suspending" | "broken";
 
-export type Play = PlayLocating & BasePlay;
+export type Play = PlayLocation & BasePlay;
 
-export type PlayLocating = (PlayWithContentUrl | PlayWithGameJsonPath);
+export type PlayLocation = (PlayWithContentUrl | PlayWithGameJsonPath);
 
 export interface BasePlay {
 	playId: string;
