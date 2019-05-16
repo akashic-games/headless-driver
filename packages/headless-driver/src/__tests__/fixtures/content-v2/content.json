@@ -3,5 +3,5 @@
   "engine_urls": [],
   "content_url": "v2_content_url",
   "asset_base_url": "v2_asset_base_url",
-  "external": []
+  "external": ["ext"]
 }

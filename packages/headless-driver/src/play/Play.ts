@@ -1,9 +1,12 @@
+import { ContentLocation } from "./Content";
+
 export type PlayStatus = "preparing" | "running" | "suspending" | "broken";
 
-export interface Play {
+export type Play = ContentLocation & BasePlay;
+
+export interface BasePlay {
 	playId: string;
 	status: PlayStatus;
-	contentUrl: string;
 	createdAt: number;
 	lastSuspendedAt: number | null;
 }

@@ -11,6 +11,7 @@ export interface RunnerParameters {
 	runnerId: string;
 	amflow: AMFlow;
 	executionMode: RunnerExecutionMode;
+	external?: { [key: string]: string };
 	gameArgs?: any;
 	player?: RunnerPlayer;
 }
@@ -71,6 +72,10 @@ export abstract class Runner {
 
 	get player(): RunnerPlayer | undefined {
 		return this.params.player;
+	}
+
+	get external(): { [key: string]: string } | undefined {
+		return this.params.external;
 	}
 
 	constructor(params: RunnerParameters) {
