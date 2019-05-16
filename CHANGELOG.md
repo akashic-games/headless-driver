@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.4.2 (2019-05-16)
+
+#### Bug Fix
+* `headless-driver`
+  * [#24](https://github.com/akashic-games/headless-driver/pull/24) Export Content Interface ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v0.4.1 (2019-05-16)
 
 #### Enhancement
