@@ -1,4 +1,5 @@
 export * from "./play/amflow/AMFlowClient";
+export * from "./play/Content";
 export * from "./play/Play";
 export * from "./play/AMFlowClientManager";
 export * from "./play/PlayManager";

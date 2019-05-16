@@ -1,6 +1,17 @@
 # CHANGELOG
 
+## v0.4.1 (2019-05-16)
 
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#23](https://github.com/akashic-games/headless-driver/pull/23) Support to run local game.json ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Other Change
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#22](https://github.com/akashic-games/headless-driver/pull/22) Use jest and update internal dependency modules ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
 
 ## v0.4.0 (2019-05-09)
 
