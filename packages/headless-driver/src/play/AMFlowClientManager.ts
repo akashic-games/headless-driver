@@ -1,5 +1,4 @@
 import { Permission } from "@akashic/amflow";
-import { sha256 } from "js-sha256";
 import { AMFlowClient } from "./amflow/AMFlowClient";
 import { AMFlowStore } from "./amflow/AMFlowStore";
 
@@ -8,10 +7,6 @@ export class AMFlowClientManager {
 	 * PlayId と AMFlowStore を紐付けるマップ情報。
 	 */
 	private storeMap: Map<string, AMFlowStore> = new Map();
-	/**
-	 * PlayId と PlayToken, Permission を紐付けるマップ情報。
-	 */
-	private playTokenMap: { [playId: string]: Map<string, Permission> } = {};
 
 	/**
 	 * 対象の PlayID の AMFlowClient を作成する。
@@ -20,8 +15,7 @@ export class AMFlowClientManager {
 	createAMFlow(playId: string): AMFlowClient {
 		let store: AMFlowStore = this.storeMap.get(playId);
 		if (!store) {
-			store = new AMFlowStore(playId, this);
-			this.storeMap.set(playId, store);
+			store = this.createAMFlowStore(playId);
 		}
 
 		const client = new AMFlowClient(playId, store);
@@ -31,15 +25,14 @@ export class AMFlowClientManager {
 	/**
 	 * 対象の Play に紐づく PlayToken を作成する。
 	 * @param playId PlayID
+	 * @param permission Permission
 	 */
 	createPlayToken(playId: string, permission: Permission): string {
-		const str = this.createRandomString(10);
-		const token = sha256(str);
-		if (this.playTokenMap[playId] == null) {
-			this.playTokenMap[playId] = new Map();
+		let store = this.storeMap.get(playId);
+		if (!store) {
+			store = this.createAMFlowStore(playId);
 		}
-		this.playTokenMap[playId].set(token, permission);
-		return token;
+		return store.createPlayToken(permission);
 	}
 
 	/**
@@ -48,9 +41,11 @@ export class AMFlowClientManager {
 	 * @param token PlayToken
 	 */
 	deletePlayToken(playId: string, token: string): void {
-		if (this.playTokenMap[playId] != null) {
-			this.playTokenMap[playId].delete(token);
+		let store = this.storeMap.get(playId);
+		if (!store) {
+			store = this.createAMFlowStore(playId);
 		}
+		return store.deletePlayToken(token);
 	}
 
 	/**
@@ -60,18 +55,11 @@ export class AMFlowClientManager {
 	 * @param revoke 対象の PlayToken を revoke するかどうか
 	 */
 	authenticatePlayToken(playId: string, token: string, revoke?: boolean): Permission | null {
-		const map = this.playTokenMap[playId];
-		if (map) {
-			const permission = map.get(token);
-			if (permission) {
-				if (revoke) {
-					this.playTokenMap[playId].delete(token);
-					delete this.playTokenMap[playId];
-				}
-				return permission;
-			}
+		let store = this.storeMap.get(playId);
+		if (!store) {
+			store = this.createAMFlowStore(playId);
 		}
-		return null;
+		return store.authenticate(token, revoke);
 	}
 
 	/**
@@ -79,11 +67,11 @@ export class AMFlowClientManager {
 	 * @param playId PlayID
 	 */
 	deleteAllPlayTokens(playId: string): void {
-		const map = this.playTokenMap[playId];
-		if (map) {
-			map.clear();
-			delete this.playTokenMap[playId];
+		let store = this.storeMap.get(playId);
+		if (!store) {
+			store = this.createAMFlowStore(playId);
 		}
+		return store.deleteAllPlayTokens();
 	}
 
 	/**
@@ -121,13 +109,12 @@ export class AMFlowClientManager {
 		}
 	}
 
-	private createRandomString(length: number): string {
-		const str = "abcdefghijklmnopqrstuvwxyz0123456789";
-		const cl = str.length;
-		let r = "";
-		for (let i = 0; i < length; i++) {
-			r += str[Math.floor(Math.random() * cl)];
+	private createAMFlowStore(playId: string): AMFlowStore {
+		let store: AMFlowStore = this.storeMap.get(playId);
+		if (!store) {
+			store = new AMFlowStore(playId);
+			this.storeMap.set(playId, store);
 		}
-		return r;
+		return store;
 	}
 }

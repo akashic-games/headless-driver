@@ -90,7 +90,6 @@ describe("プレー周りのテスト", () => {
 		const token1 = amflowClientManager.createPlayToken("0", activePermission);
 		const authenticated1 = amflowClientManager.authenticatePlayToken("0", token1);
 		expect(authenticated1).toEqual(activePermission);
-		expect((amflowClientManager as any).playTokenMap["0"]).not.toBe(null);
 
 		amflowClientManager.createAMFlow("0");
 		const storeMap: Map<string, AMFlowStore> = (amflowClientManager as any).storeMap;
@@ -105,7 +104,6 @@ describe("プレー周りのテスト", () => {
 
 		amflowClientManager.deleteAllPlayTokens("0");
 		amflowClientManager.deleteAMFlowStore("0");
-		expect((amflowClientManager as any).playTokenMap["0"]).toBeUndefined();
 		expect(storeMap.get("0")).toBeUndefined();
 	});
 

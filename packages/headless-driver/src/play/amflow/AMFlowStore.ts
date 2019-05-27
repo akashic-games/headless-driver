@@ -1,8 +1,8 @@
 import { GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, Tick, TickList } from "@akashic/playlog";
 import { Trigger } from "@akashic/trigger";
+import { sha256 } from "js-sha256";
 import cloneDeep = require("lodash.clonedeep");
-import { AMFlowClientManager } from "../AMFlowClientManager";
 import { createError } from "./ErrorFactory";
 
 /**
@@ -10,24 +10,22 @@ import { createError } from "./ErrorFactory";
  * 一つのプレーに対して一つ存在する。
  */
 export class AMFlowStore {
+	playId: string;
 	sendEventTrigger: Trigger<Event> = new Trigger();
 	sendTickTrigger: Trigger<Tick> = new Trigger();
 
-	private playId: string;
-	private amflowClientManager: AMFlowClientManager;
-
+	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] | null = [];
 	private tickList: TickList = null;
 	private suspended: boolean;
 
-	constructor(playId: string, amflowClientManager: AMFlowClientManager) {
+	constructor(playId: string) {
 		this.playId = playId;
 		this.suspended = false;
-		this.amflowClientManager = amflowClientManager;
 	}
 
 	authenticate(token: string, revoke?: boolean): Permission {
-		const permission = this.amflowClientManager.authenticatePlayToken(this.playId, token, revoke);
+		const permission = this.authenticatePlayToken(token, revoke);
 		if (this.isSuspended() && permission && (permission.sendEvent || permission.writeTick)) {
 			throw createError("permission_error", "Play may be suspended");
 		}
@@ -147,15 +145,51 @@ export class AMFlowStore {
 		this.sendTickTrigger.destroy();
 		this.sendEventTrigger = null;
 		this.sendTickTrigger = null;
-		this.amflowClientManager = null;
+		this.permissionMap = null;
 		this.startPoints = null;
 	}
 
 	isDestroyed(): boolean {
-		return this.amflowClientManager == null;
+		return this.permissionMap == null;
+	}
+
+	createPlayToken(permission: Permission): string {
+		const str = this.createRandomString(10);
+		const token = sha256(str);
+		this.permissionMap.set(token, permission);
+		return token;
+	}
+
+	deletePlayToken(token: string): void {
+		this.permissionMap.delete(token);
+	}
+
+	deleteAllPlayTokens(): void {
+		this.permissionMap.clear();
+	}
+
+	private authenticatePlayToken(token: string, revoke?: boolean): Permission | null {
+		const permission = this.permissionMap.get(token);
+		if (permission) {
+			if (revoke) {
+				this.permissionMap.delete(token);
+			}
+			return permission;
+		}
+		return null;
 	}
 
 	private cloneDeep<T>(target: T): T {
 		return cloneDeep(target);
+	}
+
+	private createRandomString(length: number): string {
+		const str = "abcdefghijklmnopqrstuvwxyz0123456789";
+		const cl = str.length;
+		let r = "";
+		for (let i = 0; i < length; i++) {
+			r += str[Math.floor(Math.random() * cl)];
+		}
+		return r;
 	}
 }
