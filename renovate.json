@@ -1,5 +1,18 @@
 {
   "extends": [
     "config:base"
+  ],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["every weekend"],
+  "labels": ["dependencies"],
+  "assignees": [""],
+  "reviewers": [""],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "packagePatterns": ["^@akashic/"],
+      "enabled": false
+    }
   ]
 }
