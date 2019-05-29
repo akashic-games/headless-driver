@@ -57,7 +57,7 @@ export class AMFlowClientManager {
 	authenticatePlayToken(playId: string, token: string, revoke?: boolean): Permission | null {
 		const store = this.storeMap.get(playId);
 		if (!store) {
-			return;
+			return null;
 		}
 		return store.authenticate(token, revoke);
 	}
