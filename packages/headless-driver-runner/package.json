@@ -27,9 +27,9 @@
   },
   "devDependencies": {
     "@types/node-fetch": "2.3.3",
-    "prettier": "^1.16.0",
-    "rimraf": "^2.6.3",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "prettier": "1.17.0",
+    "rimraf": "2.6.3",
+    "tslint": "5.16.0",
+    "typescript": "3.4.5"
   }
 }
