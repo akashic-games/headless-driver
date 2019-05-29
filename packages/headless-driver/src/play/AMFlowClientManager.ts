@@ -41,9 +41,9 @@ export class AMFlowClientManager {
 	 * @param token PlayToken
 	 */
 	deletePlayToken(playId: string, token: string): void {
-		let store = this.storeMap.get(playId);
+		const store = this.storeMap.get(playId);
 		if (!store) {
-			store = this.createAMFlowStore(playId);
+			return;
 		}
 		return store.deletePlayToken(token);
 	}
@@ -55,9 +55,9 @@ export class AMFlowClientManager {
 	 * @param revoke 対象の PlayToken を revoke するかどうか
 	 */
 	authenticatePlayToken(playId: string, token: string, revoke?: boolean): Permission | null {
-		let store = this.storeMap.get(playId);
+		const store = this.storeMap.get(playId);
 		if (!store) {
-			store = this.createAMFlowStore(playId);
+			return;
 		}
 		return store.authenticate(token, revoke);
 	}
@@ -67,9 +67,9 @@ export class AMFlowClientManager {
 	 * @param playId PlayID
 	 */
 	deleteAllPlayTokens(playId: string): void {
-		let store = this.storeMap.get(playId);
+		const store = this.storeMap.get(playId);
 		if (!store) {
-			store = this.createAMFlowStore(playId);
+			return;
 		}
 		return store.deleteAllPlayTokens();
 	}
@@ -93,9 +93,10 @@ export class AMFlowClientManager {
 	 */
 	suspendAMFlowStore(playId: string): void {
 		const store = this.storeMap.get(playId);
-		if (store) {
-			store.suspend();
+		if (!store) {
+			return;
 		}
+		store.suspend();
 	}
 
 	/**
@@ -104,9 +105,10 @@ export class AMFlowClientManager {
 	 */
 	resumeAMFlowStore(playId: string): void {
 		const store = this.storeMap.get(playId);
-		if (store) {
-			store.resume();
+		if (!store) {
+			return;
 		}
+		store.resume();
 	}
 
 	private createAMFlowStore(playId: string): AMFlowStore {
