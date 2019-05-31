@@ -30,7 +30,7 @@
     }
   },
   "devDependencies": {
-    "lerna": "3.13.4",
+    "lerna": "3.14.1",
     "lerna-changelog": "0.8.2",
     "remark-cli": "6.0.1",
     "remark-lint": "6.0.4",
