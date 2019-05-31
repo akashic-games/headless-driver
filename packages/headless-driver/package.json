@@ -32,7 +32,7 @@
     "lodash.clonedeep": "4.5.0"
   },
   "devDependencies": {
-    "@types/get-port": "4.0.0",
+    "@types/get-port": "4.0.1",
     "@types/jest": "24.0.12",
     "@types/lodash.clonedeep": "4.5.4",
     "get-port": "5.0.0",
