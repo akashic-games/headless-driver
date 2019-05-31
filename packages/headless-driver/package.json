@@ -37,7 +37,7 @@
     "@types/lodash.clonedeep": "4.5.4",
     "get-port": "5.0.0",
     "jest": "24.8.0",
-    "prettier": "1.17.0",
+    "prettier": "1.17.1",
     "rimraf": "2.6.3",
     "serve-handler": "6.0.0",
     "ts-jest": "24.0.2",
