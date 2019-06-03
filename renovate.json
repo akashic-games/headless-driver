@@ -9,10 +9,19 @@
   "reviewers": [""],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
+  "separateMinorPatch": true,
   "packageRules": [
     {
       "packagePatterns": ["^@akashic/"],
       "enabled": false
+    },
+    {
+      "updateTypes": ["minor"],
+      "groupName": "all dependencies"
+    },
+    {
+      "updateTypes": ["patch"],
+      "groupName": "all dependencies"
     }
   ]
 }
