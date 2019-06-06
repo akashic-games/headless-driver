@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver-runner",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "description": "A runner module for contents using Akashic Engine",
   "main": "lib/index.js",
   "scripts": {
