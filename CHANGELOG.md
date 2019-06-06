@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## v0.4.3 (2019-06-06)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver`
+  * [#40](https://github.com/akashic-games/headless-driver/pull/40) Export ContentParameters and GameJsonParameters ([@yu-ogi](https://github.com/yu-ogi))
+* `headless-driver-runner-v2`
+  * [#39](https://github.com/akashic-games/headless-driver/pull/39) 【v0.4.3】内部コンポーネントの更新(engineFiles@2.1.18, engineFiles@1.1.9) ([@xnv](https://github.com/xnv))
+  * [#38](https://github.com/akashic-games/headless-driver/pull/38) 【v0.4.3】内部コンポーネントの更新(engineFiles@2.1.17, engineFiles@1.1.9) ([@xnv](https://github.com/xnv))
+
+#### Bug Fix
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver`
+  * [#40](https://github.com/akashic-games/headless-driver/pull/40) Export ContentParameters and GameJsonParameters ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Other Change
+* `headless-driver`
+  * [#25](https://github.com/akashic-games/headless-driver/pull/25) Resolve circular dependency ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 2
+- [@yu-ogi](https://github.com/yu-ogi)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.4.2 (2019-05-16)
 
 #### Bug Fix
