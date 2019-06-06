@@ -1,13 +1,13 @@
 export type ContentLocation = (ContentParameters | GameJsonParameters);
 
-interface ContentParameters {
+export interface ContentParameters {
 	/**
 	 * content.json の URL。
 	 */
 	contentUrl: string;
 }
 
-interface GameJsonParameters {
+export interface GameJsonParameters {
 	/**
 	 * game.json のディレクトリ。
 	 */
