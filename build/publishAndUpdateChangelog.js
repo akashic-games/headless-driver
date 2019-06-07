@@ -3,20 +3,20 @@ const fs = require("fs");
 const execSync = require("child_process").execSync;
 
 if (process.argv.length < 3) {
-	console.error("Please enter command as follows: node updateChangelog.js [patch|minor|major]");
+	console.error("Please enter command as follows: node updateChangelog.js [patch|minor|major|empty]");
 	process.exit(1);
 }
 
 // どのバージョンを上げるのかを取得
 const target = process.argv[2];
-if (! /^patch|minor|major$/.test(target)) {
-	console.error("Please specify patch, minor or major.");
+if (! /^patch|minor|major|empty$/.test(target)) {
+	console.error("Please specify patch, minor, major or empty.");
 	process.exit(1);
 }
 
 const lernaPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna");
 // 更新するモジュールが無ければChangelog更新処理を行わず終了する
-if (parseInt(execSync(`${lernaPath} changed | wc -l`).toString(), 10) === 0) {
+if (target !== "empty" && parseInt(execSync(`${lernaPath} changed | wc -l`).toString(), 10) === 0) {
 	console.error("No modules to update version.");
 	process.exit(1);
 }
@@ -32,7 +32,11 @@ if (process.env.GITHUB_AUTH == null) {
 console.log("start to publish");
 // CHANGELOG作成時に必要になるのでpublish前のバージョンを保持しておく
 const beforeVersion = require(path.join(__dirname, "..", "lerna.json")).version;
-execSync(`${lernaPath} publish ${target} --yes`);
+if (target === "empty") {
+	execSync(`${lernaPath} publish --force-publish=* patch --yes`);
+} else {
+	execSync(`${lernaPath} publish ${target} --yes`);
+}
 console.log("end to publish");
 
 // 現在のCHANGELOGに次バージョンのログを追加
