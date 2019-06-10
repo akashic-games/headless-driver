@@ -23,13 +23,13 @@
   "dependencies": {
     "@akashic/amflow": "0.2.2",
     "@akashic/trigger": "0.1.5",
-    "node-fetch": "2.5.0"
+    "node-fetch": "2.6.0"
   },
   "devDependencies": {
     "@types/node-fetch": "2.3.5",
-    "prettier": "1.17.1",
+    "prettier": "1.18.2",
     "rimraf": "2.6.3",
-    "tslint": "5.16.0",
-    "typescript": "3.4.5"
+    "tslint": "5.17.0",
+    "typescript": "3.5.1"
   }
 }
