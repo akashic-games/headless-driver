@@ -26,8 +26,8 @@
     "node-fetch": "2.5.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "2.3.3",
-    "prettier": "1.17.0",
+    "@types/node-fetch": "2.3.5",
+    "prettier": "1.17.1",
     "rimraf": "2.6.3",
     "tslint": "5.16.0",
     "typescript": "3.4.5"
