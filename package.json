@@ -26,6 +26,7 @@
       "enhancement": "Enhancement",
       "bug": "Bug Fix",
       "documentation": "Documentation",
+      "dependencies": "Update Dependencies",
       "other": "Other Change"
     }
   },
