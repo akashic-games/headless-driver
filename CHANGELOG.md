@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v0.4.4 (2019-06-11)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#44](https://github.com/akashic-games/headless-driver/pull/44) 【v0.4.4】内部コンポーネントの更新(engineFiles@2.1.19, engineFiles@1.1.9) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#42](https://github.com/akashic-games/headless-driver/pull/42) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#41](https://github.com/akashic-games/headless-driver/pull/41) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Other Change
+* [#43](https://github.com/akashic-games/headless-driver/pull/43) Add `dependencies` label to lerna-changelog ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 2
+- [@yu-ogi](https://github.com/yu-ogi)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.4.3 (2019-06-06)
 
 #### Enhancement
