@@ -41,8 +41,14 @@ console.log("end to publish");
 
 // 現在のCHANGELOGに次バージョンのログを追加
 console.log("start to update changelog");
-const lernaChangeLogPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna-changelog");
-const addedLog = execSync(`${lernaChangeLogPath} --from v${beforeVersion}`).toString();
+let addedLog;
+if (target === "empty") {
+	const currentVersion = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "lerna.json")).toString()).version;
+	addedLog = `\n## ${currentVersion}\n* Ignorable change to fix broken publish ${beforeVersion}\n`;
+} else {
+	const lernaChangeLogPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna-changelog");
+	addedLog = execSync(`${lernaChangeLogPath} --from v${beforeVersion}`).toString();
+}
 const currentChangeLog = fs.readFileSync(path.join(__dirname, "..", "CHANGELOG.md")).toString();
 const nextChangeLog = currentChangeLog.replace("# CHANGELOG\n\n", "# CHANGELOG\n" + addedLog + "\n");
 fs.writeFileSync(path.join(__dirname, "..", "CHANGELOG.md"), nextChangeLog);
