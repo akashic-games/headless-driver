@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.4.5 (2019-06-11)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`
+  * [#46](https://github.com/akashic-games/headless-driver/pull/46) 【v0.4.5】内部コンポーネントの更新(engineFiles@2.1.19, engineFiles@1.1.9) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.4.4 (2019-06-11)
 
 #### Enhancement
