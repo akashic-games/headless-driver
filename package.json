@@ -13,6 +13,7 @@
     "publish:minor": "node build/publishAndUpdateChangelog.js minor",
     "publish:major": "node build/publishAndUpdateChangelog.js major",
     "publish:force-patch-all": "node build/republishAndUpdateChangelog.js",
+    "publish:prerelease": "lerna publish prerelease --dist-tag next --yes",
     "build": "lerna run build",
     "test": "lerna run test && npm run lint:md",
     "lint:md": "remark . --frail --no-stdout --quiet --rc-path ./.remarkrc"
