@@ -27,12 +27,13 @@
       "enhancement": "Enhancement",
       "bug": "Bug Fix",
       "documentation": "Documentation",
+      "dependencies": "Update Dependencies",
       "other": "Other Change",
       "republish": "Only Publish"
     }
   },
   "devDependencies": {
-    "lerna": "3.13.4",
+    "lerna": "3.15.0",
     "lerna-changelog": "0.8.2",
     "remark-cli": "6.0.1",
     "remark-lint": "6.0.4",

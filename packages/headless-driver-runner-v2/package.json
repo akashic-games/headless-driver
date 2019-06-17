@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver-runner-v2",
-  "version": "0.4.3",
+  "version": "0.4.9",
   "description": "A runner module for contents using Akashic Engine v2",
   "main": "lib/index.js",
   "scripts": {
@@ -21,13 +21,13 @@
   "license": "MIT",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@akashic/engine-files": "2.1.18",
-    "@akashic/headless-driver-runner": "0.4.3"
+    "@akashic/engine-files": "2.1.19",
+    "@akashic/headless-driver-runner": "0.4.4"
   },
   "devDependencies": {
-    "prettier": "1.17.0",
+    "prettier": "1.18.2",
     "rimraf": "2.6.3",
-    "tslint": "5.16.0",
-    "typescript": "3.4.5"
+    "tslint": "5.17.0",
+    "typescript": "3.5.1"
   }
 }
