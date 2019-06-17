@@ -3,20 +3,20 @@ const fs = require("fs");
 const execSync = require("child_process").execSync;
 
 if (process.argv.length < 3) {
-	console.error("Please enter command as follows: node updateChangelog.js [patch|minor|major|empty]");
+	console.error("Please enter command as follows: node updateChangelog.js [patch|minor|major]");
 	process.exit(1);
 }
 
 // どのバージョンを上げるのかを取得
 const target = process.argv[2];
-if (! /^patch|minor|major|empty$/.test(target)) {
-	console.error("Please specify patch, minor, major or empty.");
+if (! /^patch|minor|major$/.test(target)) {
+	console.error("Please specify patch, minor or major.");
 	process.exit(1);
 }
 
 const lernaPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna");
 // 更新するモジュールが無ければChangelog更新処理を行わず終了する
-if (target !== "empty" && parseInt(execSync(`${lernaPath} changed | wc -l`).toString(), 10) === 0) {
+if (parseInt(execSync(`${lernaPath} changed | wc -l`).toString(), 10) === 0) {
 	console.error("No modules to update version.");
 	process.exit(1);
 }
@@ -32,23 +32,13 @@ if (process.env.GITHUB_AUTH == null) {
 console.log("start to publish");
 // CHANGELOG作成時に必要になるのでpublish前のバージョンを保持しておく
 const beforeVersion = require(path.join(__dirname, "..", "lerna.json")).version;
-if (target === "empty") {
-	execSync(`${lernaPath} publish --force-publish=* patch --yes`);
-} else {
-	execSync(`${lernaPath} publish ${target} --yes`);
-}
+execSync(`${lernaPath} publish ${target} --yes`);
 console.log("end to publish");
 
 // 現在のCHANGELOGに次バージョンのログを追加
 console.log("start to update changelog");
-let addedLog;
-if (target === "empty") {
-	const currentVersion = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "lerna.json")).toString()).version;
-	addedLog = `\n## ${currentVersion}\n* Ignorable change to fix broken publish ${beforeVersion}\n`;
-} else {
-	const lernaChangeLogPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna-changelog");
-	addedLog = execSync(`${lernaChangeLogPath} --from v${beforeVersion}`).toString();
-}
+const lernaChangeLogPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna-changelog");
+const addedLog = execSync(`${lernaChangeLogPath} --from v${beforeVersion}`).toString();
 const currentChangeLog = fs.readFileSync(path.join(__dirname, "..", "CHANGELOG.md")).toString();
 const nextChangeLog = currentChangeLog.replace("# CHANGELOG\n\n", "# CHANGELOG\n" + addedLog + "\n");
 fs.writeFileSync(path.join(__dirname, "..", "CHANGELOG.md"), nextChangeLog);
