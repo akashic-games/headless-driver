@@ -3,7 +3,7 @@ const fs = require("fs");
 const execSync = require("child_process").execSync;
 
 if (process.argv.length < 3) {
-	console.error("Please enter command as follows: node updateChangelog.js [patch|minor|major]");
+	console.error("Please enter command as follows: node publishAndUpdateChangelog.js [patch|minor|major]");
 	process.exit(1);
 }
 

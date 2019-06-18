@@ -12,7 +12,7 @@
     "publish:patch": "node build/publishAndUpdateChangelog.js patch",
     "publish:minor": "node build/publishAndUpdateChangelog.js minor",
     "publish:major": "node build/publishAndUpdateChangelog.js major",
-    "publish:force-patch-all": "node build/republishAndUpdateChangelog.js",
+    "publish:force-patch-all": "node build/republishAndUpdateChangelog.js patch",
     "publish:prerelease": "lerna publish prerelease --dist-tag next --yes",
     "build": "lerna run build",
     "test": "lerna run test && npm run lint:md",
@@ -29,7 +29,7 @@
       "documentation": "Documentation",
       "dependencies": "Update Dependencies",
       "other": "Other Change",
-      "republish": "Only Publish"
+      "republish": "Republish"
     }
   },
   "devDependencies": {
