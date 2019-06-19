@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const execSync = require("child_process").execSync;
 
+const apiBaseUrl = "https://api.github.com/repos/akashic-games/headless-driver";
 const pullRequestBody = "※自動作成されたPRです";
 const pullRequestLabel = "republish";
 
@@ -51,14 +52,15 @@ console.log("end to bump version");
 
 // PRの作成とマージ処理
 console.log("start to create PR");
+// requireの場合bump前のバージョンを取得してしまうため、fs.readFileSyncを使用してbump後のバージョンを取得する
 const currentVersion = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "lerna.json")).toString()).version;
 // PRを作成する
-const pullReqDataString = execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X POST -d '{"title":"v${currentVersion}", "body":"${pullRequestBody}", "head":"akashic-games:${branchName}", "base":"master"}' https://api.github.com/repos/akashic-games/headless-driver/pulls`).toString();
+const pullReqDataString = execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X POST -d '{"title":"v${currentVersion}", "body":"${pullRequestBody}", "head":"akashic-games:${branchName}", "base":"master"}' ${apiBaseUrl}/pulls`).toString();
 const pullReqData = JSON.parse(pullReqDataString);
 // issue(PR)にラベル付ける
-execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X POST -d '{"labels": ["${pullRequestLabel}"]}' https://api.github.com/repos/akashic-games/headless-driver/issues/${pullReqData["number"]}/labels`);
+execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X POST -d '{"labels": ["${pullRequestLabel}"]}' ${apiBaseUrl}/issues/${pullReqData["number"]}/labels`);
 // PRのマージ
-execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X PUT https://api.github.com/repos/akashic-games/headless-driver/pulls/${pullReqData["number"]}/merge`);
+execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X PUT ${apiBaseUrl}/pulls/${pullReqData["number"]}/merge`);
 // ブランチ削除
 execCommand("git checkout origin/master");
 execCommand(`git branch -D ${branchName}`);
