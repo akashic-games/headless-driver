@@ -3,7 +3,7 @@ const fs = require("fs");
 const execSync = require("child_process").execSync;
 
 const pullRequestBody = "※自動作成されたPRです";
-const pullRequestLabels = ["republish"];
+const pullRequestLabel = "republish";
 
 if (process.argv.length < 3) {
 	console.error("Please enter command as follows: node republishAndUpdateChangelog.js [patch|minor|major]");
@@ -54,7 +54,7 @@ const currentVersion = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "le
 const pullReqDataString = execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X POST -d '{"title":"v${currentVersion}", "body":"${pullRequestBody}", "head":"akashic-games:${branchName}", "base":"master"}' https://api.github.com/repos/akashic-games/headless-driver/pulls`).toString();
 const pullReqData = JSON.parse(pullReqDataString);
 // issue(PR)にラベル付ける
-execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X POST -d '{"labels": ${pullRequestLabels}}' https://api.github.com/repos/akashic-games/headless-driver/issues/${pullReqData["number"]}/labels`);
+execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X POST -d '{"labels": ["${pullRequestLabel}"]}' https://api.github.com/repos/akashic-games/headless-driver/issues/${pullReqData["number"]}/labels`);
 // PRのマージ
 execSync(`curl --fail -H "Authorization: token ${process.env.GITHUB_AUTH}" -X PUT https://api.github.com/repos/akashic-games/headless-driver/pulls/${pullReqData["number"]}/merge`);
 // ブランチ削除
