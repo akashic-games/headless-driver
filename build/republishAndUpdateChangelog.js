@@ -5,6 +5,15 @@ const execSync = require("child_process").execSync;
 const pullRequestBody = "※自動作成されたPRです";
 const pullRequestLabel = "republish";
 
+function execCommand(command) {
+	const result = execSync(command);
+	if (execSync("echo $?").toString().replace("\n", "") !== "0") {
+		console.error(`Failed: ${command}.`);
+		process.exit(1);
+	}
+	return result;
+}
+
 if (process.argv.length < 3) {
 	console.error("Please enter command as follows: node republishAndUpdateChangelog.js [patch|minor|major]");
 	process.exit(1);
@@ -24,15 +33,6 @@ if (process.env.GITHUB_AUTH == null) {
 	process.exit(1);
 }
 
-function execCommand(command) {
-	const result = execSync(command);
-	if (execSync("echo $?").toString().replace("\n", "") !== "0") {
-		console.error(`Failed: ${command}.`);
-		process.exit(1);
-	}
-	return result;
-}
-
 // versionのbump処理
 console.log("start to bump version");
 const branchName = Date.now();
@@ -41,7 +41,9 @@ const lernaPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna");
 execCommand("git fetch");
 execCommand("git checkout origin/master");
 execCommand(`git checkout -b ${branchName}`);
+// 直前のcommitがlernaでversionをbumpしたcommitの場合、versionのbumpに失敗するので空コミットを一度挟んでおく
 execCommand("git commit --allow-empty -m 'empty'");
+// versionをbumpするためにはリモート側にブランチを用意しておく必要がある
 execCommand(`git push origin ${branchName}`);
 // versionのbumpしてcommit+push(ここでgithubリポジトリにタグとリリースノートが作成される)
 execCommand(`${lernaPath} version ${target} --allow-branch=* --force-publish=* --yes`);
