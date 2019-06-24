@@ -1,6 +1,6 @@
 const path = require("path");
 const execSync = require("child_process").execSync;
-const updateChangelog = require("./parts/updateChangelog").updateChangelog;
+const updateChangelog = require("./parts/updateChangelog");
 
 if (process.argv.length < 3) {
 	console.error("Please enter command as follows: node publishAndUpdateChangelog.js [patch|minor|major]");
