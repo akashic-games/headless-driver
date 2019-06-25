@@ -15,8 +15,8 @@ if (! /^patch|minor|major$/.test(target)) {
 }
 
 const lernaPath = path.join(__dirname, "..", "node_modules", ".bin", "lerna");
-// 更新するモジュールが無ければChangelog更新処理を行わず終了する
-if (!process.env.FORCE_PUBLISH && parseInt(execSync(`${lernaPath} changed | wc -l`).toString(), 10) === 0) {
+// 更新するモジュールが無ければChangelog更新処理を行わず終了する(ただし強制publishの場合は例外とする)
+if (process.env.PUBLISH_MODE !== "force" && parseInt(execSync(`${lernaPath} changed | wc -l`).toString(), 10) === 0) {
 	console.error("No modules to update version.");
 	process.exit(1);
 }
@@ -33,7 +33,7 @@ try {
 	console.log("start to publish");
 	// CHANGELOG作成時に必要になるのでpublish前のバージョンを保持しておく
 	const beforeVersion = require(path.join(__dirname, "..", "lerna.json")).version;
-	const forcePublishOption = process.env.FORCE_PUBLISH ? "--force-publish=*" : "";
+	const forcePublishOption = process.env.PUBLISH_MODE === "force" ? "--force-publish=*" : "";
 	execSync(`${lernaPath} publish ${target} ${forcePublishOption} --yes`);
 	console.log("end to publish");
 
