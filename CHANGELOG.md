@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.4.11 (2019-07-30)
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver`
+  * [#59](https://github.com/akashic-games/headless-driver/pull/59) Update dependency serve-handler to v6.1.0 ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#58](https://github.com/akashic-games/headless-driver/pull/58) Update dependency typescript to v3.5.3 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#57](https://github.com/akashic-games/headless-driver/pull/57) Update dependency serve-handler to v6.0.3 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#56](https://github.com/akashic-games/headless-driver/pull/56) Pin dependency cross-env to 5.2.0 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
 ## v0.4.10 (2019-06-28)
 
 #### Enhancement
