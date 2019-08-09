@@ -94,7 +94,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.runnerId).toBe("0");
 		expect(runner.engineVersion).toBe("2");
-		expect(runner.external).toEqual({ext: "0"});
+		expect(runner.external).toEqual({ ext: "0" });
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV2Game;
 		expect(game.playId).toBe(playId);
@@ -265,7 +265,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
-		expect(runner.external).toEqual({ext: "0"});
+		expect(runner.external).toEqual({ ext: "0" });
 
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {

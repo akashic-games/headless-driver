@@ -1,4 +1,4 @@
-export type ContentLocation = (ContentParameters | GameJsonParameters);
+export type ContentLocation = ContentParameters | GameJsonParameters;
 
 export interface ContentParameters {
 	/**

@@ -27,7 +27,7 @@ interface GameConfiguration {
 	definitions?: string[];
 	environment?: {
 		"sandbox-runtime"?: "1" | "2";
-		external: {[key: string]: string};
+		external: { [key: string]: string };
 	};
 }
 
@@ -59,7 +59,7 @@ export class RunnerManager {
 			let engineConfiguration: EngineConfiguration;
 			let gameConfiguration: GameConfiguration;
 			let contentUrl: string;
-			let external: {[name: string]: string} = {};
+			let external: { [name: string]: string } = {};
 
 			if ("contentUrl" in play) {
 				contentUrl = play.contentUrl;
