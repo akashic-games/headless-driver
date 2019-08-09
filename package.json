@@ -8,7 +8,7 @@
     "url": "https://github.com/akashic-games/headless-driver.git"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap --ci",
+    "postinstall": "lerna bootstrap --no-ci",
     "publish:patch": "node build/publishAndUpdateChangelog.js patch",
     "publish:minor": "node build/publishAndUpdateChangelog.js minor",
     "publish:major": "node build/publishAndUpdateChangelog.js major",
