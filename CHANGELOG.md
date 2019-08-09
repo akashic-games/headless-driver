@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.5.0 (2019-08-09)
+
+#### Republish
+* [#67](https://github.com/akashic-games/headless-driver/pull/67) Republish ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.4.12 (2019-08-09)
 
 #### Enhancement
