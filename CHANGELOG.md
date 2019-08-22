@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## v0.5.1 (2019-08-22)
+
+#### Enhancement
+* `headless-driver-runner-v1`
+  * [#70](https://github.com/akashic-games/headless-driver/pull/70) 【v0.5.1】内部コンポーネントの更新(engineFiles@2.1.22, engineFiles@1.1.11) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#69](https://github.com/akashic-games/headless-driver/pull/69) Update dependency rimraf to v3 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#60](https://github.com/akashic-games/headless-driver/pull/60) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver`
+  * [#68](https://github.com/akashic-games/headless-driver/pull/68) Update dependency jest to v24.9.0 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#64](https://github.com/akashic-games/headless-driver/pull/64) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.5.0 (2019-08-09)
 
 #### Republish
