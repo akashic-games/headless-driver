@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## v0.5.3 (2019-09-06)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#74](https://github.com/akashic-games/headless-driver/pull/74) 【v0.5.3】内部コンポーネントの更新(engineFiles@2.1.24, engineFiles@1.1.11) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* Other
+  * [#61](https://github.com/akashic-games/headless-driver/pull/61) Update dependency remark-cli to v7 ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#72](https://github.com/akashic-games/headless-driver/pull/72) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver`
+  * [#71](https://github.com/akashic-games/headless-driver/pull/71) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.5.2 (2019-08-30)
 
 #### Enhancement
