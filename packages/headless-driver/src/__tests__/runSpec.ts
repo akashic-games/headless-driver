@@ -386,4 +386,64 @@ describe("コンテンツ動作テスト: 異常系", () => {
 
 		runner.stop();
 	});
+
+	it("AkashicV1 ゲームはSandbox内で実行され危険なコードをエラーとする", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.untrusted.json")
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new RunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active"
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+
+		const handleError = () => {
+			return new Promise<any>(async (resolve, reject) => {
+				runner.errorTrigger.handle((e: any) => {
+					resolve(e);
+				});
+				await runner.start();
+			});
+		};
+
+		const error = await handleError();
+		expect(error.message).toBe("process.exit is not a function");
+		runner.stop();
+	});
+
+	it("AkashicV2 ゲームはSandbox内で実行され危険なコードをエラーとする", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.untrusted.json")
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new RunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active"
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+
+		const handleError = () => {
+			return new Promise<any>(async (resolve, reject) => {
+				runner.errorTrigger.add((e: any) => {
+					resolve(e);
+				});
+				await runner.start();
+			});
+		};
+
+		const error = await handleError();
+		expect(error.message).toBe("Cannot read property 'require' of undefined");
+		runner.stop();
+	});
 });
