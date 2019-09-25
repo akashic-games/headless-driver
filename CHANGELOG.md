@@ -1,5 +1,52 @@
 # CHANGELOG
 
+## v0.5.7 (2019-09-25)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#82](https://github.com/akashic-games/headless-driver/pull/82) 【v0.5.7】内部コンポーネントの更新(engineFiles@2.1.27, engineFiles@1.1.12) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* Other
+  * [#81](https://github.com/akashic-games/headless-driver/pull/81) Update dependency cross-env to v6 ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner`
+  * [#80](https://github.com/akashic-games/headless-driver/pull/80) Update dependency @types/node-fetch to v2.5.2 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
+## v0.5.6 (2019-09-20)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#79](https://github.com/akashic-games/headless-driver/pull/79) 【v0.5.6】内部コンポーネントの更新(engineFiles@2.1.26, engineFiles@1.1.12) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
+## v0.5.5 (2019-09-20)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#78](https://github.com/akashic-games/headless-driver/pull/78) 【v0.5.5】内部コンポーネントの更新(engineFiles@2.1.25, engineFiles@1.1.12) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#77](https://github.com/akashic-games/headless-driver/pull/77) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#76](https://github.com/akashic-games/headless-driver/pull/76) Update dependency typescript to v3.6.3 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
+## v0.5.4 (2019-09-13)
+
+#### Enhancement
+* `headless-driver-runner-v1`
+  * [#75](https://github.com/akashic-games/headless-driver/pull/75) 【v0.5.4】内部コンポーネントの更新(engineFiles@2.1.24, engineFiles@1.1.12) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.5.3 (2019-09-06)
 
 #### Enhancement

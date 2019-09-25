@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver-runner",
-  "version": "0.5.3",
+  "version": "0.5.7",
   "description": "A runner module for contents using Akashic Engine",
   "main": "lib/index.js",
   "scripts": {
@@ -26,10 +26,10 @@
     "node-fetch": "2.6.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "2.5.0",
+    "@types/node-fetch": "2.5.2",
     "prettier": "1.18.2",
     "rimraf": "3.0.0",
-    "tslint": "5.19.0",
-    "typescript": "3.6.2"
+    "tslint": "5.20.0",
+    "typescript": "3.6.3"
   }
 }
