@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.5.8 (2019-10-01)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#85](https://github.com/akashic-games/headless-driver/pull/85) 【v0.5.8】内部コンポーネントの更新(engineFiles@2.1.28, engineFiles@1.1.12) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver`
+  * [#84](https://github.com/akashic-games/headless-driver/pull/84) Update dependency serve-handler to v6.1.2 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.5.7 (2019-09-25)
 
 #### Enhancement
