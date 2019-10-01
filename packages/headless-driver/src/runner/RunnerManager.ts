@@ -1,8 +1,11 @@
 import { loadFile, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
+import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
+import { NodeVM, NodeVMOptions, VMScript } from "vm2";
+import * as ExecVmScript from "../ExecuteVmScript";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
@@ -38,9 +41,20 @@ export class RunnerManager {
 	private runners: (RunnerV1 | RunnerV2)[] = [];
 	private nextRunnerId: number = 0;
 	private playManager: PlayManager;
+	private nvm: NodeVM;
 
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
+
+		const nvmOpt: NodeVMOptions = {
+			console: "inherit",
+			require: {
+				context: "sandbox",
+				external: true,
+				builtin: ["*"]
+			}
+		};
+		this.nvm = new NodeVM(nvmOpt);
 	}
 
 	/**
@@ -105,11 +119,15 @@ export class RunnerManager {
 			}
 
 			const runnerId = `${this.nextRunnerId++}`;
+			const filePath = ExecVmScript.getFilePath();
+			const str = fs.readFileSync(filePath, { encoding: "utf8" });
+			const script = new VMScript(str);
+			const functionInSandbox = this.nvm.run(script, filePath);
 
 			if (version === "2") {
 				getSystemLogger().info("v2 content");
-				runner = new RunnerV2({
-					contentUrl,
+				const runnerParams = {
+					contentUrl: contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
 					configurationBaseUrl,
@@ -121,15 +139,12 @@ export class RunnerManager {
 					external,
 					gameArgs: params.gameArgs,
 					player: params.player
-				});
-				runner.errorTrigger.addOnce((err: any) => {
-					getSystemLogger().error(err);
-					this.stopRunner(runnerId);
-				});
+				};
+				runner = functionInSandbox.createRunnerV2(runnerParams, (_runnerId: string) => this.stopRunner(_runnerId));
 			} else {
 				getSystemLogger().info("v1 content");
-				runner = new RunnerV1({
-					contentUrl,
+				const runnerParams = {
+					contentUrl: contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
 					configurationBaseUrl,
@@ -141,12 +156,8 @@ export class RunnerManager {
 					external,
 					gameArgs: params.gameArgs,
 					player: params.player
-				});
-				runner.errorTrigger.handle((err: any) => {
-					getSystemLogger().error(err);
-					this.stopRunner(runnerId);
-					return true;
-				});
+				};
+				runner = functionInSandbox.createRunnerV1(runnerParams, (_runnerId: string) => this.stopRunner(_runnerId));
 			}
 
 			this.runners.push(runner);
