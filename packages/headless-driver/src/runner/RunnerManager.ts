@@ -162,7 +162,7 @@ export class RunnerManager {
 					player: params.player
 				};
 				runner = functionInSandbox.createRunnerV1(runnerParams);
-				runner.errorTrigger.addOnce((err: any) => {
+				runner.errorTrigger.handle((err: any) => {
 					getSystemLogger().error(err);
 					this.stopRunner(runnerId);
 					return true;
