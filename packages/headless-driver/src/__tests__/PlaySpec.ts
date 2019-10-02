@@ -14,10 +14,7 @@ const contentUrl = process.env.CONTENT_URL_V2;
 
 describe("プレー周りのテスト", () => {
 	it("各インスタンスを生成できる", async () => {
-		jest.spyOn(ExecVmScript, "getFilePath").mockImplementation(() => {
-			const targetPath = path.resolve(__dirname, "../../lib/", "ExecuteVmScript.js");
-			return targetPath;
-		});
+		jest.spyOn(ExecVmScript, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScript.js"));
 
 		const playManager = new PlayManager();
 		const playId0 = await playManager.createPlay({
