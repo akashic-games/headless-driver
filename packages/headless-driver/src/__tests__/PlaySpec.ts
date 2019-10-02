@@ -1,5 +1,3 @@
-import * as path from "path";
-import * as ExecVmScript from "../ExecuteVmScript";
 import { setSystemLogger } from "../Logger";
 import { AMFlowStore } from "../play/amflow/AMFlowStore";
 import { AMFlowClientManager } from "../play/AMFlowClientManager";
@@ -14,8 +12,6 @@ const contentUrl = process.env.CONTENT_URL_V2;
 
 describe("プレー周りのテスト", () => {
 	it("各インスタンスを生成できる", async () => {
-		jest.spyOn(ExecVmScript, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScript.js"));
-
 		const playManager = new PlayManager();
 		const playId0 = await playManager.createPlay({
 			contentUrl

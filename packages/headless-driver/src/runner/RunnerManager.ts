@@ -140,7 +140,11 @@ export class RunnerManager {
 					gameArgs: params.gameArgs,
 					player: params.player
 				};
-				runner = functionInSandbox.createRunnerV2(runnerParams, (_runnerId: string) => this.stopRunner(_runnerId));
+				runner = functionInSandbox.createRunnerV2(runnerParams);
+				runner.errorTrigger.addOnce((err: any) => {
+					getSystemLogger().error(err);
+					this.stopRunner(runnerId);
+				});
 			} else {
 				getSystemLogger().info("v1 content");
 				const runnerParams = {
@@ -157,7 +161,11 @@ export class RunnerManager {
 					gameArgs: params.gameArgs,
 					player: params.player
 				};
-				runner = functionInSandbox.createRunnerV1(runnerParams, (_runnerId: string) => this.stopRunner(_runnerId));
+				runner = functionInSandbox.createRunnerV1(runnerParams);
+				runner.errorTrigger.addOnce((err: any) => {
+					getSystemLogger().error(err);
+					this.stopRunner(runnerId);
+				});
 			}
 
 			this.runners.push(runner);

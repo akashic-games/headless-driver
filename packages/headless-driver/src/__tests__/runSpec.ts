@@ -1,7 +1,6 @@
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as path from "path";
-import * as ExecVmScript from "../ExecuteVmScript";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
@@ -14,14 +13,6 @@ const contentUrlV2 = process.env.CONTENT_URL_V2;
 const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2;
 
 setSystemLogger(new SilentLogger());
-
-const spyGetFilePath = jest.spyOn(ExecVmScript, "getFilePath");
-beforeAll(() => {
-	spyGetFilePath.mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScript.js"));
-});
-afterAll(() => {
-	spyGetFilePath.mockReset();
-});
 
 describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V1 のコンテンツが動作できる", async () => {
@@ -399,7 +390,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("AkashicV1 ゲームはSandbox内で実行され危険なコードをエラーとする", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "danger.game.refers.process.json")
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.refers.process.json")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -429,7 +420,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("AkashicV2 ゲームはSandbox内で実行され危険なコードをエラーとする", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "danger.game.refers.process.json")
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.refers.process.json")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
