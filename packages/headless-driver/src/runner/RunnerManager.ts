@@ -1,4 +1,4 @@
-import { loadFile, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { loadFile, RunnerExecutionMode, RunnerParameters, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as fs from "fs";
@@ -59,6 +59,8 @@ export class RunnerManager {
 
 	/**
 	 * Runner を作成する。
+	 * Runner は VM 上で実行される。
+	 * ( VM に関しては 各バージョンの Node VM モジュールを参照してください。)
 	 * @param params パラメータ
 	 */
 	async createRunner(params: CreateRunnerParameters): Promise<string> {
@@ -126,8 +128,8 @@ export class RunnerManager {
 
 			if (version === "2") {
 				getSystemLogger().info("v2 content");
-				const runnerParams = {
-					contentUrl: contentUrl,
+				const runnerParams: RunnerParameters = {
+					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
 					configurationBaseUrl,
@@ -147,8 +149,8 @@ export class RunnerManager {
 				});
 			} else {
 				getSystemLogger().info("v1 content");
-				const runnerParams = {
-					contentUrl: contentUrl,
+				const runnerParams: RunnerParameters = {
+					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
 					configurationBaseUrl,

@@ -11,7 +11,7 @@ function main(param) {
 		});
 		scene.append(rect);
 	});
-	// sandbox内の場合、not functionでエラーとなる
+	// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 	process.exit();
 }
 

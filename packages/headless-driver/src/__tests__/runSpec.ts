@@ -387,7 +387,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("AkashicV1 ゲームはSandbox内で実行され危険なコードをエラーとする", async () => {
+	it("Akashic V1 のコンテンツは NodeVM 上で実行されている", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.refers.process.json")
@@ -403,9 +403,11 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 
-		const handleError = () => {
+		const mockFn = jest.fn();
+		const handleError = async () => {
 			return new Promise<any>(async (resolve, reject) => {
 				runner.errorTrigger.handle((e: any) => {
+					mockFn();
 					resolve(e);
 				});
 				await runner.start();
@@ -413,11 +415,12 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		};
 
 		const error = await handleError();
-		expect(error.message).toBe("process.exit is not a function");
+		expect(mockFn).toHaveBeenCalled();
+		expect(error instanceof Error).toBeTruthy();
 		runner.stop();
 	});
 
-	it("AkashicV2 ゲームはSandbox内で実行され危険なコードをエラーとする", async () => {
+	it("Akashic V2 のコンテンツは NodeVM 上で実行されている", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.refers.process.json")
@@ -433,9 +436,11 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 
+		const mockFn = jest.fn();
 		const handleError = () => {
 			return new Promise<any>(async (resolve, reject) => {
 				runner.errorTrigger.add((e: any) => {
+					mockFn();
 					resolve(e);
 				});
 				await runner.start();
@@ -443,7 +448,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		};
 
 		const error = await handleError();
-		expect(error.message).toBe("process.exit is not a function");
+		expect(mockFn).toHaveBeenCalled();
+		expect(error instanceof Error).toBeTruthy();
 		runner.stop();
 	});
 });
