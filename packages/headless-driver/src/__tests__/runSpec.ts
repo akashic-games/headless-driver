@@ -403,11 +403,11 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 
-		const mockFn = jest.fn();
+		const errorCalledFn = jest.fn();
 		const handleError = async () => {
 			return new Promise<any>(async (resolve, reject) => {
 				runner.errorTrigger.handle((e: any) => {
-					mockFn();
+					errorCalledFn();
 					resolve(e);
 				});
 				await runner.start();
@@ -415,7 +415,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		};
 
 		const error = await handleError();
-		expect(mockFn).toHaveBeenCalled();
+		expect(errorCalledFn).toHaveBeenCalled();
 		expect(error instanceof Error).toBeTruthy();
 		runner.stop();
 	});
@@ -436,11 +436,11 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 
-		const mockFn = jest.fn();
+		const errorCalledFn = jest.fn();
 		const handleError = () => {
 			return new Promise<any>(async (resolve, reject) => {
 				runner.errorTrigger.add((e: any) => {
-					mockFn();
+					errorCalledFn();
 					resolve(e);
 				});
 				await runner.start();
@@ -448,7 +448,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		};
 
 		const error = await handleError();
-		expect(mockFn).toHaveBeenCalled();
+		expect(errorCalledFn).toHaveBeenCalled();
 		expect(error instanceof Error).toBeTruthy();
 		runner.stop();
 	});

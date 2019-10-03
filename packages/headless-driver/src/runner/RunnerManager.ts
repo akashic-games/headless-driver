@@ -1,4 +1,4 @@
-import { loadFile, RunnerExecutionMode, RunnerParameters, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { loadFile, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as fs from "fs";
@@ -59,8 +59,8 @@ export class RunnerManager {
 
 	/**
 	 * Runner を作成する。
-	 * Runner は VM 上で実行される。
-	 * ( VM に関しては 各バージョンの Node VM モジュールを参照してください。)
+	 * Runner は Node.js の Virtual Machine 上で実行される。
+	 * 主な制限事項として process へのアクセスが制限される。
 	 * @param params パラメータ
 	 */
 	async createRunner(params: CreateRunnerParameters): Promise<string> {
@@ -128,7 +128,7 @@ export class RunnerManager {
 
 			if (version === "2") {
 				getSystemLogger().info("v2 content");
-				const runnerParams: RunnerParameters = {
+				runner = functionInSandbox.createRunnerV2({
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
@@ -141,15 +141,14 @@ export class RunnerManager {
 					external,
 					gameArgs: params.gameArgs,
 					player: params.player
-				};
-				runner = functionInSandbox.createRunnerV2(runnerParams);
+				});
 				runner.errorTrigger.addOnce((err: any) => {
 					getSystemLogger().error(err);
 					this.stopRunner(runnerId);
 				});
 			} else {
 				getSystemLogger().info("v1 content");
-				const runnerParams: RunnerParameters = {
+				runner = functionInSandbox.createRunnerV1({
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
@@ -162,8 +161,7 @@ export class RunnerManager {
 					external,
 					gameArgs: params.gameArgs,
 					player: params.player
-				};
-				runner = functionInSandbox.createRunnerV1(runnerParams);
+				});
 				runner.errorTrigger.handle((err: any) => {
 					getSystemLogger().error(err);
 					this.stopRunner(runnerId);

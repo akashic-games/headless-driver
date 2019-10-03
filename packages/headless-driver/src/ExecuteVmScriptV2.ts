@@ -8,6 +8,6 @@ export function createRunnerV2(params: RunnerParameters): RunnerV2 {
 
 export function getFilePath(): string {
 	// vm2 で実行するためにビルド生成結果の js ファイルのパスが必要となる。
-	const fileName = path.basename(__filename, path.extname(__filename));
-	return path.join(__dirname, "..", "lib", fileName + ".js");
+	const basename = path.basename(__filename, path.extname(__filename));
+	return path.join(__dirname, "..", "lib", basename + ".js");
 }
