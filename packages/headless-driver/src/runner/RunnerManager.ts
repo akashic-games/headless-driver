@@ -4,8 +4,9 @@ import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
-import { NodeVM, NodeVMOptions, VMScript } from "vm2";
-import * as ExecVmScript from "../ExecuteVmScript";
+import { NodeVM, VMScript } from "vm2";
+import * as ExecVmScriptV1 from "../ExecuteVmScriptV1";
+import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
@@ -46,15 +47,14 @@ export class RunnerManager {
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
 
-		const nvmOpt: NodeVMOptions = {
+		this.nvm = new NodeVM({
 			console: "inherit",
 			require: {
 				context: "sandbox",
 				external: true,
 				builtin: ["*"]
 			}
-		};
-		this.nvm = new NodeVM(nvmOpt);
+		});
 	}
 
 	/**
@@ -121,7 +121,7 @@ export class RunnerManager {
 			}
 
 			const runnerId = `${this.nextRunnerId++}`;
-			const filePath = ExecVmScript.getFilePath();
+			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
 			const script = new VMScript(str);
 			const functionInSandbox = this.nvm.run(script, filePath);
