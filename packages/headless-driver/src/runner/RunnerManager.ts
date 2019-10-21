@@ -48,11 +48,13 @@ export class RunnerManager {
 		this.playManager = playManager;
 
 		this.nvm = new NodeVM({
-			console: "inherit",
+			sandbox: {
+				vmLoadFile: loadFile
+			},
 			require: {
 				context: "sandbox",
 				external: true,
-				builtin: ["*"]
+				builtin: ["path"] // ExecuteVmScript で使用するため path は許可
 			}
 		});
 	}
