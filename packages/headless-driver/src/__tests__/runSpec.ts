@@ -438,7 +438,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 
 		const errorCalledFn = jest.fn();
 		const handleError = () => {
-			return new Promise<any>(async (resolve, reject) => {
+			return new Promise<any>((resolve, reject) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
@@ -472,7 +472,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 
 		const errorCalledFn = jest.fn();
 		const handleError = () => {
-			return new Promise<any>(async (resolve, reject) => {
+			return new Promise<any>((resolve, reject) => {
 				runner.errorTrigger.handle((e: any) => {
 					errorCalledFn();
 					resolve(e);
