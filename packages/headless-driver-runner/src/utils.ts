@@ -19,8 +19,8 @@ export async function loadFile(url: string): Promise<string>;
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
 
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T> {
-	const isVmFuncDefined = new Function(`return typeof vmLoadFile === "function"`);
-	if (isVmFuncDefined()) {
+	const isVmLoadFileDefined = new Function(`return typeof vmLoadFile === "function"`);
+	if (isVmLoadFileDefined()) {
 		// RunnerManager の vm.sandbox で定義された function が存在する場合は、VM上で動作する。
 		const vmLoadFunc = new Function("url", "opt", "return vmLoadFile(url, opt);");
 		return await vmLoadFunc(url, opt);

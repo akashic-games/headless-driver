@@ -1,5 +1,4 @@
 const game = g.game;
-
 function main(param) {
 	const scene = new g.Scene({game});
 	scene.loaded.add(function () {
@@ -12,10 +11,11 @@ function main(param) {
 		scene.append(rect);
 	});
 
-	const http = global._require("http");
-	http.get("http://localhost:3000", (res) => {
-		// nop
-	});
+	// 本来ならg._requireでnodeコアモジュールはエラーとなるが、何らかの方法でrequireが使用できるようにされた場合にVMでエラーとして弾く。
+	const fs = global._require("fs");
+	var dir = fs.readdirSync("/");
+	console.log(dir);
+
 }
 
 module.exports = main;

@@ -404,15 +404,15 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 
 		const errorCalledFn = jest.fn();
-		const handleError = async () => {
-			return new Promise<any>(async (resolve, reject) => {
+		const handleError = () => {
+			return new Promise<any>((resolve, reject) => {
 				runner.errorTrigger.handle((e: any) => {
 					errorCalledFn();
 					resolve(e);
 				});
-				await runner.start();
 			});
 		};
+		runner.start();
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -443,9 +443,9 @@ describe("コンテンツ動作テスト: 異常系", () => {
 					errorCalledFn();
 					resolve(e);
 				});
-				await runner.start();
 			});
 		};
+		runner.start();
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -453,10 +453,10 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V1 のコンテンツは NodeVM 上で実行されていて、コンテンツでfsの使用を防げる。", async () => {
+	it("Akashic V1 のコンテンツは NodeVM 上で実行されていて、コンテンツでrequireの使用を防げる。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.refers.fs.json")
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.refers.require.json")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -471,15 +471,15 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		(runnerManager as any).nvm.run("global._require = require");
 
 		const errorCalledFn = jest.fn();
-		const handleError = async () => {
+		const handleError = () => {
 			return new Promise<any>(async (resolve, reject) => {
 				runner.errorTrigger.handle((e: any) => {
 					errorCalledFn();
 					resolve(e);
 				});
-				await runner.start();
 			});
 		};
+		runner.start();
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -487,10 +487,10 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V2 のコンテンツは NodeVM 上で実行されていて、コンテンツでfsの使用を防げる。", async () => {
+	it("Akashic V2 のコンテンツは NodeVM 上で実行されていて、コンテンツでrequireの使用を防げる。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.refers.fs.json")
+			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.refers.require.json")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -506,82 +506,14 @@ describe("コンテンツ動作テスト: 異常系", () => {
 
 		const errorCalledFn = jest.fn();
 		const handleError = () => {
-			return new Promise<any>(async (resolve, reject) => {
+			return new Promise<any>((resolve, reject) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
 				});
-				await runner.start();
 			});
 		};
-
-		const error = await handleError();
-		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
-		runner.stop();
-	});
-
-	it("Akashic V1 のコンテンツは NodeVM 上で実行されていて、コンテンツでhttpの使用を防げる。", async () => {
-		const playManager = new PlayManager();
-		const playId = await playManager.createPlay({
-			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.refers.http.json")
-		});
-		const activeAMFlow = playManager.createAMFlow(playId);
-		const playToken = playManager.createPlayToken(playId, activePermission);
-		const runnerManager = new RunnerManager(playManager);
-		const runnerId = await runnerManager.createRunner({
-			playId,
-			amflow: activeAMFlow,
-			playToken,
-			executionMode: "active"
-		});
-		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
-		(runnerManager as any).nvm.run("global._require = require");
-
-		const errorCalledFn = jest.fn();
-		const handleError = async () => {
-			return new Promise<any>(async (resolve, reject) => {
-				runner.errorTrigger.handle((e: any) => {
-					errorCalledFn();
-					resolve(e);
-				});
-				await runner.start();
-			});
-		};
-
-		const error = await handleError();
-		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
-		runner.stop();
-	});
-
-	it("Akashic V2 のコンテンツは NodeVM 上で実行されていて、コンテンツでhttpの使用を防げる。", async () => {
-		const playManager = new PlayManager();
-		const playId = await playManager.createPlay({
-			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.refers.http.json")
-		});
-		const activeAMFlow = playManager.createAMFlow(playId);
-		const playToken = playManager.createPlayToken(playId, activePermission);
-		const runnerManager = new RunnerManager(playManager);
-		const runnerId = await runnerManager.createRunner({
-			playId,
-			amflow: activeAMFlow,
-			playToken,
-			executionMode: "active"
-		});
-		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
-		(runnerManager as any).nvm.run("global._require = require");
-
-		const errorCalledFn = jest.fn();
-		const handleError = () => {
-			return new Promise<any>(async (resolve, reject) => {
-				runner.errorTrigger.add((e: any) => {
-					errorCalledFn();
-					resolve(e);
-				});
-				await runner.start();
-			});
-		};
+		runner.start();
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();

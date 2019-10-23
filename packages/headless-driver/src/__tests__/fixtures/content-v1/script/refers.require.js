@@ -10,11 +10,10 @@ function main(param) {
 		});
 		scene.append(rect);
 	});
-
+	// 本来ならg._requireでnodeコアモジュールはエラーとなるが、何らかの方法でrequireが使用できるようにされた場合にVMでエラーとして弾く。
 	const fs = global._require("fs");
-	var dir = fs.readdirSync("/");
-	console.log(dir);
-
+	const dir = fs.readdirSync("/");
+	console.log(dir)
 }
 
 module.exports = main;
