@@ -33,6 +33,14 @@ function main(param) {
 				text: "data_from_content"
 			}));
 			return;
+		} else if (message.data === "process") {
+			// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
+			process.exit();
+		} else if (message.data === "require") {
+			// 本来ならg._requireでnodeコアモジュールはエラーとなるが、何らかの方法でrequireが使用できるようにされた場合にVMでエラーとして弾く。
+			const fs = global._require("fs");
+			var dir = fs.readdirSync("/");
+			console.log(dir);
 		}
 		game.external.send(message);
 	});

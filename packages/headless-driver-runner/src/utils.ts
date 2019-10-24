@@ -19,23 +19,22 @@ export async function loadFile(url: string): Promise<string>;
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
 
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T> {
-	const isVmLoadFileDefined = new Function(`return typeof vmLoadFile === "function"`);
-	if (isVmLoadFileDefined()) {
-		// RunnerManager の vm.sandbox で定義された function が存在する場合は、VM上で動作する。
-		const vmLoadFunc = new Function("url", "opt", "return vmLoadFile(url, opt);");
-		return await vmLoadFunc(url, opt);
+	const fs = require("fs");
+	const fetch = require("node-fetch");
+	if (isHttpProtocol(url)) {
+		const res = await fetch(url, { method: "GET" });
+		return opt.json ? res.json() : res.text();
 	} else {
-		// vm により require が制限されているため、hostで動作するこのpathでモジュールを読み込む。
-		const fs = require("fs");
-		const fetch = require("node-fetch");
-		if (isHttpProtocol(url)) {
-			const res = await fetch(url, { method: "GET" });
-			return opt.json ? res.json() : res.text();
-		} else {
-			const str = fs.readFileSync(url, { encoding: opt.encoding ? opt.encoding : "utf8" });
-			return opt.json ? JSON.parse(str) : str;
-		}
+		const str = fs.readFileSync(url, { encoding: opt.encoding ? opt.encoding : "utf8" });
+		return opt.json ? JSON.parse(str) : str;
 	}
+}
+
+// SandBox内でのみ使用可能な関数の宣言
+declare function vmLoadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
+
+export async function loadFileInVm<T>(url: string, opt?: ReadFileOption): Promise<T> {
+	return await vmLoadFile(url, opt);
 }
 
 export function isHttpProtocol(url: string): boolean {

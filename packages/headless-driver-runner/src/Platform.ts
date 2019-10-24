@@ -1,5 +1,5 @@
 import { AMFlow } from "@akashic/amflow";
-import { loadFile } from "./utils";
+import { loadFileInVm } from "./utils";
 
 export interface PlatformParameters {
 	assetBaseUrl: string;
@@ -30,7 +30,7 @@ export abstract class Platform {
 	}
 
 	loadGameConfiguration(url: string, callback: (err: Error, data?: object) => void): void {
-		loadFile<any>(url, { json: true })
+		loadFileInVm<any>(url, { json: true })
 			.then(json => callback(null, json))
 			.catch(e => callback(e));
 	}
