@@ -49,12 +49,14 @@ export class RunnerManager {
 
 		this.nvm = new NodeVM({
 			sandbox: {
-				vmLoadFile: loadFile
+				trustedFunctions: {
+					loadFile: loadFile
+				}
 			},
 			require: {
 				context: "sandbox",
 				external: true,
-				builtin: ["path"] // ExecuteVmScript で使用するため path は許可
+				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
 			}
 		});
 	}

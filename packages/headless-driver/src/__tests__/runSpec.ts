@@ -1,6 +1,8 @@
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as path from "path";
+import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
+import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
@@ -13,6 +15,11 @@ const contentUrlV2 = process.env.CONTENT_URL_V2;
 const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2;
 
 setSystemLogger(new SilentLogger());
+
+beforeAll(() => {
+	jest.spyOn(ExecuteVmScriptV1, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV1.js"));
+	jest.spyOn(ExecuteVmScriptV2, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV2.js"));
+});
 
 describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V1 のコンテンツが動作できる", async () => {
@@ -387,7 +394,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V1 のコンテンツは NodeVM 上で実行されている", async () => {
+	it("Akashic V1 のコンテンツでは process を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV1
@@ -414,6 +421,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
+		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, null, ":akashic", "process"]);
 
 		const error = await handleError();
@@ -422,7 +430,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V2 のコンテンツは NodeVM 上で実行されている", async () => {
+	it("Akashic V2 のコンテンツでは process を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -449,6 +457,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
+		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, null, ":akashic", "process"]);
 
 		const error = await handleError();
@@ -457,7 +466,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V1 のコンテンツは NodeVM 上で実行されていて、コンテンツでrequireの使用を防げる。", async () => {
+	it("Akashic V1 のコンテンツでは node の require() を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV1
@@ -472,6 +481,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
+		// 本来なら nodeコアモジュールの require() は g._require() で握り潰されエラーとなるが、
+		// 何らかの方法で触る事ができても防げる事を確認するため、require() を触れるようにしている。
 		(runnerManager as any).nvm.run("global._require = require");
 		await runnerManager.startRunner(runner.runnerId);
 
@@ -493,7 +504,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V2 のコンテンツは NodeVM 上で実行されていて、コンテンツでrequireの使用を防げる。", async () => {
+	it("Akashic V2 のコンテンツでは node の require() を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -508,6 +519,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+		// 本来なら nodeコアモジュールの require() は g._require() で握り潰されエラーとなるが、
+		// 何らかの方法で触る事ができても防げる事を確認するため、require() を触れるようにしている。
 		(runnerManager as any).nvm.run("global._require = require");
 		await runnerManager.startRunner(runner.runnerId);
 

@@ -30,13 +30,6 @@ export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>
 	}
 }
 
-// SandBox内でのみ使用可能な関数の宣言
-declare function vmLoadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
-
-export async function loadFileInVm<T>(url: string, opt?: ReadFileOption): Promise<T> {
-	return await vmLoadFile(url, opt);
-}
-
 export function isHttpProtocol(url: string): boolean {
 	return /^(http|https)\:\/\//.test(url);
 }
