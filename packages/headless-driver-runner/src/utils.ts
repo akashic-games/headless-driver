@@ -19,6 +19,7 @@ export async function loadFile(url: string): Promise<string>;
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
 
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T> {
+	// VM により ファイル読み込み時の require() が制限されているため、ここでモジュールを読み込む。
 	const fs = require("fs");
 	const fetch = require("node-fetch");
 	if (isHttpProtocol(url)) {
