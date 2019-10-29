@@ -132,7 +132,7 @@ export class RunnerManager {
 
 			if (version === "2") {
 				getSystemLogger().info("v2 content");
-				runner = functionInSandbox.createRunnerV2({
+				runner = (functionInSandbox as typeof ExecVmScriptV2).createRunnerV2({
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
@@ -152,7 +152,7 @@ export class RunnerManager {
 				});
 			} else {
 				getSystemLogger().info("v1 content");
-				runner = functionInSandbox.createRunnerV1({
+				runner = (functionInSandbox as typeof ExecVmScriptV1).createRunnerV1({
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
