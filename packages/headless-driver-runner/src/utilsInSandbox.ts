@@ -1,4 +1,7 @@
-import { ReadFileOption } from "./utils";
+export interface ReadFileOption {
+	encoding?: string;
+	json?: boolean;
+}
 
 /**
  * ファイルの読み込みを行う。

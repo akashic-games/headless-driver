@@ -1,5 +1,5 @@
-import { loadFile } from "@akashic/headless-driver-runner";
 import { RunnerManager } from "../../runner/RunnerManager";
+import { loadFile } from "../../utils";
 
 const gameJsonUrlV1 = process.env.GAME_JSON_URL_V1;
 const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2;

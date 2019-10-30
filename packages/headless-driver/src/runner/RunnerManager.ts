@@ -1,4 +1,4 @@
-import { loadFile, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as fs from "fs";
@@ -10,6 +10,7 @@ import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
+import { loadFile } from "../utils";
 
 export interface CreateRunnerParameters {
 	playId: string;

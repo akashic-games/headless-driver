@@ -1,7 +1,6 @@
-export interface ReadFileOption {
-	encoding?: string;
-	json?: boolean;
-}
+import { ReadFileOption } from "@akashic/headless-driver-runner";
+import { readFileSync } from "fs";
+import fetch from "node-fetch";
 
 /**
  * テキストファイルの読み込みを行う。
@@ -18,15 +17,13 @@ export async function loadFile(url: string): Promise<string>;
  */
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
 
+// TODO: fetch, readFileSync 共に、リクエスト先/ファイルの読み込み先を限定する必要がある。
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T> {
-	// VM により ファイル読み込み時の require() が制限されているため、ここでモジュールを読み込む。
-	const fs = require("fs");
-	const fetch = require("node-fetch");
 	if (isHttpProtocol(url)) {
 		const res = await fetch(url, { method: "GET" });
 		return opt.json ? res.json() : res.text();
 	} else {
-		const str = fs.readFileSync(url, { encoding: opt.encoding ? opt.encoding : "utf8" });
+		const str = readFileSync(url, { encoding: opt.encoding ? opt.encoding : "utf8" });
 		return opt.json ? JSON.parse(str) : str;
 	}
 }
