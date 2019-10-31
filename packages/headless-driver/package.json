@@ -30,7 +30,8 @@
     "@akashic/trigger": "0.1.5",
     "js-sha256": "0.9.0",
     "lodash.clonedeep": "4.5.0",
-    "node-fetch": "2.6.0"
+    "node-fetch": "2.6.0",
+    "vm2": "3.8.4"
   },
   "devDependencies": {
     "@types/get-port": "4.0.1",
@@ -44,8 +45,7 @@
     "serve-handler": "6.1.2",
     "ts-jest": "24.1.0",
     "tslint": "5.20.0",
-    "typescript": "3.6.3",
-    "vm2": "3.8.4"
+    "typescript": "3.6.3"
   },
   "jest": {
     "moduleFileExtensions": [
