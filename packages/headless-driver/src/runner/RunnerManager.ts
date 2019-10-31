@@ -1,11 +1,16 @@
-import { loadFile, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
+import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
+import { NodeVM, VMScript } from "vm2";
+import * as ExecVmScriptV1 from "../ExecuteVmScriptV1";
+import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
+import { loadFile } from "../utils";
 
 export interface CreateRunnerParameters {
 	playId: string;
@@ -38,13 +43,29 @@ export class RunnerManager {
 	private runners: (RunnerV1 | RunnerV2)[] = [];
 	private nextRunnerId: number = 0;
 	private playManager: PlayManager;
+	private nvm: NodeVM;
 
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
+
+		this.nvm = new NodeVM({
+			sandbox: {
+				trustedFunctions: {
+					loadFile: loadFile
+				}
+			},
+			require: {
+				context: "sandbox",
+				external: true,
+				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
+			}
+		});
 	}
 
 	/**
 	 * Runner を作成する。
+	 * Runner は Node.js の Virtual Machine 上で実行される。
+	 * 主な制限事項として process へのアクセスが制限される。
 	 * @param params パラメータ
 	 */
 	async createRunner(params: CreateRunnerParameters): Promise<string> {
@@ -105,10 +126,14 @@ export class RunnerManager {
 			}
 
 			const runnerId = `${this.nextRunnerId++}`;
+			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
+			const str = fs.readFileSync(filePath, { encoding: "utf8" });
+			const script = new VMScript(str);
+			const functionInSandbox = this.nvm.run(script, filePath);
 
 			if (version === "2") {
 				getSystemLogger().info("v2 content");
-				runner = new RunnerV2({
+				runner = (functionInSandbox as typeof ExecVmScriptV2).createRunnerV2({
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
@@ -128,7 +153,7 @@ export class RunnerManager {
 				});
 			} else {
 				getSystemLogger().info("v1 content");
-				runner = new RunnerV1({
+				runner = (functionInSandbox as typeof ExecVmScriptV1).createRunnerV1({
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,

@@ -1,3 +1,6 @@
+import * as path from "path";
+import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
+import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import { setSystemLogger } from "../Logger";
 import { AMFlowStore } from "../play/amflow/AMFlowStore";
 import { AMFlowClientManager } from "../play/AMFlowClientManager";
@@ -9,6 +12,11 @@ import { SilentLogger } from "./helpers/SilentLogger";
 setSystemLogger(new SilentLogger());
 
 const contentUrl = process.env.CONTENT_URL_V2;
+
+beforeAll(() => {
+	jest.spyOn(ExecuteVmScriptV1, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV1.js"));
+	jest.spyOn(ExecuteVmScriptV2, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV2.js"));
+});
 
 describe("プレー周りのテスト", () => {
 	it("各インスタンスを生成できる", async () => {

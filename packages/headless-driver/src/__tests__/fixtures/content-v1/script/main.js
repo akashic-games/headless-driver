@@ -33,6 +33,12 @@ function main(param) {
 				text: "data_from_content"
 			}));
 			return;
+		} else if (message.data === "process") {
+			process.exit();
+		} else if (message.data === "require") {
+			const fs = global._require("fs");
+			const dir = fs.readdirSync("/");
+			console.log(dir);
 		}
 		game.external.send(message);
 	});
