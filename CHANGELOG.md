@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.5.12 (2019-10-31)
+
+#### Enhancement
+* `headless-driver`
+  * [#91](https://github.com/akashic-games/headless-driver/pull/91) Fix vm2 of package.json to dependencies ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v0.5.11 (2019-10-31)
 
 #### Enhancement
