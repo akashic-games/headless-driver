@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.5.11 (2019-10-31)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#83](https://github.com/akashic-games/headless-driver/pull/83) support vm module ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v0.5.10 (2019-10-16)
 
 #### Enhancement
