@@ -19,6 +19,7 @@ export interface CreateRunnerParameters {
 	executionMode: RunnerExecutionMode;
 	gameArgs?: any;
 	player?: RunnerPlayer;
+	allowedPath?: string;
 }
 
 interface EngineConfiguration {
@@ -47,12 +48,15 @@ export class RunnerManager {
 
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
+	}
 
+	createVm(allowedPath: string[]): void {
 		this.nvm = new NodeVM({
 			sandbox: {
 				trustedFunctions: {
 					loadFile: loadFile
-				}
+				},
+				allowedPaths: allowedPath
 			},
 			require: {
 				context: "sandbox",
@@ -124,6 +128,10 @@ export class RunnerManager {
 			} else if (gameConfiguration.environment && gameConfiguration.environment["sandbox-runtime"] === "2") {
 				version = "2";
 			}
+
+			const allowedPaths = [engineConfiguration.asset_base_url];
+			if (params.allowedPath) allowedPaths.push(params.allowedPath);
+			this.createVm(allowedPaths);
 
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();

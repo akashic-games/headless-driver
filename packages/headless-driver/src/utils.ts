@@ -17,7 +17,6 @@ export async function loadFile(url: string): Promise<string>;
  */
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
 
-// TODO: fetch, readFileSync 共に、リクエスト先/ファイルの読み込み先を限定する必要がある。
 export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T> {
 	if (isHttpProtocol(url)) {
 		const res = await fetch(url, { method: "GET" });

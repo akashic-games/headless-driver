@@ -289,6 +289,156 @@ describe("ローカルコンテンツの動作テスト", () => {
 	});
 });
 
+describe("アクセスできるpathの動作テスト", () => {
+	describe("Akashic V1 ", () => {
+		it("許可されていないパスのassetはloadできない", async () => {
+			const playManager = new PlayManager();
+			const playId = await playManager.createPlay({
+				contentUrl: contentUrlV1
+			});
+			const activeAMFlow = playManager.createAMFlow(playId);
+			const playToken = playManager.createPlayToken(playId, activePermission);
+			const runnerManager = new MockRunnerManager(playManager);
+			const runnerId = await runnerManager.createRunner({
+				playId,
+				amflow: activeAMFlow,
+				playToken,
+				executionMode: "active"
+			});
+			const runner = runnerManager.getRunner(runnerId) as RunnerV1;
+			await runnerManager.startRunner(runner.runnerId);
+
+			const handleEvent = () =>
+				new Promise<any>((resolve, reject) => {
+					// コンテンツ側での g.Game#external.send() を捕捉できる
+					runner.sendToExternalTrigger.handle((l: any) => {
+						if (l.error == null) return;
+						resolve(l);
+					});
+				});
+
+			// AMFlow 経由でコンテンツに例外を投げさせる
+			activeAMFlow.sendEvent([0x20, null, ":akashic", "arrowedTest"]);
+
+			const event = await handleEvent();
+			expect(event.asset.path).toBe(
+				"https://github.com/akashic-games/headless-driver/blob/master/packages/headless-driver/src/index.ts"
+			);
+			expect(event.error.message).toMatch(/Not allowed to read this path.+/);
+			runner.stop();
+		});
+
+		it("許可対象のパスのassetはloadできる", async () => {
+			const playManager = new PlayManager();
+			const playId = await playManager.createPlay({
+				contentUrl: contentUrlV1
+			});
+			const activeAMFlow = playManager.createAMFlow(playId);
+			const playToken = playManager.createPlayToken(playId, activePermission);
+			const runnerManager = new MockRunnerManager(playManager);
+			const runnerId = await runnerManager.createRunner({
+				playId,
+				amflow: activeAMFlow,
+				playToken,
+				executionMode: "active",
+				allowedPath: "https://github.com/akashic-games/headless-driver"
+			});
+			const runner = runnerManager.getRunner(runnerId) as RunnerV1;
+			await runnerManager.startRunner(runner.runnerId);
+
+			const handleEvent = () =>
+				new Promise<any>((resolve, reject) => {
+					// コンテンツ側での g.Game#external.send() を捕捉できる
+					runner.sendToExternalTrigger.handle((l: any) => {
+						if (l.path == null) return;
+						resolve(l);
+					});
+				});
+
+			// AMFlow 経由でコンテンツに例外を投げさせる
+			activeAMFlow.sendEvent([0x20, null, ":akashic", "arrowedTest"]);
+
+			const event = await handleEvent();
+			expect(event.path).toBe("https://github.com/akashic-games/headless-driver/blob/master/packages/headless-driver/src/index.ts");
+			runner.stop();
+		});
+	});
+
+	describe("Akashic V2 ", () => {
+		it("許可されていないパスのassetはloadできない", async () => {
+			const playManager = new PlayManager();
+			const playId = await playManager.createPlay({
+				contentUrl: contentUrlV2
+			});
+			const activeAMFlow = playManager.createAMFlow(playId);
+			const playToken = playManager.createPlayToken(playId, activePermission);
+			const runnerManager = new MockRunnerManager(playManager);
+			const runnerId = await runnerManager.createRunner({
+				playId,
+				amflow: activeAMFlow,
+				playToken,
+				executionMode: "active"
+			});
+			const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+			await runnerManager.startRunner(runner.runnerId);
+
+			const handleEvent = () =>
+				new Promise<any>((resolve, reject) => {
+					// コンテンツ側での g.Game#external.send() を捕捉できる
+					runner.sendToExternalTrigger.add(l => {
+						if (l.error == null) return;
+						resolve(l);
+					});
+				});
+
+			// AMFlow 経由でコンテンツに例外を投げさせる
+			activeAMFlow.sendEvent([0x20, null, ":akashic", "arrowedTest"]);
+
+			const event = await handleEvent();
+			expect(event.asset.path).toBe(
+				"https://github.com/akashic-games/headless-driver/blob/master/packages/headless-driver/src/index.ts"
+			);
+			expect(event.error.message).toMatch(/Not allowed to read this path.+/);
+			runner.stop();
+		});
+
+		it("許可対象のパスのassetはloadできる", async () => {
+			const playManager = new PlayManager();
+			const playId = await playManager.createPlay({
+				contentUrl: contentUrlV2
+			});
+			const activeAMFlow = playManager.createAMFlow(playId);
+			const playToken = playManager.createPlayToken(playId, activePermission);
+			const runnerManager = new MockRunnerManager(playManager);
+			const runnerId = await runnerManager.createRunner({
+				playId,
+				amflow: activeAMFlow,
+				playToken,
+				executionMode: "active",
+				allowedPath: "https://github.com/akashic-games/headless-driver"
+			});
+			const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+			await runnerManager.startRunner(runner.runnerId);
+
+			const handleEvent = () =>
+				new Promise<any>((resolve, reject) => {
+					// コンテンツ側での g.Game#external.send() を捕捉できる
+					runner.sendToExternalTrigger.add(l => {
+						if (l.path == null) return;
+						resolve(l);
+					});
+				});
+
+			// AMFlow 経由でコンテンツに例外を投げさせる
+			activeAMFlow.sendEvent([0x20, null, ":akashic", "arrowedTest"]);
+
+			const event = await handleEvent();
+			expect(event.path).toBe("https://github.com/akashic-games/headless-driver/blob/master/packages/headless-driver/src/index.ts");
+			runner.stop();
+		});
+	});
+});
+
 describe("コンテンツ動作テスト: 異常系", () => {
 	it("存在しない Content URL を指定すると Runner 起動に失敗する", async () => {
 		const playManager = new PlayManager();

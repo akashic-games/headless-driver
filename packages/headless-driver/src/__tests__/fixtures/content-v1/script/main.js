@@ -39,6 +39,19 @@ function main(param) {
 			const fs = global._require("fs");
 			const dir = fs.readdirSync("/");
 			console.log(dir);
+		} else if (message.data === "arrowedTest") {
+			scene.assetLoadFailed.handle((errInfo) => {
+				game.external.send(errInfo);
+			});
+			scene.requestAssets([{
+				id: "arrowedTest",
+				uri: "https://github.com/akashic-games/headless-driver/blob/master/packages/headless-driver/src/index.ts",
+				type: "text"
+			}],
+				() => {
+					// load完了した対象のpathだけ返す
+					game.external.send({ path: scene.assets.arrowedTest.path });
+				});
 		}
 		game.external.send(message);
 	});
