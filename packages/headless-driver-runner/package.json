@@ -25,9 +25,9 @@
     "@akashic/trigger": "0.1.5"
   },
   "devDependencies": {
-    "prettier": "1.18.2",
+    "prettier": "1.19.1",
     "rimraf": "3.0.0",
     "tslint": "5.20.0",
-    "typescript": "3.6.3"
+    "typescript": "3.7.2"
   }
 }
