@@ -48,10 +48,10 @@ function main(param) {
 				uri: "https://github.com/akashic-games/headless-driver/blob/master/packages/headless-driver/src/index.ts",
 				type: "text"
 			}],
-				() => {
-					// load完了した対象のpathだけ返す
-					game.external.send({ path: scene.assets.arrowedTest.path });
-				});
+			() => {
+				// load完了した対象のpathだけ返す
+				game.external.send({ path: scene.assets.arrowedTest.path });
+			});
 		}
 		game.external.send(message);
 	});
