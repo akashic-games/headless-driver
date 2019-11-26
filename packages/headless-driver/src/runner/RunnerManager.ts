@@ -48,15 +48,12 @@ export class RunnerManager {
 
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
-	}
 
-	createVm(allowedPath: string[]): void {
 		this.nvm = new NodeVM({
 			sandbox: {
 				trustedFunctions: {
 					loadFile: loadFile
-				},
-				allowedPaths: allowedPath
+				}
 			},
 			require: {
 				context: "sandbox",
@@ -131,7 +128,6 @@ export class RunnerManager {
 
 			const allowedPaths = [engineConfiguration.asset_base_url];
 			if (params.allowedPath) allowedPaths.push(params.allowedPath);
-			this.createVm(allowedPaths);
 
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
@@ -153,7 +149,8 @@ export class RunnerManager {
 					executionMode: params.executionMode,
 					external,
 					gameArgs: params.gameArgs,
-					player: params.player
+					player: params.player,
+					allowedPaths
 				});
 				runner.errorTrigger.addOnce((err: any) => {
 					getSystemLogger().error(err);
@@ -173,7 +170,8 @@ export class RunnerManager {
 					executionMode: params.executionMode,
 					external,
 					gameArgs: params.gameArgs,
-					player: params.player
+					player: params.player,
+					allowedPaths
 				});
 				runner.errorTrigger.handle((err: any) => {
 					getSystemLogger().error(err);

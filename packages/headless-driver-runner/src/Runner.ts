@@ -14,6 +14,7 @@ export interface RunnerParameters {
 	external?: { [key: string]: string };
 	gameArgs?: any;
 	player?: RunnerPlayer;
+	allowedPaths: string[];
 }
 
 export type RunnerExecutionMode = "active" | "passive";
@@ -76,6 +77,10 @@ export abstract class Runner {
 
 	get external(): { [key: string]: string } | undefined {
 		return this.params.external;
+	}
+
+	get allowedPaths(): string[] {
+		return this.params.allowedPaths;
 	}
 
 	constructor(params: RunnerParameters) {

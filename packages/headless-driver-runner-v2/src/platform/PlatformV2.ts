@@ -11,7 +11,7 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 
 	constructor(param: PlatformParameters) {
 		super(param);
-		this.resFac = new ResourceFactory((e: Error) => this.errorHandler(e));
+		this.resFac = new ResourceFactory(this.allowedPaths, (e: Error) => this.errorHandler(e));
 		this.rendererReq = null;
 		this.primarySurface = null;
 	}
