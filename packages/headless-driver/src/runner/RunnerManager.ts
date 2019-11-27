@@ -1,4 +1,4 @@
-import { RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { LoadFileOption, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as fs from "fs";
@@ -10,7 +10,7 @@ import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
-import { loadFile } from "../utils";
+import { loadFile, validateUrl } from "../utils";
 
 export interface CreateRunnerParameters {
 	playId: string;
@@ -19,7 +19,7 @@ export interface CreateRunnerParameters {
 	executionMode: RunnerExecutionMode;
 	gameArgs?: any;
 	player?: RunnerPlayer;
-	allowedPath?: string;
+	allowedPaths?: any[]; // アクセスを許可する path の配列。Regex か string を対象とする。
 }
 
 interface EngineConfiguration {
@@ -48,19 +48,6 @@ export class RunnerManager {
 
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
-
-		this.nvm = new NodeVM({
-			sandbox: {
-				trustedFunctions: {
-					loadFile: loadFile
-				}
-			},
-			require: {
-				context: "sandbox",
-				external: true,
-				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
-			}
-		});
 	}
 
 	/**
@@ -126,8 +113,26 @@ export class RunnerManager {
 				version = "2";
 			}
 
-			const allowedPaths = [engineConfiguration.asset_base_url];
-			if (params.allowedPath) allowedPaths.push(params.allowedPath);
+			let allowedPaths = [engineConfiguration.asset_base_url];
+			if (params.allowedPaths) {
+				allowedPaths = allowedPaths.concat(params.allowedPaths);
+			}
+
+			this.nvm = new NodeVM({
+				sandbox: {
+					trustedFunctions: {
+						loadFile: (targetUrl: string, opt?: LoadFileOption) => {
+							validateUrl(targetUrl, allowedPaths);
+							return loadFile(targetUrl, opt);
+						}
+					}
+				},
+				require: {
+					context: "sandbox",
+					external: true,
+					builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
+				}
+			});
 
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
@@ -149,8 +154,7 @@ export class RunnerManager {
 					executionMode: params.executionMode,
 					external,
 					gameArgs: params.gameArgs,
-					player: params.player,
-					allowedPaths
+					player: params.player
 				});
 				runner.errorTrigger.addOnce((err: any) => {
 					getSystemLogger().error(err);
@@ -170,8 +174,7 @@ export class RunnerManager {
 					executionMode: params.executionMode,
 					external,
 					gameArgs: params.gameArgs,
-					player: params.player,
-					allowedPaths
+					player: params.player
 				});
 				runner.errorTrigger.handle((err: any) => {
 					getSystemLogger().error(err);

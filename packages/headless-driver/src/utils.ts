@@ -1,4 +1,4 @@
-import { ReadFileOption } from "@akashic/headless-driver-runner";
+import { LoadFileOption } from "@akashic/headless-driver-runner";
 import { readFileSync } from "fs";
 import fetch from "node-fetch";
 
@@ -15,10 +15,9 @@ export async function loadFile(url: string): Promise<string>;
  * @param url url または path
  * @param opt オプション
  */
-export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
+export async function loadFile<T>(url: string, opt?: LoadFileOption): Promise<T>;
 
-export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T> {
-	validateUrl(url, opt.allowedPaths);
+export async function loadFile<T>(url: string, opt?: LoadFileOption): Promise<T> {
 	if (isHttpProtocol(url)) {
 		const res = await fetch(url, { method: "GET" });
 		return opt.json ? res.json() : res.text();
@@ -32,10 +31,14 @@ export function isHttpProtocol(url: string): boolean {
 	return /^(http|https)\:\/\//.test(url);
 }
 
-function validateUrl(url: string, allowedPaths: string[]): void {
-	if (!allowedPaths) return;
-
-	const isValidPath = allowedPaths.some(path => url.indexOf(path) >= 0);
+export function validateUrl(url: string, pathWhitelist: any[]): void {
+	const isValidPath = pathWhitelist.some(path => {
+		if (typeof path === "string") {
+			return url.indexOf(path) >= 0;
+		} else if (path instanceof RegExp) {
+			return path.test(url);
+		}
+	});
 	if (!isValidPath) {
 		throw new Error(`Not allowed to read this path. ${url}`);
 	}

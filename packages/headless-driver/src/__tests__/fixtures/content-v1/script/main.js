@@ -39,18 +39,20 @@ function main(param) {
 			const fs = global._require("fs");
 			const dir = fs.readdirSync("/");
 			console.log(dir);
-		} else if (message.data === "arrowedTest") {
+		} else if (message.data === "allowed_test") {
 			scene.assetLoadFailed.handle((errInfo) => {
 				game.external.send(errInfo);
 			});
+			// デフォルトでは許可されていない v2 の content.json を対象とする
+			const target = __dirname.replace("content-v1/script", "content-v2/content.json")
 			scene.requestAssets([{
-				id: "arrowedTest",
-				uri: "https://github.com/akashic-games/headless-driver/blob/master/packages/headless-driver/src/index.ts",
+				id: "allowedTest",
+				uri: target,
 				type: "text"
 			}],
 			() => {
 				// load完了した対象のpathだけ返す
-				game.external.send({ path: scene.assets.arrowedTest.path });
+				game.external.send(scene.assets.allowedTest.path);
 			});
 		}
 		game.external.send(message);
