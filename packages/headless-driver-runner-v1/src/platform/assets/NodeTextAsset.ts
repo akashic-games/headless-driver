@@ -2,15 +2,8 @@ import { akashicEngine as g } from "@akashic/engine-files";
 import { loadFileInSandbox } from "@akashic/headless-driver-runner";
 
 export class NodeTextAsset extends g.TextAsset {
-	private allowedPaths: string[];
-
-	constructor(id: string, assetPath: string, allowdPaths: string[]) {
-		super(id, assetPath);
-		this.allowedPaths = allowdPaths;
-	}
-
 	_load(loader: g.AssetLoadHandler): void {
-		loadFileInSandbox<string>(this.path, { json: false, allowedPaths: this.allowedPaths })
+		loadFileInSandbox<string>(this.path, { json: false })
 			.then(text => {
 				this.data = text;
 				return loader._onAssetLoad(this);

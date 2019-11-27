@@ -10,12 +10,10 @@ import { NullSurface } from "./NullSurface";
 
 export class ResourceFactory extends g.ResourceFactory {
 	private errorHandler: (err: any) => void;
-	private allowedPaths: string[];
 
-	constructor(allowedPaths: string[], errorHandler: (err: any) => void) {
+	constructor(errorHandler: (err: any) => void) {
 		super();
 		this.errorHandler = errorHandler;
-		this.allowedPaths = allowedPaths;
 	}
 
 	createImageAsset(id: string, assetPath: string, width: number, height: number): g.ImageAsset {
@@ -50,11 +48,11 @@ export class ResourceFactory extends g.ResourceFactory {
 	}
 
 	createTextAsset(id: string, assetPath: string): g.TextAsset {
-		return new NodeTextAsset(id, assetPath, this.allowedPaths);
+		return new NodeTextAsset(id, assetPath);
 	}
 
 	createScriptAsset(id: string, assetPath: string): g.ScriptAsset {
-		return new NodeScriptAsset(id, assetPath, this.allowedPaths, this.errorHandler);
+		return new NodeScriptAsset(id, assetPath, this.errorHandler);
 	}
 
 	createSurface(width: number, height: number): g.Surface {

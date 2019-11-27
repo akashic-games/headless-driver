@@ -1,7 +1,6 @@
-export interface ReadFileOption {
+export interface LoadFileOption {
 	encoding?: string;
 	json?: boolean;
-	allowedPaths?: string[];
 }
 
 /**
@@ -11,6 +10,6 @@ export interface ReadFileOption {
  * @param url url または path
  * @param opt オプション
  */
-export async function loadFileInSandbox<T>(url: string, opt?: ReadFileOption): Promise<T> {
+export async function loadFileInSandbox<T>(url: string, opt?: LoadFileOption): Promise<T> {
 	return await trustedFunctions.loadFile(url, opt);
 }

@@ -5,7 +5,6 @@ export interface PlatformParameters {
 	assetBaseUrl: string;
 	configurationBaseUrl?: string;
 	amflow: AMFlow;
-	allowedPaths: string[];
 	sendToExternalHandler: (data: any) => void;
 	errorHandler: (err: any) => void;
 }
@@ -25,7 +24,6 @@ export abstract class Platform {
 		this.amflow = param.amflow;
 		this.sendToExternalHandler = param.sendToExternalHandler;
 		this.errorHandler = param.errorHandler;
-		this.allowedPaths = param.allowedPaths;
 	}
 
 	sendToExternal(playId: string, data: any): void {
@@ -33,7 +31,7 @@ export abstract class Platform {
 	}
 
 	loadGameConfiguration(url: string, callback: (err: Error, data?: object) => void): void {
-		loadFileInSandbox<any>(url, { json: true, allowedPaths: this.allowedPaths })
+		loadFileInSandbox<any>(url, { json: true })
 			.then(json => callback(null, json))
 			.catch(e => callback(e));
 	}

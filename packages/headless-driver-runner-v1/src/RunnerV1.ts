@@ -59,7 +59,6 @@ export class RunnerV1 extends Runner {
 				configurationBaseUrl: this.configurationBaseUrl,
 				assetBaseUrl: this.assetBaseUrl,
 				amflow: this.amflow,
-				allowedPaths: this.allowedPaths,
 				sendToExternalHandler: (data: any) => this.onSendedToExternal(data),
 				errorHandler: (e: any) => this.onError(e)
 			});
