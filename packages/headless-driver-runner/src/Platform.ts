@@ -13,7 +13,6 @@ export abstract class Platform {
 	amflow: AMFlow;
 	assetBaseUrl: string;
 	configurationBaseUrl: string;
-	allowedPaths: string[];
 
 	protected sendToExternalHandler: (data: any) => void;
 	protected errorHandler: (err: any) => void;
