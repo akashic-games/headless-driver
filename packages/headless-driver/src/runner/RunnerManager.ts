@@ -21,7 +21,8 @@ export interface CreateRunnerParameters {
 	player?: RunnerPlayer;
 	/**
 	 * asset へのアクセスを許可する URL。
-	 * この URL に一致しない asset へのアクセスはエラーとなる。
+	 * この URL と一致もしくは部分一致しない asset へのアクセスはエラーとなる。
+	 * 省略時は game 配下の asset のみアクセス可能となる。
 	 */
 	allowedUrls?: (string | RegExp)[];
 }
@@ -116,7 +117,8 @@ export class RunnerManager {
 				version = "2";
 			}
 
-			const nvm = this.createVm(params.allowedUrls);
+			const allowedUrls = params.allowedUrls ? params.allowedUrls : [engineConfiguration.asset_base_url];
+			const nvm = this.createVm(allowedUrls);
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
@@ -230,19 +232,19 @@ export class RunnerManager {
 		return await loadFile<T>(contentUrl, { json: true });
 	}
 
-	private createVm(allowedUrls: (string | RegExp)[] = []): NodeVM {
+	private createVm(allowedUrls: (string | RegExp)[]): NodeVM {
 		return new NodeVM({
 			sandbox: {
 				trustedFunctions: {
 					loadFile: (targetUrl: string, opt?: LoadFileOption) => {
-						const isValidPath = allowedUrls.some(elem => {
+						const isValidUrl = allowedUrls.some(elem => {
 							if (typeof elem === "string") {
 								return targetUrl.indexOf(elem) >= 0;
 							} else if (elem instanceof RegExp) {
 								return elem.test(targetUrl);
 							}
 						});
-						if (!isValidPath) {
+						if (!isValidUrl) {
 							throw new Error(`Not allowed to read this path. ${targetUrl}`);
 						}
 						return loadFile(targetUrl, opt);

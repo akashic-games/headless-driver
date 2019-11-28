@@ -39,12 +39,12 @@ function main(param) {
 			const fs = global._require("fs");
 			const dir = fs.readdirSync("/");
 			console.log(dir);
-		} else if (message.data === "allowed_test") {
-			scene.children[0].update.destroy(); // タイミングで rect の message が先に返るのでupdateを破棄
+		} else if (message.data === "load_external_asset") {
 			scene.assetLoadFailed.handle((errInfo) => {
-				game.external.send(errInfo.error.message);
+				game.external.send("failed_load_external_asset");
+				return true;
 			});
-			// デフォルトでは許可されていない v2 の content.json を対象とする
+			// 別の場所にあるリソースを動的に読み込む
 			const target = __dirname.replace("content-v1/script", "content-v2/content.json")
 			scene.requestAssets([{
 				id: "allowedTest",
@@ -52,8 +52,7 @@ function main(param) {
 				type: "text"
 			}],
 			() => {
-				// load完了した対象のpathだけ返す
-				game.external.send(scene.assets.allowedTest.path);
+				game.external.send("loaded_external_asset");
 			});
 			return;
 		}
