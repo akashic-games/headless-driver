@@ -36,7 +36,8 @@ describe("プレー周りのテスト", () => {
 			playId: playId0,
 			amflow: amflow0,
 			playToken: playToken0,
-			executionMode: "active"
+			executionMode: "active",
+			allowedUrls: [process.env.ASSET_BASE_URL_V2]
 		});
 		const runner0 = runnerManager.getRunner(runnerId0);
 

@@ -1,3 +1,4 @@
+import { NodeVM } from "vm2";
 import { RunnerManager } from "../../runner/RunnerManager";
 import { loadFile } from "../../utils";
 
@@ -8,6 +9,8 @@ const assetBaseUrlV2 = process.env.ASSET_BASE_URL_V2;
 const cascadeGameJsonUrlV2 = process.env.CASCADE_GAME_JSON_URL_V2;
 
 export class MockRunnerManager extends RunnerManager {
+	public nvm: NodeVM;
+
 	protected async resolveContent(contentUrl: string): Promise<any> {
 		const config = await loadFile<any>(contentUrl, { json: true });
 		if (config.content_url === "v1_content_url") {

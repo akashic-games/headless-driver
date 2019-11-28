@@ -30,16 +30,3 @@ export async function loadFile<T>(url: string, opt?: LoadFileOption): Promise<T>
 export function isHttpProtocol(url: string): boolean {
 	return /^(http|https)\:\/\//.test(url);
 }
-
-export function validateUrl(url: string, pathWhitelist: any[]): void {
-	const isValidPath = pathWhitelist.some(path => {
-		if (typeof path === "string") {
-			return url.indexOf(path) >= 0;
-		} else if (path instanceof RegExp) {
-			return path.test(url);
-		}
-	});
-	if (!isValidPath) {
-		throw new Error(`Not allowed to read this path. ${url}`);
-	}
-}

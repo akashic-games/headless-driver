@@ -40,8 +40,9 @@ function main(param) {
 			const dir = fs.readdirSync("/");
 			console.log(dir);
 		} else if (message.data === "allowed_test") {
+			scene.children[0].update.destroy(); // タイミングによりrectのmessageが先に返るのでupdateを破棄
 			scene.assetLoadFailed.addOnce((errInfo) => {
-				game.external.send(errInfo);
+				game.external.send(errInfo.error.message);
 			});
 			// デフォルトでは許可されていない v1 の content.json を対象とする
 			const target = __dirname.replace("content-v2/script", "content-v1/content.json")

@@ -40,8 +40,9 @@ function main(param) {
 			const dir = fs.readdirSync("/");
 			console.log(dir);
 		} else if (message.data === "allowed_test") {
+			scene.children[0].update.destroy(); // タイミングで rect の message が先に返るのでupdateを破棄
 			scene.assetLoadFailed.handle((errInfo) => {
-				game.external.send(errInfo);
+				game.external.send(errInfo.error.message);
 			});
 			// デフォルトでは許可されていない v2 の content.json を対象とする
 			const target = __dirname.replace("content-v1/script", "content-v2/content.json")
@@ -54,6 +55,7 @@ function main(param) {
 				// load完了した対象のpathだけ返す
 				game.external.send(scene.assets.allowedTest.path);
 			});
+			return;
 		}
 		game.external.send(message);
 	});

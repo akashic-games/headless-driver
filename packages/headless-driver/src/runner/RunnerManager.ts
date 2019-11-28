@@ -10,7 +10,7 @@ import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
-import { loadFile, validateUrl } from "../utils";
+import { loadFile } from "../utils";
 
 export interface CreateRunnerParameters {
 	playId: string;
@@ -19,7 +19,11 @@ export interface CreateRunnerParameters {
 	executionMode: RunnerExecutionMode;
 	gameArgs?: any;
 	player?: RunnerPlayer;
-	allowedPaths?: any[]; // アクセスを許可する path の配列。Regex か string を対象とする。
+	/**
+	 * asset へのアクセスを許可する URL。
+	 * この URL に一致しない asset へのアクセスはエラーとなる。
+	 */
+	allowedUrls?: (string | RegExp)[];
 }
 
 interface EngineConfiguration {
@@ -44,7 +48,6 @@ export class RunnerManager {
 	private runners: (RunnerV1 | RunnerV2)[] = [];
 	private nextRunnerId: number = 0;
 	private playManager: PlayManager;
-	private nvm: NodeVM;
 
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
@@ -113,32 +116,12 @@ export class RunnerManager {
 				version = "2";
 			}
 
-			let allowedPaths = [engineConfiguration.asset_base_url];
-			if (params.allowedPaths) {
-				allowedPaths = allowedPaths.concat(params.allowedPaths);
-			}
-
-			this.nvm = new NodeVM({
-				sandbox: {
-					trustedFunctions: {
-						loadFile: (targetUrl: string, opt?: LoadFileOption) => {
-							validateUrl(targetUrl, allowedPaths);
-							return loadFile(targetUrl, opt);
-						}
-					}
-				},
-				require: {
-					context: "sandbox",
-					external: true,
-					builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
-				}
-			});
-
+			const nvm = this.createVm(params.allowedUrls);
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
 			const script = new VMScript(str);
-			const functionInSandbox = this.nvm.run(script, filePath);
+			const functionInSandbox = nvm.run(script, filePath);
 
 			if (version === "2") {
 				getSystemLogger().info("v2 content");
@@ -245,5 +228,32 @@ export class RunnerManager {
 
 	protected async loadJSON<T>(contentUrl: string): Promise<T> {
 		return await loadFile<T>(contentUrl, { json: true });
+	}
+
+	private createVm(allowedUrls: (string | RegExp)[]): NodeVM {
+		return new NodeVM({
+			sandbox: {
+				trustedFunctions: {
+					loadFile: (targetUrl: string, opt?: LoadFileOption) => {
+						const isValidPath = allowedUrls.some(elem => {
+							if (typeof elem === "string") {
+								return targetUrl.indexOf(elem) >= 0;
+							} else if (elem instanceof RegExp) {
+								return elem.test(targetUrl);
+							}
+						});
+						if (!isValidPath) {
+							throw new Error(`Not allowed to read this path. ${targetUrl}`);
+						}
+						return loadFile(targetUrl, opt);
+					}
+				}
+			},
+			require: {
+				context: "sandbox",
+				external: true,
+				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
+			}
+		});
 	}
 }
