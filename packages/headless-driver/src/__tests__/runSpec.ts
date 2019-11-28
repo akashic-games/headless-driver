@@ -1,16 +1,16 @@
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as path from "path";
+import { NodeVM } from "vm2";
 import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
+import { loadFile } from "../utils";
 import { activePermission, passivePermission } from "./constants";
 import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
-import { NodeVM } from "vm2";
-import { loadFile } from "../utils";
 
 const contentUrlV1 = process.env.CONTENT_URL_V1;
 const contentUrlV2 = process.env.CONTENT_URL_V2;
@@ -55,8 +55,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V1]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		expect(runner.runnerId).toBe("0");
@@ -114,8 +113,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V2]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.runnerId).toBe("0");
@@ -171,16 +169,14 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken: activePlayToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V2]
+			executionMode: "active"
 		});
 
 		const passiveRunnerId = await runnerManager.createRunner({
 			playId,
 			amflow: passiveAMFlow,
 			playToken: passivePlayToken,
-			executionMode: "passive",
-			allowedUrls: [process.env.BASE_URL]
+			executionMode: "passive"
 		});
 
 		const activeRunner = runnerManager.getRunner(activeRunnerId) as RunnerV2;
@@ -223,8 +219,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V2]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 
@@ -266,16 +261,16 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
-					resolve(l);
+					if (l === "loaded_external_asset") resolve(l);
 					return true;
 				});
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", "allowed_test"]);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", "load_external_asset"]);
 
 		const event = await handleEvent();
-		expect(event).toBe(contentJsonV2);
+		expect(event).toBe("loaded_external_asset");
 		runner.stop();
 	});
 
@@ -301,15 +296,15 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add(l => {
-					resolve(l);
+					if (l === "loaded_external_asset") resolve(l);
 				});
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", "allowed_test"]);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", "load_external_asset"]);
 
 		const event = await handleEvent();
-		expect(event).toMatch(/.+content-v1\/content.json$/);
+		expect(event).toBe("loaded_external_asset");
 		runner.stop();
 	});
 });
@@ -327,8 +322,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [path.resolve(__dirname, "fixtures", "content-v1")]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.external).toEqual({});
@@ -362,8 +356,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [path.resolve(__dirname, "fixtures", "content-v2")]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.external).toEqual({ ext: "0" });
@@ -403,8 +396,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 				playId,
 				amflow: activeAMFlow,
 				playToken,
-				executionMode: "active",
-				allowedUrls: [process.env.ASSET_BASE_URL_V2]
+				executionMode: "active"
 			});
 			fail();
 		} catch (e) {
@@ -428,8 +420,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V1]
+			executionMode: "active"
 		});
 
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
@@ -467,8 +458,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V2]
+			executionMode: "active"
 		});
 
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
@@ -503,8 +493,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V1]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		await runnerManager.startRunner(runner.runnerId);
@@ -540,8 +529,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V2]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
@@ -582,8 +570,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V1]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		// 本来なら nodeコアモジュールの require() は g._require() で握り潰されエラーとなるが、
@@ -626,8 +613,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V2]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		// 本来なら nodeコアモジュールの require() は g._require() で握り潰されエラーとなるが、
@@ -665,8 +651,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V1]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		await runnerManager.startRunner(runner.runnerId);
@@ -675,15 +660,15 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
-					resolve(l);
+					if (l === "failed_load_external_asset") resolve(l);
 				});
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", "allowed_test"]);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", "load_external_asset"]);
 
 		const event = await handleEvent();
-		expect(event).toMatch(/Not allowed to read this path.+content-v2\/content.json$/);
+		expect(event).toBe("failed_load_external_asset");
 		runner.stop();
 	});
 
@@ -699,8 +684,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			playId,
 			amflow: activeAMFlow,
 			playToken,
-			executionMode: "active",
-			allowedUrls: [process.env.ASSET_BASE_URL_V2]
+			executionMode: "active"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
@@ -709,15 +693,15 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add(l => {
-					resolve(l);
+					if (l === "failed_load_external_asset") resolve(l);
 				});
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", "allowed_test"]);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", "load_external_asset"]);
 
 		const event = await handleEvent();
-		expect(event).toMatch(/Not allowed to read this path.+content-v1\/content.json$/);
+		expect(event).toBe("failed_load_external_asset");
 		runner.stop();
 	});
 });
