@@ -230,7 +230,7 @@ export class RunnerManager {
 		return await loadFile<T>(contentUrl, { json: true });
 	}
 
-	private createVm(allowedUrls: (string | RegExp)[]): NodeVM {
+	private createVm(allowedUrls: (string | RegExp)[] = []): NodeVM {
 		return new NodeVM({
 			sandbox: {
 				trustedFunctions: {
