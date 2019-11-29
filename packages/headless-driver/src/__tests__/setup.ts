@@ -50,6 +50,8 @@ export const initialize = async () => {
 	process.env.BASE_URL = baseUrl;
 	process.env.CONTENT_URL_V1 = url.resolve(baseUrl, "content-v1/content.json");
 	process.env.CONTENT_URL_V2 = url.resolve(baseUrl, "content-v2/content.json");
+	process.env.EXT_CONTENT_URL_V1 = url.resolve(extBaseUrl, "content-v1/content.json");
+	process.env.EXT_CONTENT_URL_V2 = url.resolve(extBaseUrl, "content-v2/content.json");
 	process.env.GAME_JSON_URL_V1 = url.resolve(baseUrl, "content-v1/game.json");
 	process.env.GAME_JSON_URL_V2 = url.resolve(baseUrl, "content-v2/game.json");
 	process.env.ASSET_BASE_URL_V1 = url.resolve(baseUrl, "content-v1/");

@@ -44,10 +44,9 @@ function main(param) {
 				game.external.send("failed_load_external_asset");
 			});
 			// 別の場所にあるリソースを動的に読み込む
-			const target = message.data.url + "content.json";
 			scene.requestAssets([{
-				id: "allowedTest",
-				uri: target,
+				id: "external",
+				uri: message.data.url,
 				type: "text"
 			}],
 			() => {

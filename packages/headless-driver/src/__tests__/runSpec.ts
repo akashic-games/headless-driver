@@ -12,7 +12,11 @@ import { SilentLogger } from "./helpers/SilentLogger";
 
 const contentUrlV1 = process.env.CONTENT_URL_V1;
 const contentUrlV2 = process.env.CONTENT_URL_V2;
+const extContentUrlV1 = process.env.EXT_CONTENT_URL_V1;
+const extContentUrlV2 = process.env.EXT_CONTENT_URL_V2;
 const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2;
+const assetBaseUrlV1 = process.env.ASSET_BASE_URL_V1;
+const assetBaseUrlV2 = process.env.ASSET_BASE_URL_V2;
 const extAssetBaseUrlV1 = process.env.EXT_ASSET_BASE_URL_V1;
 const extAssetBaseUrlV2 = process.env.EXT_ASSET_BASE_URL_V2;
 
@@ -241,7 +245,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [/^http:\/\/localhost.*content-v1\//, extAssetBaseUrlV2]
+			allowedUrls: [assetBaseUrlV1, extAssetBaseUrlV1]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runner.start();
@@ -257,7 +261,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 				});
 			});
 
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extAssetBaseUrlV2 }]);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("loaded_external_asset");
@@ -277,7 +281,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [/^http:\/\/localhost.*\/content-v2\//, extAssetBaseUrlV1]
+			allowedUrls: [assetBaseUrlV2, extAssetBaseUrlV2]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runner.start();
@@ -290,7 +294,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 				});
 			});
 
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extAssetBaseUrlV1 }]);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("loaded_external_asset");
@@ -640,7 +644,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [/^http:\/\/localhost.*content-v1\//]
+			allowedUrls: [assetBaseUrlV1]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		await runnerManager.startRunner(runner.runnerId);
@@ -649,12 +653,15 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
-					if (l === "failed_load_external_asset") resolve(l);
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
 				});
 			});
 
-		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extAssetBaseUrlV2 }]);
+		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求
+		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");
@@ -674,7 +681,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [/^http:\/\/localhost.*content-v2\//]
+			allowedUrls: [assetBaseUrlV2]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
@@ -687,8 +694,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 				});
 			});
 
-		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extAssetBaseUrlV2 }]);
+		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求
+		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");

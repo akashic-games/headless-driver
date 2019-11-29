@@ -237,15 +237,15 @@ export class RunnerManager {
 				trustedFunctions: {
 					loadFile: (targetUrl: string, opt?: LoadFileOption) => {
 						if (allowedUrls) {
-							const isValidUrl = allowedUrls.some(elem => {
+							const isAllowedUrl = allowedUrls.some(elem => {
 								if (typeof elem === "string") {
 									return targetUrl.indexOf(elem) >= 0;
 								} else if (elem instanceof RegExp) {
 									return elem.test(targetUrl);
 								}
 							});
-							if (!isValidUrl) {
-								throw new Error(`Not allowed to read this path. ${targetUrl}`);
+							if (!isAllowedUrl) {
+								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
 							}
 						}
 						return loadFile(targetUrl, opt);
