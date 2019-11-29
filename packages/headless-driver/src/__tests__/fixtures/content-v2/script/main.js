@@ -26,25 +26,25 @@ function main(param) {
 	});
 
 	scene.message.add(function(message) {
-		if (message.data === "throw_error") {
+		if (message.data.type === "throw_error") {
 			throw new Error("unknown error");
-		} else if (message.data === "send_event") {
+		} else if (message.data.type === "send_event") {
 			game.raiseEvent(new g.MessageEvent({
 				text: "data_from_content"
 			}));
 			return;
-		} else if (message.data === "process") {
+		} else if (message.data.type === "process") {
 			process.exit();
-		} else if (message.data === "require") {
+		} else if (message.data.type === "require") {
 			const fs = global._require("fs");
 			const dir = fs.readdirSync("/");
 			console.log(dir);
-		} else if (message.data === "load_external_asset") {
+		} else if (message.data.type === "load_external_asset") {
 			scene.assetLoadFailed.addOnce((errInfo) => {
 				game.external.send("failed_load_external_asset");
 			});
 			// 別の場所にあるリソースを動的に読み込む
-			const target = __dirname.replace("content-v2/script", "content-v1/content.json")
+			const target = message.data.url + "content.json";
 			scene.requestAssets([{
 				id: "allowedTest",
 				uri: target,

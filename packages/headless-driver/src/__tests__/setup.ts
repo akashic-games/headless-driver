@@ -29,6 +29,9 @@ export const initialize = async () => {
 	const port = await getPort();
 	const host = "localhost";
 	const baseUrl = `http://${host}:${port}`;
+	const extPort = port;
+	const extHost = "127.0.0.1";
+	const extBaseUrl = `http://${extHost}:${extPort}`;
 
 	const server = http.createServer((request, response) => {
 		handler(request, response, {
@@ -51,6 +54,8 @@ export const initialize = async () => {
 	process.env.GAME_JSON_URL_V2 = url.resolve(baseUrl, "content-v2/game.json");
 	process.env.ASSET_BASE_URL_V1 = url.resolve(baseUrl, "content-v1/");
 	process.env.ASSET_BASE_URL_V2 = url.resolve(baseUrl, "content-v2/");
+	process.env.EXT_ASSET_BASE_URL_V1 = url.resolve(extBaseUrl, "content-v1/");
+	process.env.EXT_ASSET_BASE_URL_V2 = url.resolve(extBaseUrl, "content-v2/");
 	process.env.CASCADE_CONTENT_URL_V2 = url.resolve(baseUrl, "content-v2/content.cascade.json");
 	process.env.CASCADE_GAME_JSON_URL_V2 = url.resolve(baseUrl, "content-v2/game.definitions.json");
 };
