@@ -55,6 +55,25 @@ function main(param) {
 				game.external.send("loaded_external_asset");
 			});
 			return;
+
+		} else if (message.data === "load_external_asset222") {
+			scene.assetLoadFailed.handle((errInfo) => {
+				console.log("* err", errInfo);
+				game.external.send("* failed_load_external_asset");
+				return true;
+			});
+			// 別の場所にあるリソースを動的に読み込む
+			const target = __dirname.replace("content-v1/script", "content-v2/content.json")
+			scene.requestAssets([{
+				id: "allowedTest",
+				uri: target,
+				type: "text"
+			}],
+			() => {
+				console.log("* loadComp");
+				game.external.send("loaded_external_asset");
+			});
+			return;
 		}
 		game.external.send(message);
 	});

@@ -249,6 +249,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
+					console.log("*l:", l);
 					if (l === "loaded_external_asset") {
 						resolve(l);
 						return true;
@@ -257,9 +258,10 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", "load_external_asset"]);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", "load_external_asset222"]);
 
 		const event = await handleEvent();
+		console.log("* event", event);
 		expect(event).toBe("loaded_external_asset");
 		runner.stop();
 	});
