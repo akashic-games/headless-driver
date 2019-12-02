@@ -51,7 +51,9 @@ function main(param) {
 				type: "text"
 			}],
 			() => {
-				game.external.send("loaded_external_asset");
+				if (scene.assets.external != null ) {
+					game.external.send("loaded_external_asset");
+				}
 			});
 			return;
 		}

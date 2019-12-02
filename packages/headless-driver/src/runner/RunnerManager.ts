@@ -117,7 +117,10 @@ export class RunnerManager {
 				version = "2";
 			}
 
-			const nvm = this.createVm(params.allowedUrls);
+			const urls: RegExp[] | null = params.allowedUrls
+				? params.allowedUrls.map(u => (typeof u === "string" ? new RegExp(u) : u))
+				: null;
+			const nvm = this.createVm(urls);
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
@@ -231,19 +234,13 @@ export class RunnerManager {
 		return await loadFile<T>(contentUrl, { json: true });
 	}
 
-	protected createVm(allowedUrls: (string | RegExp)[]): NodeVM {
+	protected createVm(allowedUrls: RegExp[] | null): NodeVM {
 		return new NodeVM({
 			sandbox: {
 				trustedFunctions: {
 					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
-						if (allowedUrls) {
-							const isAllowedUrl = allowedUrls.some(elem => {
-								if (typeof elem === "string") {
-									return targetUrl.indexOf(elem) >= 0;
-								} else if (elem instanceof RegExp) {
-									return elem.test(targetUrl);
-								}
-							});
+						if (allowedUrls != null) {
+							const isAllowedUrl = allowedUrls.some(elem => elem.test(targetUrl));
 							if (!isAllowedUrl) {
 								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
 							}

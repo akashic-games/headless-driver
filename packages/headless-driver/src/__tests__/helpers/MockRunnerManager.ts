@@ -29,24 +29,18 @@ export class MockRunnerManager extends RunnerManager {
 		return config;
 	}
 
-	protected createVm(allowedUrls: (string | RegExp)[]): NodeVM {
+	protected createVm(allowedUrls: RegExp[] | null): NodeVM {
 		this.nvm = new NodeVM({
 			sandbox: {
 				trustedFunctions: {
-					loadFile: (targetUrl: string, opt?: LoadFileOption) => {
-						if (allowedUrls) {
-							const isValidUrl = allowedUrls.some(elem => {
-								if (typeof elem === "string") {
-									return targetUrl.indexOf(elem) >= 0;
-								} else if (elem instanceof RegExp) {
-									return elem.test(targetUrl);
-								}
-							});
-							if (!isValidUrl) {
-								throw new Error(`Not allowed to read this path. ${targetUrl}`);
+					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
+						if (allowedUrls != null) {
+							const isAllowedUrl = allowedUrls.some(elem => elem.test(targetUrl));
+							if (!isAllowedUrl) {
+								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
 							}
 						}
-						return loadFile(targetUrl, opt);
+						return await loadFile(targetUrl, opt);
 					}
 				}
 			},

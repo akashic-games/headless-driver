@@ -290,7 +290,10 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add(l => {
-					if (l === "loaded_external_asset") resolve(l);
+					if (l === "loaded_external_asset") {
+						resolve(l);
+						return true;
+					}
 				});
 			});
 
@@ -690,7 +693,10 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add(l => {
-					if (l === "failed_load_external_asset") resolve(l);
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
 				});
 			});
 
