@@ -235,7 +235,7 @@ export class RunnerManager {
 		return new NodeVM({
 			sandbox: {
 				trustedFunctions: {
-					loadFile: (targetUrl: string, opt?: LoadFileOption) => {
+					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
 						if (allowedUrls) {
 							const isAllowedUrl = allowedUrls.some(elem => {
 								if (typeof elem === "string") {
@@ -248,7 +248,7 @@ export class RunnerManager {
 								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
 							}
 						}
-						return loadFile(targetUrl, opt);
+						return await loadFile(targetUrl, opt);
 					}
 				}
 			},
