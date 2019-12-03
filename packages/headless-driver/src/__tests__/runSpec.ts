@@ -707,4 +707,108 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		expect(event).toBe("failed_load_external_asset");
 		runner.stop();
 	});
+
+	it("許可対象の文字列の値が先頭一致しない場合はassetはloadできない", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV2
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: [assetBaseUrlV2, extAssetBaseUrlV2]
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const handleEvent = () =>
+			new Promise<any>((resolve, reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.add(l => {
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
+				});
+			});
+
+		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求。先頭一致しないURL
+		const errorUrl = `http://localhost:3300/content-v2?q=${extContentUrlV2}`;
+		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: errorUrl }]);
+
+		const event = await handleEvent();
+		expect(event).toBe("failed_load_external_asset");
+		runner.stop();
+	});
+
+	it("許可対象の正規表現の値が先頭一致しない場合はassetはloadできない", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV2
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: [assetBaseUrlV2, /^http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定あり
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const handleEvent = () =>
+			new Promise<any>((resolve, reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.add(l => {
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
+				});
+			});
+
+		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求。先頭一致しないURL
+		const errorUrl = `http://localhost:3300/content-v2?q=${extContentUrlV2}`;
+		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: errorUrl }]);
+
+		const event = await handleEvent();
+		expect(event).toBe("failed_load_external_asset");
+		runner.stop();
+
+		const runnerId2 = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: [assetBaseUrlV2, /http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定なし
+		});
+		const runner2 = runnerManager.getRunner(runnerId2) as RunnerV2;
+		await runnerManager.startRunner(runner2.runnerId);
+
+		const handleEvent2 = () =>
+			new Promise<any>((resolve, reject) => {
+				runner2.sendToExternalTrigger.add(l => {
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
+				});
+			});
+
+		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求。先頭一致しないURL
+		console.log(errorUrl);
+		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: errorUrl }]);
+
+		const event2 = await handleEvent2();
+		expect(event2).toBe("failed_load_external_asset");
+		runner2.stop();
+	});
 });

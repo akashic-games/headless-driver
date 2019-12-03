@@ -21,7 +21,7 @@ export interface CreateRunnerParameters {
 	player?: RunnerPlayer;
 	/**
 	 * asset へのアクセスを許可する URL。
-	 * この URL と一致もしくは部分一致しない asset へのアクセスはエラーとなる。
+	 * この URL と一致もしくは先頭一致しない asset へのアクセスはエラーとなる。
 	 * null が指定された場合は全てのアクセスを許可する。
 	 */
 	allowedUrls: (string | RegExp)[] | null;
@@ -117,10 +117,7 @@ export class RunnerManager {
 				version = "2";
 			}
 
-			const urls: RegExp[] | null = params.allowedUrls
-				? params.allowedUrls.map(u => (typeof u === "string" ? new RegExp(u) : u))
-				: null;
-			const nvm = this.createVm(urls);
+			const nvm = this.createVm(params.allowedUrls);
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
@@ -234,13 +231,19 @@ export class RunnerManager {
 		return await loadFile<T>(contentUrl, { json: true });
 	}
 
-	protected createVm(allowedUrls: RegExp[] | null): NodeVM {
+	protected createVm(allowedUrls: (string | RegExp)[] | null): NodeVM {
 		return new NodeVM({
 			sandbox: {
 				trustedFunctions: {
 					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
 						if (allowedUrls != null) {
-							const isAllowedUrl = allowedUrls.some(elem => elem.test(targetUrl));
+							const isAllowedUrl = allowedUrls.some(u => {
+								if (typeof u === "string") {
+									return targetUrl.startsWith(u);
+								} else if (u instanceof RegExp) {
+									return /^\/\^/.test(targetUrl.toString()) && u.test(targetUrl);
+								}
+							});
 							if (!isAllowedUrl) {
 								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
 							}
