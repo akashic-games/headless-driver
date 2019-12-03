@@ -241,7 +241,7 @@ export class RunnerManager {
 								if (typeof u === "string") {
 									return targetUrl.startsWith(u);
 								} else if (u instanceof RegExp) {
-									return /^\/\^/.test(targetUrl.toString()) && u.test(targetUrl);
+									return /^\/\^/.test(u.toString()) && u.test(targetUrl);
 								}
 							});
 							if (!isAllowedUrl) {
