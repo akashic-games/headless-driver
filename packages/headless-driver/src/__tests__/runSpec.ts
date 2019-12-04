@@ -783,32 +783,18 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		expect(event).toBe("failed_load_external_asset");
 		runner.stop();
 
-		const runnerId2 = await runnerManager.createRunner({
-			playId,
-			amflow: activeAMFlow,
-			playToken,
-			executionMode: "active",
-			allowedUrls: [assetBaseUrlV2, /http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定なし
-		});
-		const runner2 = runnerManager.getRunner(runnerId2) as RunnerV2;
-		await runnerManager.startRunner(runner2.runnerId);
-
-		const handleEvent2 = () =>
-			new Promise<any>((resolve, reject) => {
-				runner2.sendToExternalTrigger.add(l => {
-					if (l === "failed_load_external_asset") {
-						resolve(l);
-						return true;
-					}
-				});
+		try {
+			// allowedUrlsの正規表現は '^' で始まらない場合エラーとなる。
+			await runnerManager.createRunner({
+				playId,
+				amflow: activeAMFlow,
+				playToken,
+				executionMode: "active",
+				allowedUrls: [assetBaseUrlV2, /http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定なし
 			});
-
-		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求。先頭一致しないURL
-		console.log(errorUrl);
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: errorUrl }]);
-
-		const event2 = await handleEvent2();
-		expect(event2).toBe("failed_load_external_asset");
-		runner2.stop();
+			fail();
+		} catch (err) {
+			expect(err.message).toMatch("Regexp must start with '^'");
+		}
 	});
 });

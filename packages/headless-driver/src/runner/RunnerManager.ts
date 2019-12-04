@@ -61,6 +61,15 @@ export class RunnerManager {
 	 * @param params パラメータ
 	 */
 	async createRunner(params: CreateRunnerParameters): Promise<string> {
+		if (params.allowedUrls != null) {
+			params.allowedUrls.forEach(u => {
+				// 正規表現の場合、'^' で始まらなければエラーとする。
+				if (u instanceof RegExp && !/^\/\^/.test(u.toString())) {
+					throw new Error(`Regexp must start with '^'. value:${u}`);
+				}
+			});
+		}
+
 		let runner: RunnerV1 | RunnerV2;
 
 		const play = this.playManager.getPlay(params.playId);
@@ -241,8 +250,9 @@ export class RunnerManager {
 								if (typeof u === "string") {
 									return targetUrl.startsWith(u);
 								} else if (u instanceof RegExp) {
-									return /^\/\^/.test(u.toString()) && u.test(targetUrl);
+									return u.test(targetUrl);
 								}
+								return false;
 							});
 							if (!isAllowedUrl) {
 								throw new Error(`Not allowed to read this URL. ${targetUrl}`);

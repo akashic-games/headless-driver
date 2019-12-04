@@ -39,8 +39,9 @@ export class MockRunnerManager extends RunnerManager {
 								if (typeof u === "string") {
 									return targetUrl.startsWith(u);
 								} else if (u instanceof RegExp) {
-									return /^\/\^/.test(u.toString()) && u.test(targetUrl);
+									return u.test(targetUrl);
 								}
+								return false;
 							});
 							if (!isAllowedUrl) {
 								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
