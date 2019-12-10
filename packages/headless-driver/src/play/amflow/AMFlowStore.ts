@@ -5,6 +5,11 @@ import { sha256 } from "js-sha256";
 import cloneDeep = require("lodash.clonedeep");
 import { createError } from "./ErrorFactory";
 
+export interface AmflowDump {
+	tickList: TickList;
+	startPoints: StartPoint[];
+}
+
 /**
  * AMFlow のストア。
  * 一つのプレーに対して一つ存在する。
@@ -166,6 +171,13 @@ export class AMFlowStore {
 
 	deleteAllPlayTokens(): void {
 		this.permissionMap.clear();
+	}
+
+	dump(): AmflowDump {
+		return {
+			tickList: this.tickList,
+			startPoints: this.startPoints
+		};
 	}
 
 	private authenticatePlayToken(token: string, revoke?: boolean): Permission | null {
