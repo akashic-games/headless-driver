@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.5.17 (2019-12-10)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#98](https://github.com/akashic-games/headless-driver/pull/98) 【v0.5.17】内部コンポーネントの更新(engineFiles@2.1.34, engineFiles@1.1.13) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#97](https://github.com/akashic-games/headless-driver/pull/97) Update dependency typescript to v3.7.3 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v0.5.16 (2019-12-05)
 
 #### Enhancement
