@@ -251,10 +251,10 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			// ハンドラは削除するが、store自体は playLog のdump機能のため削除しない。
 			this.store.sendEventTrigger.remove(this.onEventSended, this);
 			this.store.sendTickTrigger.remove(this.onTickSended, this);
 		}
+		this.store = null;
 		this.permission = null;
 		this.tickHandlers = null;
 		this.eventHandlers = null;
