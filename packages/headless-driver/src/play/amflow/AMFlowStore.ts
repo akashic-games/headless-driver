@@ -5,7 +5,7 @@ import { sha256 } from "js-sha256";
 import cloneDeep = require("lodash.clonedeep");
 import { createError } from "./ErrorFactory";
 
-export interface AmflowDump {
+export interface DumpedPlaylog {
 	tickList: TickList;
 	startPoints: StartPoint[];
 }
@@ -173,7 +173,7 @@ export class AMFlowStore {
 		this.permissionMap.clear();
 	}
 
-	dump(): AmflowDump {
+	dump(): DumpedPlaylog {
 		return {
 			tickList: this.tickList,
 			startPoints: this.startPoints

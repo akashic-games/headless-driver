@@ -1,7 +1,7 @@
 import { AMFlow, GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
 import { getSystemLogger } from "../../Logger";
-import { AmflowDump, AMFlowStore } from "./AMFlowStore";
+import { AMFlowStore, DumpedPlaylog } from "./AMFlowStore";
 import { createError } from "./ErrorFactory";
 
 export type AMFlowState = "connecting" | "open" | "closing" | "closed";
@@ -265,7 +265,7 @@ export class AMFlowClient implements AMFlow {
 		return this.store == null;
 	}
 
-	dump(): AmflowDump {
+	dump(): DumpedPlaylog {
 		return this.store.dump();
 	}
 
