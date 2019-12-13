@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.6.0 (2019-12-13)
+
+#### Breaking Change
+* `headless-driver-runner`, `headless-driver`
+  * [#95](https://github.com/akashic-games/headless-driver/pull/95) Add file access validation ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Enhancement
+* `headless-driver-runner`, `headless-driver`
+  * [#95](https://github.com/akashic-games/headless-driver/pull/95) Add file access validation ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v0.5.18 (2019-12-13)
 
 #### Enhancement
