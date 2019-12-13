@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.5.18 (2019-12-13)
+
+#### Enhancement
+* `headless-driver`
+  * [#99](https://github.com/akashic-games/headless-driver/pull/99) Add dump function to AMFlow ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v0.5.17 (2019-12-10)
 
 #### Enhancement
