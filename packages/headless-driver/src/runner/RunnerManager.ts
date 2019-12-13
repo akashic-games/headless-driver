@@ -1,4 +1,4 @@
-import { RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { LoadFileOption, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import * as fs from "fs";
@@ -19,6 +19,12 @@ export interface CreateRunnerParameters {
 	executionMode: RunnerExecutionMode;
 	gameArgs?: any;
 	player?: RunnerPlayer;
+	/**
+	 * asset へのアクセスを許可する URL。
+	 * この URL と一致もしくは先頭一致しない asset へのアクセスはエラーとなる。
+	 * null が指定された場合は全てのアクセスを許可する。
+	 */
+	allowedUrls: (string | RegExp)[] | null;
 }
 
 interface EngineConfiguration {
@@ -43,23 +49,9 @@ export class RunnerManager {
 	private runners: (RunnerV1 | RunnerV2)[] = [];
 	private nextRunnerId: number = 0;
 	private playManager: PlayManager;
-	private nvm: NodeVM;
 
 	constructor(playManager: PlayManager) {
 		this.playManager = playManager;
-
-		this.nvm = new NodeVM({
-			sandbox: {
-				trustedFunctions: {
-					loadFile: loadFile
-				}
-			},
-			require: {
-				context: "sandbox",
-				external: true,
-				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
-			}
-		});
 	}
 
 	/**
@@ -69,6 +61,15 @@ export class RunnerManager {
 	 * @param params パラメータ
 	 */
 	async createRunner(params: CreateRunnerParameters): Promise<string> {
+		if (params.allowedUrls != null) {
+			params.allowedUrls.forEach(u => {
+				// 正規表現の場合、'^' で始まらなければエラーとする。
+				if (u instanceof RegExp && !/^\/\^/.test(u.toString())) {
+					throw new Error(`Regexp must start with '^'. value:${u}`);
+				}
+			});
+		}
+
 		let runner: RunnerV1 | RunnerV2;
 
 		const play = this.playManager.getPlay(params.playId);
@@ -125,11 +126,12 @@ export class RunnerManager {
 				version = "2";
 			}
 
+			const nvm = this.createVm(params.allowedUrls);
 			const runnerId = `${this.nextRunnerId++}`;
 			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
 			const script = new VMScript(str);
-			const functionInSandbox = this.nvm.run(script, filePath);
+			const functionInSandbox = nvm.run(script, filePath);
 
 			if (version === "2") {
 				getSystemLogger().info("v2 content");
@@ -236,5 +238,35 @@ export class RunnerManager {
 
 	protected async loadJSON<T>(contentUrl: string): Promise<T> {
 		return await loadFile<T>(contentUrl, { json: true });
+	}
+
+	protected createVm(allowedUrls: (string | RegExp)[] | null): NodeVM {
+		return new NodeVM({
+			sandbox: {
+				trustedFunctions: {
+					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
+						if (allowedUrls != null) {
+							const isAllowedUrl = allowedUrls.some(u => {
+								if (typeof u === "string") {
+									return targetUrl.startsWith(u);
+								} else if (u instanceof RegExp) {
+									return u.test(targetUrl);
+								}
+								return false;
+							});
+							if (!isAllowedUrl) {
+								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
+							}
+						}
+						return await loadFile(targetUrl, opt);
+					}
+				}
+			},
+			require: {
+				context: "sandbox",
+				external: true,
+				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
+			}
+		});
 	}
 }

@@ -36,7 +36,8 @@ describe("プレー周りのテスト", () => {
 			playId: playId0,
 			amflow: amflow0,
 			playToken: playToken0,
-			executionMode: "active"
+			executionMode: "active",
+			allowedUrls: null
 		});
 		const runner0 = runnerManager.getRunner(runnerId0);
 
@@ -57,7 +58,8 @@ describe("プレー周りのテスト", () => {
 			playId: playId1,
 			amflow: amflow1,
 			playToken: playToken1,
-			executionMode: "active"
+			executionMode: "active",
+			allowedUrls: null
 		});
 		const runner1 = runnerManager.getRunner(runnerId1);
 
@@ -85,7 +87,8 @@ describe("プレー周りのテスト", () => {
 			playId: playId2,
 			amflow: amflow2,
 			playToken: playToken2,
-			executionMode: "active"
+			executionMode: "active",
+			allowedUrls: null
 		});
 		const runner2 = runnerManager.getRunner(runnerId2);
 		expect(runner2.runnerId).toBe("2");

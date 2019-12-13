@@ -1,4 +1,4 @@
-import { ReadFileOption } from "@akashic/headless-driver-runner";
+import { LoadFileOption } from "@akashic/headless-driver-runner";
 import { readFileSync } from "fs";
 import fetch from "node-fetch";
 
@@ -15,10 +15,9 @@ export async function loadFile(url: string): Promise<string>;
  * @param url url または path
  * @param opt オプション
  */
-export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T>;
+export async function loadFile<T>(url: string, opt?: LoadFileOption): Promise<T>;
 
-// TODO: fetch, readFileSync 共に、リクエスト先/ファイルの読み込み先を限定する必要がある。
-export async function loadFile<T>(url: string, opt?: ReadFileOption): Promise<T> {
+export async function loadFile<T>(url: string, opt?: LoadFileOption): Promise<T> {
 	if (isHttpProtocol(url)) {
 		const res = await fetch(url, { method: "GET" });
 		return opt.json ? res.json() : res.text();
