@@ -1,7 +1,7 @@
 import { AMFlow, GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
 import { getSystemLogger } from "../../Logger";
-import { AMFlowStore } from "./AMFlowStore";
+import { AMFlowStore, DumpedPlaylog } from "./AMFlowStore";
 import { createError } from "./ErrorFactory";
 
 export type AMFlowState = "connecting" | "open" | "closing" | "closed";
@@ -263,6 +263,10 @@ export class AMFlowClient implements AMFlow {
 
 	isDestroyed(): boolean {
 		return this.store == null;
+	}
+
+	dump(): DumpedPlaylog {
+		return this.store.dump();
 	}
 
 	private onTickSended(tick: Tick): void {
