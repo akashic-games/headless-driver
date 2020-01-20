@@ -38,14 +38,14 @@
     "@types/jest": "24.0.25",
     "@types/lodash.clonedeep": "4.5.6",
     "@types/node-fetch": "2.5.4",
-    "get-port": "5.1.0",
+    "get-port": "5.1.1",
     "jest": "24.9.0",
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
     "serve-handler": "6.1.2",
     "ts-jest": "24.3.0",
     "tslint": "5.20.1",
-    "typescript": "3.7.4"
+    "typescript": "3.7.5"
   },
   "jest": {
     "moduleFileExtensions": [
