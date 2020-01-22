@@ -5,7 +5,7 @@ import { NullSurface } from "./NullSurface";
 import { ResourceFactory } from "./ResourceFactory";
 
 export class PlatformV3 extends Platform implements pdi.Platform {
-	private resFac: g.ResourceFactory;
+	private resFac: g.ResourceFactoryLike;
 	private rendererReq: pdi.RendererRequirement;
 	private primarySurface: g.Surface;
 
@@ -16,7 +16,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 		this.primarySurface = null;
 	}
 
-	getResourceFactory(): g.ResourceFactory {
+	getResourceFactory(): g.ResourceFactoryLike {
 		return this.resFac;
 	}
 

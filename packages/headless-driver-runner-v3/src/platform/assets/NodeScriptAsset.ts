@@ -1,7 +1,10 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 import { loadFileInSandbox } from "@akashic/headless-driver-runner";
 
-export class NodeScriptAsset extends g.ScriptAsset {
+export class NodeScriptAsset extends g.Asset implements g.ScriptAssetLike {
+	type: "script" = "script";
+	script: string;
+
 	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
 	static POST_SCRIPT: string = "\n})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
 	private errorHandler: (err: any) => void;

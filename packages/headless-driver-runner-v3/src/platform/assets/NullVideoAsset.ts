@@ -1,12 +1,28 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 import { NullSurface } from "../NullSurface";
 
-export class NullVideoAsset extends g.VideoAsset {
+export class NullVideoAsset extends g.Asset implements g.VideoAssetLike {
+	type: "video" = "video";
+	width: number;
+	height: number;
+	realWidth: number;
+	realHeight: number;
+	_system: g.VideoSystemLike;
+	_loop: boolean;
+	_useRealSize: boolean;
+
 	_surface: g.Surface = null;
 	_player: g.VideoPlayer;
 
 	constructor(id: string, assetPath: string, width: number, height: number, system: any, loop: boolean, useRealSize: boolean) {
-		super(id, assetPath, width, height, system, loop, useRealSize);
+		super(id, assetPath);
+		this.width = width;
+		this.height = height;
+		this.realWidth = 0;
+		this.realHeight = 0;
+		this._system = system;
+		this._loop = loop;
+		this._useRealSize = useRealSize;
 		this._player = new g.VideoPlayer();
 	}
 
@@ -25,4 +41,6 @@ export class NullVideoAsset extends g.VideoAsset {
 	play(): g.VideoPlayer {
 		return this._player;
 	}
+
+	stop(): void {}
 }

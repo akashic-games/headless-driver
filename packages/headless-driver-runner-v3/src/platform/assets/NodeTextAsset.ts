@@ -1,7 +1,10 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 import { loadFileInSandbox } from "@akashic/headless-driver-runner";
 
-export class NodeTextAsset extends g.TextAsset {
+export class NodeTextAsset extends g.Asset implements g.TextAssetLike {
+	type: "text" = "text";
+	data: string;
+
 	_load(loader: g.AssetLoadHandler): void {
 		loadFileInSandbox<string>(this.path, { json: false })
 			.then(text => {
