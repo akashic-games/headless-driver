@@ -13,7 +13,7 @@ export class NullSurfaceAtlas implements g.SurfaceAtlasLike {
 		this._usedRectangleAreaSize = { width: 0, height: 0 };
 	}
 
-	addSurface(surface: g.SurfaceLike, offsetX: number, offsetY: number, width: number, height: number): g.SurfaceAtlasSlotLike {
+	addSurface(_surface: g.SurfaceLike, _offsetX: number, _offsetY: number, _width: number, _height: number): g.SurfaceAtlasSlotLike {
 		return this._emptySurfaceAtlasSlotHead;
 	}
 

@@ -25,7 +25,9 @@ export class NullAudioAsset extends g.Asset implements g.AudioAssetLike {
 		return this._system.createPlayer();
 	}
 
-	stop(): void {}
+	stop(): void {
+		//
+	}
 
 	inUse(): boolean {
 		return this._system.findPlayers(this).length > 0;

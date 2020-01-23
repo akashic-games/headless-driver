@@ -42,5 +42,7 @@ export class NullVideoAsset extends g.Asset implements g.VideoAssetLike {
 		return this._player;
 	}
 
-	stop(): void {}
+	stop(): void {
+		//
+	}
 }
