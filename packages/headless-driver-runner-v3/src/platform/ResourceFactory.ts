@@ -25,7 +25,7 @@ export class ResourceFactory implements g.ResourceFactoryLike {
 		assetPath: string,
 		width: number,
 		height: number,
-		system: g.VideoSystem,
+		system: g.VideoSystemLike,
 		loop: boolean,
 		useRealSize: boolean
 	): g.VideoAssetLike {
@@ -36,14 +36,14 @@ export class ResourceFactory implements g.ResourceFactoryLike {
 		id: string,
 		assetPath: string,
 		duration: number,
-		system: g.AudioSystem,
+		system: g.AudioSystemLike,
 		loop: boolean,
 		hint: g.AudioAssetHint
 	): g.AudioAssetLike {
 		return new NullAudioAsset(id, assetPath, duration, system, loop, hint);
 	}
 
-	createAudioPlayer(system: g.AudioSystem): g.AudioPlayerLike {
+	createAudioPlayer(system: g.AudioSystemLike): g.AudioPlayerLike {
 		return new NullAudioPlayer(system);
 	}
 

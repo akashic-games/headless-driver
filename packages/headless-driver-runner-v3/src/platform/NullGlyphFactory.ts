@@ -1,4 +1,5 @@
 import { akashicEngine as g } from "@akashic/engine-files";
+import { NullGlyph } from "./NullGlyph";
 import { NullSurface } from "./NullSurface";
 
 export class NullGlyphFactory implements g.GlyphFactoryLike {
@@ -11,7 +12,7 @@ export class NullGlyphFactory implements g.GlyphFactoryLike {
 	strokeColor: string;
 	strokeOnly: boolean;
 
-	private dummySurface: g.Surface = new NullSurface(0, 0);
+	private dummySurface: g.SurfaceLike = new NullSurface(0, 0);
 
 	constructor(
 		fontFamily: g.FontFamily | string | (g.FontFamily | string)[],
@@ -33,7 +34,7 @@ export class NullGlyphFactory implements g.GlyphFactoryLike {
 		this.strokeOnly = strokeOnly;
 	}
 
-	create(code: number): g.Glyph {
-		return new g.Glyph(code, 0, 0, 0, 0, 0, 0, this.fontSize, this.dummySurface, true);
+	create(code: number): g.GlyphLike {
+		return new NullGlyph(code, 0, 0, 0, 0, 0, 0, this.fontSize, this.dummySurface, true);
 	}
 }

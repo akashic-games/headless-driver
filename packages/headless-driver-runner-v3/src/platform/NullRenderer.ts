@@ -26,7 +26,7 @@ export class NullRenderer implements g.RendererLike {
 	}
 
 	drawSprites(
-		_surface: g.Surface,
+		_surface: g.SurfaceLike,
 		_offsetX: number[],
 		_offsetY: number[],
 		_width: number[],
@@ -78,7 +78,7 @@ export class NullRenderer implements g.RendererLike {
 		return false;
 	}
 
-	setShaderProgram(shaderProgram: g.ShaderProgram | null): void {
+	setShaderProgram(shaderProgram: g.ShaderProgramLike | null): void {
 		//
 	}
 

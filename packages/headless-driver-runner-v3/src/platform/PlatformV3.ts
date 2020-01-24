@@ -7,7 +7,7 @@ import { ResourceFactory } from "./ResourceFactory";
 export class PlatformV3 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactoryLike;
 	private rendererReq: pdi.RendererRequirement;
-	private primarySurface: g.Surface;
+	private primarySurface: g.SurfaceLike;
 
 	constructor(param: PlatformParameters) {
 		super(param);
@@ -29,7 +29,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 		// do nothing
 	}
 
-	getPrimarySurface(): g.Surface {
+	getPrimarySurface(): g.SurfaceLike {
 		return this.primarySurface;
 	}
 

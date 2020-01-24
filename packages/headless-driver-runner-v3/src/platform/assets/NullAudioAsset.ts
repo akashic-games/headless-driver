@@ -1,6 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
+import { Asset } from "./Asset";
 
-export class NullAudioAsset extends g.Asset implements g.AudioAssetLike {
+export class NullAudioAsset extends Asset implements g.AudioAssetLike {
 	type: "audio" = "audio";
 	data: any;
 	duration: number;
