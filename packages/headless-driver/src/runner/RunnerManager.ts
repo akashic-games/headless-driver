@@ -130,67 +130,82 @@ export class RunnerManager {
 
 			const nvm = this.createVm(params.allowedUrls);
 			const runnerId = `${this.nextRunnerId++}`;
-			let filePath: string;
-			switch (version) {
-				case "1":
-					filePath = ExecVmScriptV1.getFilePath();
-					break;
-				case "2":
-					filePath = ExecVmScriptV2.getFilePath();
-					break;
-				case "3":
-					filePath = ExecVmScriptV3.getFilePath();
-					break;
-				default:
-					throw new Error(`${version} is not undefined.`);
+			const filePathMap = {
+				1: ExecVmScriptV1.getFilePath(),
+				2: ExecVmScriptV2.getFilePath(),
+				3: ExecVmScriptV3.getFilePath()
+			};
+			if (!filePathMap[version]) {
+				throw new Error(`version ${version} is not undefined.`);
 			}
+			const filePath = filePathMap[version];
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
 			const script = new VMScript(str);
 			const functionInSandbox = nvm.run(script, filePath);
 
-			const runnerParameters = {
-				contentUrl,
-				assetBaseUrl: engineConfiguration.asset_base_url,
-				configurationUrl: engineConfiguration.content_url,
-				configurationBaseUrl,
-				runnerId,
-				playId: play.playId,
-				playToken: params.playToken,
-				amflow,
-				executionMode: params.executionMode,
-				external,
-				gameArgs: params.gameArgs,
-				player: params.player
-			};
-			switch (version) {
-				case "1":
-					getSystemLogger().info("v1 content");
-					runner = (functionInSandbox as typeof ExecVmScriptV1).createRunnerV1(runnerParameters);
-					runner.errorTrigger.handle((err: any) => {
-						getSystemLogger().error(err);
-						this.stopRunner(runnerId);
-						return true;
-					});
-					break;
-				case "2":
-					getSystemLogger().info("v2 content");
-					runner = (functionInSandbox as typeof ExecVmScriptV2).createRunnerV2(runnerParameters);
-					runner.errorTrigger.addOnce((err: any) => {
-						getSystemLogger().error(err);
-						this.stopRunner(runnerId);
-					});
-					break;
-				case "3":
-					getSystemLogger().info("v3 content");
-					runner = (functionInSandbox as typeof ExecVmScriptV3).createRunnerV3(runnerParameters);
-					runner.errorTrigger.addOnce((err: any) => {
-						getSystemLogger().error(err);
-						this.stopRunner(runnerId);
-					});
-					break;
-				default:
-					throw new Error(`${version} is not undefined.`);
+			if (version === "3") {
+				getSystemLogger().info("v3 content");
+				runner = (functionInSandbox as typeof ExecVmScriptV3).createRunnerV3({
+					contentUrl,
+					assetBaseUrl: engineConfiguration.asset_base_url,
+					configurationUrl: engineConfiguration.content_url,
+					configurationBaseUrl,
+					runnerId,
+					playId: play.playId,
+					playToken: params.playToken,
+					amflow,
+					executionMode: params.executionMode,
+					external,
+					gameArgs: params.gameArgs,
+					player: params.player
+				});
+				runner.errorTrigger.addOnce((err: any) => {
+					getSystemLogger().error(err);
+					this.stopRunner(runnerId);
+				});
+			} else if (version === "2") {
+				getSystemLogger().info("v2 content");
+				runner = (functionInSandbox as typeof ExecVmScriptV2).createRunnerV2({
+					contentUrl,
+					assetBaseUrl: engineConfiguration.asset_base_url,
+					configurationUrl: engineConfiguration.content_url,
+					configurationBaseUrl,
+					runnerId,
+					playId: play.playId,
+					playToken: params.playToken,
+					amflow,
+					executionMode: params.executionMode,
+					external,
+					gameArgs: params.gameArgs,
+					player: params.player
+				});
+				runner.errorTrigger.addOnce((err: any) => {
+					getSystemLogger().error(err);
+					this.stopRunner(runnerId);
+				});
+			} else {
+				getSystemLogger().info("v1 content");
+				runner = (functionInSandbox as typeof ExecVmScriptV1).createRunnerV1({
+					contentUrl,
+					assetBaseUrl: engineConfiguration.asset_base_url,
+					configurationUrl: engineConfiguration.content_url,
+					configurationBaseUrl,
+					runnerId,
+					playId: play.playId,
+					playToken: params.playToken,
+					amflow,
+					executionMode: params.executionMode,
+					external,
+					gameArgs: params.gameArgs,
+					player: params.player
+				});
+				runner.errorTrigger.handle((err: any) => {
+					getSystemLogger().error(err);
+					this.stopRunner(runnerId);
+					return true;
+				});
 			}
+
 			this.runners.push(runner);
 		} catch (e) {
 			throw e;
