@@ -6,8 +6,8 @@ import { ResourceFactory } from "./ResourceFactory";
 
 export class PlatformV3 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactoryLike;
-	private rendererReq: pdi.RendererRequirement;
-	private primarySurface: g.SurfaceLike;
+	private rendererReq: pdi.RendererRequirement | null;
+	private primarySurface: g.SurfaceLike | null;
 
 	constructor(param: PlatformParameters) {
 		super(param);

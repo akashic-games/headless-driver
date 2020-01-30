@@ -11,7 +11,7 @@ export class NullGlyph implements g.GlyphLike {
 	offsetY: number;
 	advanceWidth: number;
 	isSurfaceValid: boolean;
-	_atlas: g.SurfaceAtlasLike;
+	_atlas: g.SurfaceAtlasLike | null;
 
 	constructor(
 		code: number,

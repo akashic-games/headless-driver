@@ -13,7 +13,7 @@ export class NullVideoAsset extends Asset implements g.VideoAssetLike {
 	_loop: boolean;
 	_useRealSize: boolean;
 
-	_surface: g.Surface = null;
+	_surface: g.Surface | null = null;
 	_player: g.VideoPlayerLike;
 
 	constructor(id: string, assetPath: string, width: number, height: number, system: any, loop: boolean, useRealSize: boolean) {

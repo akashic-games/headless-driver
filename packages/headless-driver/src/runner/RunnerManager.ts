@@ -136,7 +136,7 @@ export class RunnerManager {
 				3: ExecVmScriptV3.getFilePath()
 			};
 			if (!filePathMap[version]) {
-				throw new Error(`version ${version} is not undefined.`);
+				throw new Error(`version ${version} is not supported.`);
 			}
 			const filePath = filePathMap[version];
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });

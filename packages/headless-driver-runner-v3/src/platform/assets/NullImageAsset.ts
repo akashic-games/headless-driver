@@ -8,7 +8,7 @@ export class NullImageAsset extends Asset implements g.ImageAssetLike {
 	height: number;
 	hint: g.ImageAssetHint;
 
-	_surface: g.SurfaceLike = null;
+	_surface: g.SurfaceLike | null = null;
 
 	constructor(id: string, assetPath: string, width: number, height: number) {
 		super(id, assetPath);
