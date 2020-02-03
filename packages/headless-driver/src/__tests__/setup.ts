@@ -15,10 +15,13 @@ declare global {
 			BASE_URL: string;
 			CONTENT_URL_V1: string;
 			CONTENT_URL_V2: string;
+			CONTENT_URL_V3: string;
 			GAME_JSON_URL_V1: string;
 			GAME_JSON_URL_V2: string;
+			GAME_JSON_URL_V3: string;
 			ASSET_BASE_URL_V1: string;
 			ASSET_BASE_URL_V2: string;
+			ASSET_BASE_URL_V3: string;
 			CASCADE_CONTENT_URL_V2: string;
 			CASCADE_GAME_JSON_URL_V2: string;
 		}
