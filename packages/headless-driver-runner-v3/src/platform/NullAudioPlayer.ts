@@ -6,7 +6,6 @@ export class NullAudioPlayer implements g.AudioPlayerLike {
 	stopped: g.Trigger<g.AudioPlayerEvent>;
 	volume: number;
 	_muted: boolean;
-	_playbackRate: number;
 
 	constructor(system: g.AudioSystemLike) {
 		this.played = new g.Trigger<g.AudioPlayerEvent>();
@@ -14,7 +13,6 @@ export class NullAudioPlayer implements g.AudioPlayerLike {
 		this.currentAudio = undefined;
 		this.volume = system.volume;
 		this._muted = system._muted;
-		this._playbackRate = system._playbackRate;
 	}
 
 	play(audio: g.AudioAssetLike): void {
@@ -35,17 +33,5 @@ export class NullAudioPlayer implements g.AudioPlayerLike {
 
 	_changeMuted(muted: boolean): void {
 		this._muted = muted;
-	}
-
-	_changePlaybackRate(rate: number): void {
-		this._playbackRate = rate;
-	}
-
-	_supportsPlaybackRate(): boolean {
-		return false;
-	}
-
-	_onVolumeChanged(): void {
-		//
 	}
 }
