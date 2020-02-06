@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## v1.0.0 (2020-02-06)
+
+#### Breaking Change
+* `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#108](https://github.com/akashic-games/headless-driver/pull/108) v3系のengineを利用しているコンテンツも動かせるよう対応 ([@dera-](https://github.com/dera-))
+
+#### Enhancement
+* `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#108](https://github.com/akashic-games/headless-driver/pull/108) v3系のengineを利用しているコンテンツも動かせるよう対応 ([@dera-](https://github.com/dera-))
+
+#### Update Dependencies
+* `headless-driver`
+  * [#105](https://github.com/akashic-games/headless-driver/pull/105) Update dependency @types/jest to v24.9.0 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#102](https://github.com/akashic-games/headless-driver/pull/102) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner`, `headless-driver`
+  * [#104](https://github.com/akashic-games/headless-driver/pull/104) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#101](https://github.com/akashic-games/headless-driver/pull/101) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Other Change
+* [#106](https://github.com/akashic-games/headless-driver/pull/106) Remove node-8 from travis.yml and add node-12 ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 2
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+- [@dera-](https://github.com/dera-)
+
 ## v0.6.1 (2019-12-16)
 
 #### Enhancement
