@@ -1,12 +1,14 @@
 import { LoadFileOption, RunnerExecutionMode, RunnerPlayer } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
+import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
 import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
 import { NodeVM, VMScript } from "vm2";
 import * as ExecVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
+import * as ExecVmScriptV3 from "../ExecuteVmScriptV3";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
@@ -37,7 +39,7 @@ interface EngineConfiguration {
 interface GameConfiguration {
 	definitions?: string[];
 	environment?: {
-		"sandbox-runtime"?: "1" | "2";
+		"sandbox-runtime"?: "1" | "2" | "3";
 		external: { [key: string]: string };
 	};
 }
@@ -46,7 +48,7 @@ interface GameConfiguration {
  * Runner を管理するマネージャ。
  */
 export class RunnerManager {
-	private runners: (RunnerV1 | RunnerV2)[] = [];
+	private runners: (RunnerV1 | RunnerV2 | RunnerV3)[] = [];
 	private nextRunnerId: number = 0;
 	private playManager: PlayManager;
 
@@ -70,7 +72,7 @@ export class RunnerManager {
 			});
 		}
 
-		let runner: RunnerV1 | RunnerV2;
+		let runner: RunnerV1 | RunnerV2 | RunnerV3;
 
 		const play = this.playManager.getPlay(params.playId);
 		if (play == null) {
@@ -109,7 +111,7 @@ export class RunnerManager {
 			const amflow = params.amflow;
 
 			let configurationBaseUrl: string | null = null;
-			let version: "1" | "2" = "1";
+			let version: "1" | "2" | "3" = "1";
 
 			// NOTE: `sandbox-runtime` の値を解決する。
 			// TODO: akashic-runtime の値を参照するようにする。
@@ -122,18 +124,46 @@ export class RunnerManager {
 				}
 				version = defs.reduce((acc, def) => (def.environment && def.environment["sandbox-runtime"]) || acc, version);
 				configurationBaseUrl = url.resolve(engineConfiguration.content_url, "./");
-			} else if (gameConfiguration.environment && gameConfiguration.environment["sandbox-runtime"] === "2") {
-				version = "2";
+			} else if (gameConfiguration.environment) {
+				version = gameConfiguration.environment["sandbox-runtime"];
 			}
 
 			const nvm = this.createVm(params.allowedUrls);
 			const runnerId = `${this.nextRunnerId++}`;
-			const filePath = version === "2" ? ExecVmScriptV2.getFilePath() : ExecVmScriptV1.getFilePath();
+			const filePathMap = {
+				1: ExecVmScriptV1.getFilePath(),
+				2: ExecVmScriptV2.getFilePath(),
+				3: ExecVmScriptV3.getFilePath()
+			};
+			if (!filePathMap[version]) {
+				throw new Error(`version ${version} is not supported.`);
+			}
+			const filePath = filePathMap[version];
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
 			const script = new VMScript(str);
 			const functionInSandbox = nvm.run(script, filePath);
 
-			if (version === "2") {
+			if (version === "3") {
+				getSystemLogger().info("v3 content");
+				runner = (functionInSandbox as typeof ExecVmScriptV3).createRunnerV3({
+					contentUrl,
+					assetBaseUrl: engineConfiguration.asset_base_url,
+					configurationUrl: engineConfiguration.content_url,
+					configurationBaseUrl,
+					runnerId,
+					playId: play.playId,
+					playToken: params.playToken,
+					amflow,
+					executionMode: params.executionMode,
+					external,
+					gameArgs: params.gameArgs,
+					player: params.player
+				});
+				runner.errorTrigger.addOnce((err: any) => {
+					getSystemLogger().error(err);
+					this.stopRunner(runnerId);
+				});
+			} else if (version === "2") {
 				getSystemLogger().info("v2 content");
 				runner = (functionInSandbox as typeof ExecVmScriptV2).createRunnerV2({
 					contentUrl,
@@ -188,7 +218,7 @@ export class RunnerManager {
 	 * Runner を開始する。
 	 * @param runnerId RunnerID
 	 */
-	async startRunner(runnerId: string): Promise<RunnerV1Game | RunnerV2Game | null> {
+	async startRunner(runnerId: string): Promise<RunnerV1Game | RunnerV2Game | RunnerV3Game | null> {
 		const runner = this.getRunner(runnerId);
 
 		if (!runner) {
@@ -217,14 +247,14 @@ export class RunnerManager {
 	 * Runner の情報を取得する。
 	 * @param runnerId RunnerID
 	 */
-	getRunner(runnerId: string): (RunnerV1 | RunnerV2) | null {
+	getRunner(runnerId: string): (RunnerV1 | RunnerV2 | RunnerV3) | null {
 		return this.runners.find(runner => runner.runnerId === runnerId) || null;
 	}
 
 	/**
 	 * 現在作成されている Runner の情報の一覧を取得する。
 	 */
-	getRunners(): (RunnerV1 | RunnerV2)[] {
+	getRunners(): (RunnerV1 | RunnerV2 | RunnerV3)[] {
 		return this.runners;
 	}
 
