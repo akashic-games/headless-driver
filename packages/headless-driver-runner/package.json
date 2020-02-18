@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver-runner",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "A runner module for contents using Akashic Engine",
   "main": "lib/index.js",
   "scripts": {
@@ -22,11 +22,11 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@akashic/amflow": "~0.3.1",
-    "@akashic/trigger": "0.1.5"
+    "@akashic/trigger": "~0.1.5"
   },
   "devDependencies": {
     "prettier": "1.19.1",
-    "rimraf": "3.0.0",
+    "rimraf": "3.0.2",
     "tslint": "5.20.1",
     "typescript": "3.7.5"
   }
