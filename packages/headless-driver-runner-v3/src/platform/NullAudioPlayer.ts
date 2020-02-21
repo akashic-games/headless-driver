@@ -34,4 +34,8 @@ export class NullAudioPlayer implements g.AudioPlayerLike {
 	_changeMuted(muted: boolean): void {
 		this._muted = muted;
 	}
+
+	_notifyVolumeChanged(): void {
+		//
+	}
 }
