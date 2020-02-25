@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v1.0.1 (2020-02-25)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#111](https://github.com/akashic-games/headless-driver/pull/111) Update dependency ts-jest to v25 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#113](https://github.com/akashic-games/headless-driver/pull/113) Update dependency @types/jest to v25 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#110](https://github.com/akashic-games/headless-driver/pull/110) Update dependency jest to v25 ([@renovate[bot]](https://github.com/apps/renovate))
+* Other
+  * [#103](https://github.com/akashic-games/headless-driver/pull/103) Update dependency lerna-changelog to v1 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#112](https://github.com/akashic-games/headless-driver/pull/112) Update dependency cross-env to v7 ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#109](https://github.com/akashic-games/headless-driver/pull/109) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- [@dera-](https://github.com/dera-)
+
 ## v1.0.0 (2020-02-06)
 
 #### Breaking Change
