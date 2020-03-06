@@ -81,6 +81,10 @@ export class AMFlowClient implements AMFlow {
 		});
 	}
 
+    initTick(start: number, end: number) {
+        this.store.initTick(start, end);
+    }
+
 	sendTick(tick: Tick): void {
 		if (this.state !== "open") {
 			throw createError("invalid_status", "Client is not open");

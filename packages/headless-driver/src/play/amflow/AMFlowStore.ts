@@ -37,6 +37,13 @@ export class AMFlowStore {
 		return permission;
 	}
 
+    initTick(start: number, end: number) {
+        if (this.tickList) {
+            throw createError("bad_request", "TickList alrady initialized");
+        }
+        this.tickList = [start, end, []];
+    }
+
 	sendTick(tick: Tick): void {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
