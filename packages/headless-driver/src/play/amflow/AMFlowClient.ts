@@ -81,9 +81,9 @@ export class AMFlowClient implements AMFlow {
 		});
 	}
 
-    initTick(start: number, end: number) {
-        this.store.initTick(start, end);
-    }
+	initTick(start: number, end: number): void {
+		this.store.initTick(start, end);
+	}
 
 	sendTick(tick: Tick): void {
 		if (this.state !== "open") {
