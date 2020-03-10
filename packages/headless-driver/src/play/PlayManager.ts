@@ -11,11 +11,6 @@ export interface PlayFilter {
 	status: PlayStatus;
 }
 
-interface PlaylogIndex {
-	playId: string;
-	playlog: DumpedPlaylog;
-}
-
 /**
  * Play を管理するマネージャ。
  */
@@ -23,7 +18,6 @@ export class PlayManager {
 	private amflowClientManager: AMFlowClientManager = new AMFlowClientManager();
 	private nextPlayId: number = 0;
 	private plays: Play[] = [];
-	private playlogIndex: PlaylogIndex[] = [];
 
  	/**
 	 * Play を作成する。
@@ -39,10 +33,6 @@ export class PlayManager {
 			...params
 		});
 		if (playlog) {
-			this.playlogIndex.push({
-				playId,
-				playlog
-			});
 			const amflow = this.createAMFlow(playId);
 			const activePermission = {
 				readTick: true,
