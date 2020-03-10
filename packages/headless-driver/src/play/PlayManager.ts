@@ -3,11 +3,17 @@ import { AMFlowClient } from "./amflow/AMFlowClient";
 import { AMFlowClientManager } from "./AMFlowClientManager";
 import { ContentLocation } from "./Content";
 import { Play, PlayStatus } from "./Play";
+import { DumpedPlaylog } from "./amflow/AMFlowStore";
 
 export type PlayManagerParameters = ContentLocation;
 
 export interface PlayFilter {
 	status: PlayStatus;
+}
+
+interface PlaylogIndex {
+	playId: string;
+	playlog: DumpedPlaylog;
 }
 
 /**
@@ -17,12 +23,13 @@ export class PlayManager {
 	private amflowClientManager: AMFlowClientManager = new AMFlowClientManager();
 	private nextPlayId: number = 0;
 	private plays: Play[] = [];
+	private playlogIndex: PlaylogIndex[] = [];
 
-	/**
+ 	/**
 	 * Play を作成する。
 	 * @param params パラメータ
 	 */
-	async createPlay(params: PlayManagerParameters): Promise<string> {
+	async createPlay(params: PlayManagerParameters, playlog?: DumpedPlaylog): Promise<string> {
 		const playId = `${this.nextPlayId++}`;
 		this.plays.push({
 			playId,
@@ -31,6 +38,27 @@ export class PlayManager {
 			lastSuspendedAt: null,
 			...params
 		});
+		if (playlog) {
+			this.playlogIndex.push({
+				playId,
+				playlog
+			});
+			const amflow = this.createAMFlow(playId);
+			const activePermission = {
+				readTick: true,
+				writeTick: true,
+				sendEvent: true,
+				subscribeEvent: true,
+				subscribeTick: true,
+				maxEventPriority: 2
+			};
+			const token = this.createPlayToken(playId, activePermission);
+
+			await new Promise((resolve, reject) => amflow.open(playId, (e: Error) => e ? reject(e) : resolve()));
+			await new Promise((resolve, reject) => amflow.authenticate(token, (e: Error) => e ? reject(e) : resolve()));
+			await new Promise((resolve, reject) => amflow.putStartPoint(playlog.startPoints[0], (e: Error) => e ? reject(e) : resolve()));
+			amflow.setTickList(playlog.tickList);
+		}
 		return playId;
 	}
 

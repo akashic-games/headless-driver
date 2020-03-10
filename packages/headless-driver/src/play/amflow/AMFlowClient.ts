@@ -81,8 +81,8 @@ export class AMFlowClient implements AMFlow {
 		});
 	}
 
-	initTick(start: number, end: number): void {
-		this.store.initTick(start, end);
+	setTickList(tickList: TickList): void {
+		this.store.setTickList(tickList);
 	}
 
 	sendTick(tick: Tick): void {

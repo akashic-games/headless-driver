@@ -37,11 +37,8 @@ export class AMFlowStore {
 		return permission;
 	}
 
-	initTick(start: number, end: number): void {
-		if (this.tickList) {
-			throw createError("bad_request", "TickList alrady initialized");
-		}
-		this.tickList = [start, end, []];
+	setTickList(tickList: TickList): void {
+		this.tickList = tickList;
 	}
 
 	sendTick(tick: Tick): void {
