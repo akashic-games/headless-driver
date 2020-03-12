@@ -19,7 +19,7 @@ export class PlayManager {
 	private nextPlayId: number = 0;
 	private plays: Play[] = [];
 
- 	/**
+	/**
 	 * Play を作成する。
 	 * @param params パラメータ
 	 */
@@ -44,9 +44,10 @@ export class PlayManager {
 			};
 			const token = this.createPlayToken(playId, activePermission);
 
-			await new Promise((resolve, reject) => amflow.open(playId, (e: Error) => e ? reject(e) : resolve()));
-			await new Promise((resolve, reject) => amflow.authenticate(token, (e: Error) => e ? reject(e) : resolve()));
-			await new Promise((resolve, reject) => amflow.putStartPoint(playlog.startPoints[0], (e: Error) => e ? reject(e) : resolve()));
+			// TODO: プレイ生成時に AMFlowStore 生成し playlog を渡して初期化できるようにし、 AMFlowClient 経由で playlog を渡さず済むようにする
+			await new Promise((resolve, reject) => amflow.open(playId, (e: Error) => (e ? reject(e) : resolve())));
+			await new Promise((resolve, reject) => amflow.authenticate(token, (e: Error) => (e ? reject(e) : resolve())));
+			await new Promise((resolve, reject) => amflow.putStartPoint(playlog.startPoints[0], (e: Error) => (e ? reject(e) : resolve())));
 			amflow.setTickList(playlog.tickList);
 		}
 		return playId;
