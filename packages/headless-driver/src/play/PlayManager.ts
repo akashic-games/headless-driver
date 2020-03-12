@@ -21,16 +21,16 @@ export class PlayManager {
 
 	/**
 	 * Play を作成する。
-	 * @param params パラメータ
+	 * @param playLocation パラメータ
 	 */
-	async createPlay(params: PlayManagerParameters, playlog?: DumpedPlaylog): Promise<string> {
+	async createPlay(playLocation: PlayManagerParameters, playlog?: DumpedPlaylog): Promise<string> {
 		const playId = `${this.nextPlayId++}`;
 		this.plays.push({
 			playId,
 			status: "running",
 			createdAt: Date.now(),
 			lastSuspendedAt: null,
-			...params
+			...playLocation
 		});
 		if (playlog) {
 			const amflow = this.createAMFlow(playId);
