@@ -81,6 +81,10 @@ export class AMFlowClient implements AMFlow {
 		});
 	}
 
+	setTickList(tickList: TickList): void {
+		this.store.setTickList(tickList);
+	}
+
 	sendTick(tick: Tick): void {
 		if (this.state !== "open") {
 			throw createError("invalid_status", "Client is not open");

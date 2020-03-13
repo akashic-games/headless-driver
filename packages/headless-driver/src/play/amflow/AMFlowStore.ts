@@ -37,6 +37,10 @@ export class AMFlowStore {
 		return permission;
 	}
 
+	setTickList(tickList: TickList): void {
+		this.tickList = tickList;
+	}
+
 	sendTick(tick: Tick): void {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");

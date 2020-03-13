@@ -1,5 +1,6 @@
 import { Permission } from "@akashic/amflow";
 import { AMFlowClient } from "./amflow/AMFlowClient";
+import { DumpedPlaylog } from "./amflow/AMFlowStore";
 import { AMFlowClientManager } from "./AMFlowClientManager";
 import { ContentLocation } from "./Content";
 import { Play, PlayStatus } from "./Play";
@@ -20,17 +21,35 @@ export class PlayManager {
 
 	/**
 	 * Play を作成する。
-	 * @param params パラメータ
+	 * @param playLocation パラメータ
 	 */
-	async createPlay(params: PlayManagerParameters): Promise<string> {
+	async createPlay(playLocation: PlayManagerParameters, playlog?: DumpedPlaylog): Promise<string> {
 		const playId = `${this.nextPlayId++}`;
 		this.plays.push({
 			playId,
 			status: "running",
 			createdAt: Date.now(),
 			lastSuspendedAt: null,
-			...params
+			...playLocation
 		});
+		if (playlog) {
+			const amflow = this.createAMFlow(playId);
+			const activePermission = {
+				readTick: true,
+				writeTick: true,
+				sendEvent: true,
+				subscribeEvent: true,
+				subscribeTick: true,
+				maxEventPriority: 2
+			};
+			const token = this.createPlayToken(playId, activePermission);
+
+			// TODO: プレイ生成時に AMFlowStore 生成し playlog を渡して初期化できるようにし、 AMFlowClient 経由で playlog を渡さず済むようにする
+			await new Promise((resolve, reject) => amflow.open(playId, (e: Error) => (e ? reject(e) : resolve())));
+			await new Promise((resolve, reject) => amflow.authenticate(token, (e: Error) => (e ? reject(e) : resolve())));
+			await new Promise((resolve, reject) => amflow.putStartPoint(playlog.startPoints[0], (e: Error) => (e ? reject(e) : resolve())));
+			amflow.setTickList(playlog.tickList);
+		}
 		return playId;
 	}
 
