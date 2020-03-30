@@ -64,7 +64,7 @@ export class RunnerManager {
 	 */
 	async createRunner(params: CreateRunnerParameters): Promise<string> {
 		if (params.allowedUrls != null) {
-			params.allowedUrls.forEach(u => {
+			params.allowedUrls.forEach((u) => {
 				// 正規表現の場合、'^' で始まらなければエラーとする。
 				if (u instanceof RegExp && !/^\/\^/.test(u.toString())) {
 					throw new Error(`Regexp must start with '^'. value:${u}`);
@@ -240,7 +240,7 @@ export class RunnerManager {
 		}
 
 		await runner.stop();
-		this.runners = this.runners.filter(r => r !== runner);
+		this.runners = this.runners.filter((r) => r !== runner);
 	}
 
 	/**
@@ -248,7 +248,7 @@ export class RunnerManager {
 	 * @param runnerId RunnerID
 	 */
 	getRunner(runnerId: string): (RunnerV1 | RunnerV2 | RunnerV3) | null {
-		return this.runners.find(runner => runner.runnerId === runnerId) || null;
+		return this.runners.find((runner) => runner.runnerId === runnerId) || null;
 	}
 
 	/**
@@ -276,7 +276,7 @@ export class RunnerManager {
 				trustedFunctions: {
 					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
 						if (allowedUrls != null) {
-							const isAllowedUrl = allowedUrls.some(u => {
+							const isAllowedUrl = allowedUrls.some((u) => {
 								if (typeof u === "string") {
 									return targetUrl.startsWith(u);
 								} else if (u instanceof RegExp) {

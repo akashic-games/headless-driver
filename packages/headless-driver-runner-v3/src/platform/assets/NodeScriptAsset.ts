@@ -17,11 +17,11 @@ export class NodeScriptAsset extends Asset implements g.ScriptAssetLike {
 
 	_load(loader: g.AssetLoadHandler): void {
 		loadFileInSandbox<string>(this.path, { json: false })
-			.then(text => {
+			.then((text) => {
 				this.script = text;
 				return loader._onAssetLoad(this);
 			})
-			.catch(e => {
+			.catch((e) => {
 				loader._onAssetError(this, e);
 			});
 	}

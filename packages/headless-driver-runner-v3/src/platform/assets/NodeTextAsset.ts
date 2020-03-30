@@ -8,10 +8,10 @@ export class NodeTextAsset extends Asset implements g.TextAssetLike {
 
 	_load(loader: g.AssetLoadHandler): void {
 		loadFileInSandbox<string>(this.path, { json: false })
-			.then(text => {
+			.then((text) => {
 				this.data = text;
 				return loader._onAssetLoad(this);
 			})
-			.catch(e => loader._onAssetError(this, e));
+			.catch((e) => loader._onAssetError(this, e));
 	}
 }

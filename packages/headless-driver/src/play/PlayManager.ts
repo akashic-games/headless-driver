@@ -64,7 +64,7 @@ export class PlayManager {
 		}
 		this.amflowClientManager.deleteAllPlayTokens(playId);
 		this.amflowClientManager.deleteAMFlowStore(playId);
-		this.plays = this.plays.filter(p => p !== play);
+		this.plays = this.plays.filter((p) => p !== play);
 	}
 
 	/**
@@ -100,7 +100,7 @@ export class PlayManager {
 	 * @param playId PlayID
 	 */
 	getPlay(playId: string): Play | null {
-		return this.plays.find(play => play.playId === playId) || null;
+		return this.plays.find((play) => play.playId === playId) || null;
 	}
 
 	/**
@@ -114,7 +114,7 @@ export class PlayManager {
 	 * 与えられた引数の条件に一致する Play の情報の一覧を取得する。
 	 */
 	getPlays(filter: PlayFilter): Play[] {
-		return this.plays.filter(play => play.status === filter.status);
+		return this.plays.filter((play) => play.status === filter.status);
 	}
 
 	/**

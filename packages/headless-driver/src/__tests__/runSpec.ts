@@ -124,7 +124,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.addOnce(l => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -135,7 +135,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.addOnce(l => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -178,9 +178,9 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		expect(game.playId).toBe(playId);
 
 		const handleData = () =>
-			new Promise<any>(resolve => {
+			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.addOnce(l => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -189,9 +189,9 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		expect(data).toBe("reached right");
 
 		const handleEvent = () =>
-			new Promise<any>(resolve => {
+			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.addOnce(l => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -248,7 +248,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
 				// NOTE: 読み込んだコンテンツ側で受信したメッセージイベントを出力しているので、ここで内容を取得する
-				activeRunner.sendToExternalTrigger.addOnce(l => {
+				activeRunner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -283,7 +283,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.addOnce(l => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -352,7 +352,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.add(l => {
+				runner.sendToExternalTrigger.add((l) => {
 					if (l === "loaded_external_asset") {
 						resolve(l);
 						return true;
@@ -386,9 +386,9 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		await runner.start();
 
 		const handleEvent = () =>
-			new Promise<any>(resolve => {
+			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.add(l => {
+				runner.sendToExternalTrigger.add((l) => {
 					if (l === "loaded_external_asset") {
 						resolve(l);
 						return true;
@@ -461,7 +461,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.addOnce(l => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -491,9 +491,9 @@ describe("ローカルコンテンツの動作テスト", () => {
 		expect(runner.external).toEqual({ ext: "0" });
 
 		const handleData = () =>
-			new Promise<any>(resolve => {
+			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.addOnce(l => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			});
@@ -637,7 +637,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const handleError = () =>
-			new Promise<any>(resolve => {
+			new Promise<any>((resolve) => {
 				runner.errorTrigger.add((e: any) => {
 					resolve(e);
 					return true;
@@ -747,7 +747,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 
 		const errorCalledFn = jest.fn();
 		const handleError = () => {
-			return new Promise<any>(resolve => {
+			return new Promise<any>((resolve) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
@@ -939,7 +939,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.add(l => {
+				runner.sendToExternalTrigger.add((l) => {
 					if (l === "failed_load_external_asset") {
 						resolve(l);
 						return true;
@@ -974,9 +974,9 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const handleEvent = () =>
-			new Promise<any>(resolve => {
+			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.add(l => {
+				runner.sendToExternalTrigger.add((l) => {
 					if (l === "failed_load_external_asset") {
 						resolve(l);
 						return true;
@@ -1013,7 +1013,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.add(l => {
+				runner.sendToExternalTrigger.add((l) => {
 					if (l === "failed_load_external_asset") {
 						resolve(l);
 						return true;
@@ -1051,7 +1051,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
-				runner.sendToExternalTrigger.add(l => {
+				runner.sendToExternalTrigger.add((l) => {
 					if (l === "failed_load_external_asset") {
 						resolve(l);
 						return true;
