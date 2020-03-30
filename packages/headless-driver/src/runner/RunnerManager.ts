@@ -140,8 +140,8 @@ export class RunnerManager {
 			}
 			const filePath = filePathMap[version];
 			const str = fs.readFileSync(filePath, { encoding: "utf8" });
-			const script = new VMScript(str);
-			const functionInSandbox = nvm.run(script, filePath);
+			const script = new VMScript(str, filePath);
+			const functionInSandbox = nvm.run(script);
 
 			if (version === "3") {
 				getSystemLogger().info("v3 content");
