@@ -124,7 +124,7 @@ export class RunnerManager {
 				}
 				version = defs.reduce((acc, def) => (def.environment && def.environment["sandbox-runtime"]) || acc, version);
 				configurationBaseUrl = url.resolve(engineConfiguration.content_url, "./");
-			} else if (gameConfiguration.environment) {
+			} else if (gameConfiguration.environment && gameConfiguration.environment["sandbox-runtime"]) {
 				version = gameConfiguration.environment["sandbox-runtime"];
 			}
 
