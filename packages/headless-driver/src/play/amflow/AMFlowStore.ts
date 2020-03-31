@@ -74,7 +74,7 @@ export class AMFlowStore {
 		}
 		from = Math.max(from, this.tickList[0]);
 		to = Math.min(to, this.tickList[1]);
-		const ticks = this.tickList[2].filter(tick => {
+		const ticks = this.tickList[2].filter((tick) => {
 			const age = tick[0];
 			return from <= age && age <= to;
 		});

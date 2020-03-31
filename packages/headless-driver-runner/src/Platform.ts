@@ -31,7 +31,7 @@ export abstract class Platform {
 
 	loadGameConfiguration(url: string, callback: (err: Error, data?: object) => void): void {
 		loadFileInSandbox<any>(url, { json: true })
-			.then(json => callback(null, json))
-			.catch(e => callback(e));
+			.then((json) => callback(null, json))
+			.catch((e) => callback(e));
 	}
 }

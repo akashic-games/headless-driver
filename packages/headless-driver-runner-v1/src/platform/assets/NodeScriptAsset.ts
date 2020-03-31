@@ -13,11 +13,11 @@ export class NodeScriptAsset extends g.ScriptAsset {
 
 	_load(loader: g.AssetLoadHandler): void {
 		loadFileInSandbox<string>(this.path, { json: false })
-			.then(text => {
+			.then((text) => {
 				this.script = text;
 				return loader._onAssetLoad(this);
 			})
-			.catch(e => loader._onAssetError(this, e));
+			.catch((e) => loader._onAssetError(this, e));
 	}
 
 	execute(execEnv: g.ScriptAssetExecuteEnvironment): any {
