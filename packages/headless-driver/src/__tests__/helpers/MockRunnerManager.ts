@@ -41,7 +41,7 @@ export class MockRunnerManager extends RunnerManager {
 				trustedFunctions: {
 					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
 						if (allowedUrls != null) {
-							const isAllowedUrl = allowedUrls.some(u => {
+							const isAllowedUrl = allowedUrls.some((u) => {
 								if (typeof u === "string") {
 									return targetUrl.startsWith(u);
 								} else if (u instanceof RegExp) {

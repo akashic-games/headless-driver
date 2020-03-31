@@ -124,43 +124,43 @@ describe("プレー周りのテスト", () => {
 		const playId2 = await playManager.createPlay({ contentUrl });
 		const playId3 = await playManager.createPlay({ contentUrl });
 
-		let playIds = playManager.getAllPlays().map(play => play.playId);
+		let playIds = playManager.getAllPlays().map((play) => play.playId);
 		expect(playIds).toEqual([playId1, playId2, playId3]);
 
 		playManager.suspendPlay(playId1);
 
 		// すべてのPlay
-		playIds = playManager.getAllPlays().map(play => play.playId);
+		playIds = playManager.getAllPlays().map((play) => play.playId);
 		expect(playIds).toEqual([playId1, playId2, playId3]);
 		// running の Play
-		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
+		playIds = playManager.getPlays({ status: "running" }).map((play) => play.playId);
 		expect(playIds).toEqual([playId2, playId3]);
 		// suspend の Play
-		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
+		playIds = playManager.getPlays({ status: "suspending" }).map((play) => play.playId);
 		expect(playIds).toEqual([playId1]);
 
 		playManager.deletePlay(playId2);
 
 		// すべてのPlay
-		playIds = playManager.getAllPlays().map(play => play.playId);
+		playIds = playManager.getAllPlays().map((play) => play.playId);
 		expect(playIds).toEqual([playId1, playId3]);
 		// running の Play
-		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
+		playIds = playManager.getPlays({ status: "running" }).map((play) => play.playId);
 		expect(playIds).toEqual([playId3]);
 		// suspend の Play
-		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
+		playIds = playManager.getPlays({ status: "suspending" }).map((play) => play.playId);
 		expect(playIds).toEqual([playId1]);
 
 		playManager.resumePlay(playId1);
 
 		// すべてのPlay
-		playIds = playManager.getAllPlays().map(play => play.playId);
+		playIds = playManager.getAllPlays().map((play) => play.playId);
 		expect(playIds).toEqual([playId1, playId3]);
 		// running の Play
-		playIds = playManager.getPlays({ status: "running" }).map(play => play.playId);
+		playIds = playManager.getPlays({ status: "running" }).map((play) => play.playId);
 		expect(playIds).toEqual([playId1, playId3]);
 		// suspend の Play
-		playIds = playManager.getPlays({ status: "suspending" }).map(play => play.playId);
+		playIds = playManager.getPlays({ status: "suspending" }).map((play) => play.playId);
 		expect(playIds).toEqual([]);
 	});
 });

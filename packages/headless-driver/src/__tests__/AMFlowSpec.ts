@@ -11,19 +11,19 @@ import { SilentLogger } from "./helpers/SilentLogger";
 setSystemLogger(new SilentLogger());
 
 describe("AMFlow の動作テスト", () => {
-	it("getStartPoint で正しく startPoint が取得できる", done => {
+	it("getStartPoint で正しく startPoint が取得できる", (done) => {
 		const amflowClientManager = new AMFlowClientManager();
 		const amflowClient = amflowClientManager.createAMFlow("0");
 		amflowClient.open("0", () => {
 			const token = amflowClientManager.createPlayToken("0", activePermission);
 			amflowClient.authenticate(token, async () => {
-				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint> = opts =>
+				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint> = (opts) =>
 					new Promise<StartPoint>((resolve, reject) => {
 						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data)));
 					});
-				const putStartPoint: (sp: StartPoint) => Promise<StartPoint> = sp =>
+				const putStartPoint: (sp: StartPoint) => Promise<StartPoint> = (sp) =>
 					new Promise((resolve, reject) => {
-						amflowClient.putStartPoint(sp, e => (e ? reject(e) : resolve()));
+						amflowClient.putStartPoint(sp, (e) => (e ? reject(e) : resolve()));
 					});
 
 				await putStartPoint({
@@ -95,7 +95,7 @@ describe("AMFlow の動作テスト", () => {
 		});
 	});
 
-	it("AMFlow#onEvent が登録されるより以前の Event を正しく取得できる", done => {
+	it("AMFlow#onEvent が登録されるより以前の Event を正しく取得できる", (done) => {
 		const playManager = new PlayManager();
 		let activeAMFlow: AMFlowClient;
 		let passiveAMFlow: AMFlowClient;
@@ -105,11 +105,11 @@ describe("AMFlow の動作テスト", () => {
 			.createPlay({
 				contentUrl: "dummy"
 			})
-			.then(p => {
+			.then((p) => {
 				return new Promise((resolve, reject) => {
 					playId = p;
 					activeAMFlow = playManager.createAMFlow(playId);
-					activeAMFlow.open(playId, err => {
+					activeAMFlow.open(playId, (err) => {
 						if (err) {
 							reject(err);
 							return;
@@ -121,7 +121,7 @@ describe("AMFlow の動作テスト", () => {
 			.then(() => {
 				return new Promise((resolve, reject) => {
 					passiveAMFlow = playManager.createAMFlow(playId);
-					passiveAMFlow.open(playId, err => {
+					passiveAMFlow.open(playId, (err) => {
 						if (err) {
 							reject(err);
 							return;
@@ -134,7 +134,7 @@ describe("AMFlow の動作テスト", () => {
 				return new Promise((resolve, reject) => {
 					// 認証できる
 					const playToken = playManager.createPlayToken(playId, passivePermission);
-					passiveAMFlow.authenticate(playToken, err => {
+					passiveAMFlow.authenticate(playToken, (err) => {
 						if (err) {
 							reject(err);
 							return;
@@ -152,7 +152,7 @@ describe("AMFlow の動作テスト", () => {
 				return new Promise((resolve, reject) => {
 					// Active の認証
 					const playToken = playManager.createPlayToken(playId, activePermission);
-					activeAMFlow.authenticate(playToken, err => {
+					activeAMFlow.authenticate(playToken, (err) => {
 						if (err) {
 							reject(err);
 							return;
@@ -162,7 +162,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				activeAMFlow.onEvent(event => {
+				activeAMFlow.onEvent((event) => {
 					events.push(event);
 				});
 			})
@@ -180,10 +180,10 @@ describe("AMFlow の動作テスト", () => {
 				]);
 			})
 			.then(done)
-			.catch(e => done(e));
+			.catch((e) => done(e));
 	});
 
-	it("AMFlow通信ができる", done => {
+	it("AMFlow通信ができる", (done) => {
 		const playManager = new PlayManager();
 		let playId: string;
 		let activeAMFlow: AMFlowClient;
@@ -193,13 +193,13 @@ describe("AMFlow の動作テスト", () => {
 			.createPlay({
 				contentUrl: "dummy"
 			})
-			.then(p => {
+			.then((p) => {
 				playId = p;
 			})
 			.then(() => {
 				return new Promise((resolve, reject) => {
 					activeAMFlow = playManager.createAMFlow(playId);
-					activeAMFlow.open(playId, err => {
+					activeAMFlow.open(playId, (err) => {
 						if (err) {
 							reject(err);
 							return;
@@ -211,7 +211,7 @@ describe("AMFlow の動作テスト", () => {
 			.then(() => {
 				return new Promise((resolve, reject) => {
 					passiveAMFlow = playManager.createAMFlow(playId);
-					passiveAMFlow.open(playId, err => {
+					passiveAMFlow.open(playId, (err) => {
 						if (err) {
 							reject(err);
 							return;
@@ -223,7 +223,7 @@ describe("AMFlow の動作テスト", () => {
 			.then(() => {
 				return new Promise((resolve, reject) => {
 					failureAMFlow = playManager.createAMFlow(playId);
-					failureAMFlow.open(playId, err => {
+					failureAMFlow.open(playId, (err) => {
 						if (err) {
 							reject(err);
 							return;
@@ -374,7 +374,7 @@ describe("AMFlow の動作テスト", () => {
 							timestamp: 1000,
 							data: "hoge"
 						},
-						e => {
+						(e) => {
 							if (e) {
 								expect(e instanceof BadRequestError).toBe(true);
 								resolve();
@@ -400,7 +400,7 @@ describe("AMFlow の動作テスト", () => {
 							timestamp: 1000,
 							data: "hoge"
 						},
-						e => {
+						(e) => {
 							if (e) {
 								reject(e);
 								return;
@@ -440,10 +440,10 @@ describe("AMFlow の動作テスト", () => {
 			.then(() => {
 				return new Promise((resolve, reject) => {
 					// すでに delete したプレーの AMFlowClient に対して close() を呼び出しても問題ない
-					passiveAMFlow.close(err => (err ? reject(err) : resolve()));
+					passiveAMFlow.close((err) => (err ? reject(err) : resolve()));
 				});
 			})
 			.then(done)
-			.catch(e => done(e));
+			.catch((e) => done(e));
 	});
 });

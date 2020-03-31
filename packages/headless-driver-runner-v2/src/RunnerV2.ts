@@ -37,7 +37,7 @@ export class RunnerV2 extends Runner {
 				reject(new Error("Game is not started"));
 				return;
 			}
-			this.driver.changeState(param, err => (err ? reject(err) : resolve()));
+			this.driver.changeState(param, (err) => (err ? reject(err) : resolve()));
 		});
 	}
 

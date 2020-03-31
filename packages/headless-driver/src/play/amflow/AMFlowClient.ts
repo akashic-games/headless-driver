@@ -118,7 +118,7 @@ export class AMFlowClient implements AMFlow {
 		if (this.permission == null) {
 			throw createError("invalid_status", "Not authenticated");
 		}
-		this.tickHandlers = this.tickHandlers.filter(h => h !== handler);
+		this.tickHandlers = this.tickHandlers.filter((h) => h !== handler);
 	}
 
 	sendEvent(event: Event): void {
@@ -149,7 +149,7 @@ export class AMFlowClient implements AMFlow {
 		this.eventHandlers.push(handler);
 
 		if (0 < this.unconsumedEvents.length) {
-			this.eventHandlers.forEach(h => this.unconsumedEvents.forEach(ev => h(ev)));
+			this.eventHandlers.forEach((h) => this.unconsumedEvents.forEach((ev) => h(ev)));
 			this.unconsumedEvents = [];
 		}
 	}
@@ -161,7 +161,7 @@ export class AMFlowClient implements AMFlow {
 		if (this.permission == null) {
 			throw createError("invalid_status", "Not authenticated");
 		}
-		this.eventHandlers = this.eventHandlers.filter(h => h !== handler);
+		this.eventHandlers = this.eventHandlers.filter((h) => h !== handler);
 	}
 
 	getTickList(from: number, to: number, callback: (error: Error, tickList: TickList) => void): void {
@@ -274,7 +274,7 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	private onTickSended(tick: Tick): void {
-		this.tickHandlers.forEach(h => h(tick));
+		this.tickHandlers.forEach((h) => h(tick));
 	}
 
 	private onEventSended(event: Event): void {
@@ -282,6 +282,6 @@ export class AMFlowClient implements AMFlow {
 			this.unconsumedEvents.push(event);
 			return;
 		}
-		this.eventHandlers.forEach(h => h(event));
+		this.eventHandlers.forEach((h) => h(event));
 	}
 }
