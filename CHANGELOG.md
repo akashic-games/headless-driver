@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.1.1 (2020-03-31)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#124](https://github.com/akashic-games/headless-driver/pull/124) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#123](https://github.com/akashic-games/headless-driver/pull/123) Update dependency prettier to v2 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#122](https://github.com/akashic-games/headless-driver/pull/122) Update dependency tslint to v6 ([@renovate[bot]](https://github.com/apps/renovate))
+* Other
+  * [#125](https://github.com/akashic-games/headless-driver/pull/125) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
 
 ## v1.0.2 (2020-03-12)
 
