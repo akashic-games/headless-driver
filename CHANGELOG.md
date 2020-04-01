@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.1.2 (2020-04-01)
+
+#### Bug Fix
+* `headless-driver`
+  * [#126](https://github.com/akashic-games/headless-driver/pull/126) fix that runner-version will not be undefined ([@dera-](https://github.com/dera-))
+
+#### Committers: 1
+- [@dera-](https://github.com/dera-)
+
 ## v1.1.1 (2020-03-31)
 
 #### Update Dependencies
