@@ -2,6 +2,8 @@ import { akashicEngine as g } from "@akashic/engine-files";
 
 export class NullVideoPlayer implements g.VideoPlayerLike {
 	currentVideo: g.VideoAssetLike;
+	onPlay: g.Trigger<g.VideoPlayerEvent>;
+	onStop: g.Trigger<g.VideoPlayerEvent>;
 	played: g.Trigger<g.VideoPlayerEvent>;
 	stopped: g.Trigger<g.VideoPlayerEvent>;
 	volume: number;
@@ -9,8 +11,10 @@ export class NullVideoPlayer implements g.VideoPlayerLike {
 
 	constructor(loop?: boolean) {
 		this._loop = !!loop;
-		this.played = new g.Trigger<g.VideoPlayerEvent>();
-		this.stopped = new g.Trigger<g.VideoPlayerEvent>();
+		this.onPlay = new g.Trigger<g.VideoPlayerEvent>();
+		this.onStop = new g.Trigger<g.VideoPlayerEvent>();
+		this.played = this.onPlay;
+		this.stopped = this.onStop;
 		this.currentVideo = undefined;
 		this.volume = 1.0;
 	}
