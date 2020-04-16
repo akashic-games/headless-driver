@@ -52,7 +52,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: null
+			allowedUrls: null,
+			externalValue: {hoge: () => "hoge1", foo: () => "foo1" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		expect(runner.runnerId).toBe("0");
@@ -61,6 +62,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV1Game;
 		expect(game.playId).toBe(playId);
+		expect(game.external.hoge()).toBe("hoge1");
+		expect(game.external.foo()).toBe("foo1");
 
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
@@ -111,7 +114,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: null
+			allowedUrls: null,
+			externalValue: { hoge: () => "hoge2", foo: () => "foo2" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.runnerId).toBe("0");
@@ -120,6 +124,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV2Game;
 		expect(game.playId).toBe(playId);
+		expect(game.external.hoge()).toBe("hoge2");
+		expect(game.external.foo()).toBe("foo2");
 
 		const handleData = () =>
 			new Promise<any>((resolve, reject) => {
@@ -167,7 +173,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: null
+			allowedUrls: null,
+			externalValue: { hoge: () => "hoge3", foo: () => "foo3" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		expect(runner.runnerId).toBe("0");
@@ -176,6 +183,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV3Game;
 		expect(game.playId).toBe(playId);
+		expect(game.external.hoge()).toBe("hoge3");
+		expect(game.external.foo()).toBe("foo3");
 
 		const handleData = () =>
 			new Promise<any>((resolve) => {
@@ -418,7 +427,8 @@ describe("ローカルコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: null
+			allowedUrls: null,
+			externalValue: { hoge: () => "hoge1", foo: () => "foo1" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.external).toEqual({});
@@ -433,9 +443,11 @@ describe("ローカルコンテンツの動作テスト", () => {
 			});
 
 		try {
-			await runner.start();
+			const game = await runner.start();
 			const data = await handleData();
 			expect(data).toBe("reached right");
+			expect(game.external.hoge()).toBe("hoge1");
+			expect(game.external.foo()).toBe("foo1");
 		} finally {
 			runner.stop();
 		}
@@ -453,7 +465,8 @@ describe("ローカルコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: null
+			allowedUrls: null,
+			externalValue: { hoge: () => "hoge2", foo: () => "foo2" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.external).toEqual({ ext: "0" });
@@ -466,9 +479,11 @@ describe("ローカルコンテンツの動作テスト", () => {
 				});
 			});
 
-		await runner.start();
+		const game = await runner.start();
 		const data = await handleData();
 		expect(data).toBe("reached right");
+		expect(game.external.hoge()).toBe("hoge2");
+		expect(game.external.foo()).toBe("foo2");
 		runner.stop();
 	});
 
@@ -485,7 +500,8 @@ describe("ローカルコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: null
+			allowedUrls: null,
+			externalValue: { hoge: () => "hoge3", foo: () => "foo3" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		expect(runner.external).toEqual({ ext: "0" });
@@ -498,9 +514,11 @@ describe("ローカルコンテンツの動作テスト", () => {
 				});
 			});
 
-		await runner.start();
+		const game = await runner.start();
 		const data = await handleData();
 		expect(data).toBe("reached right");
+		expect(game.external.hoge()).toBe("hoge3");
+		expect(game.external.foo()).toBe("foo3");
 		runner.stop();
 	});
 });

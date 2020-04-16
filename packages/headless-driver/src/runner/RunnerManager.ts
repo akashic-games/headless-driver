@@ -27,6 +27,7 @@ export interface CreateRunnerParameters {
 	 * null が指定された場合は全てのアクセスを許可する。
 	 */
 	allowedUrls: (string | RegExp)[] | null;
+	externalValue?: { [key: string]: any };
 }
 
 interface EngineConfiguration {
@@ -157,7 +158,8 @@ export class RunnerManager {
 					executionMode: params.executionMode,
 					external,
 					gameArgs: params.gameArgs,
-					player: params.player
+					player: params.player,
+					externalValue: params.externalValue
 				});
 				runner.errorTrigger.addOnce((err: any) => {
 					getSystemLogger().error(err);
@@ -177,7 +179,8 @@ export class RunnerManager {
 					executionMode: params.executionMode,
 					external,
 					gameArgs: params.gameArgs,
-					player: params.player
+					player: params.player,
+					externalValue: params.externalValue
 				});
 				runner.errorTrigger.addOnce((err: any) => {
 					getSystemLogger().error(err);
@@ -197,7 +200,8 @@ export class RunnerManager {
 					executionMode: params.executionMode,
 					external,
 					gameArgs: params.gameArgs,
-					player: params.player
+					player: params.player,
+					externalValue: params.externalValue
 				});
 				runner.errorTrigger.handle((err: any) => {
 					getSystemLogger().error(err);

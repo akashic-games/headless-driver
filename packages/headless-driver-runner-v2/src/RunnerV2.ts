@@ -97,6 +97,11 @@ export class RunnerV2 extends Runner {
 			);
 
 			driver.gameCreatedTrigger.addOnce((game: RunnerV2Game) => {
+				if (this.externalValue) {
+					Object.keys(this.externalValue).forEach((key) => {
+						if (key) game.external[key] = this.externalValue[key];
+					});
+				}
 				game._started.addOnce(() => resolve(game));
 			});
 		});
