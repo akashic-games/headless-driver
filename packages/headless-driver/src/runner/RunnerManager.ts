@@ -28,7 +28,7 @@ export interface CreateRunnerParameters {
 	 */
 	allowedUrls: (string | RegExp)[] | null;
 	/**
-	 * g.Game#external に対応する。
+	 * g.Game#external に与えられる値。
 	 * g.Game#_started の発火前にセットされる。
 	 */
 	externalValue?: { [key: string]: any };
