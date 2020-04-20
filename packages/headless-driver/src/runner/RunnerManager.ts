@@ -27,6 +27,10 @@ export interface CreateRunnerParameters {
 	 * null が指定された場合は全てのアクセスを許可する。
 	 */
 	allowedUrls: (string | RegExp)[] | null;
+	/**
+	 * g.Game#external に対応する。
+	 * g.Game#_started の発火前にセットされる。
+	 */
 	externalValue?: { [key: string]: any };
 }
 

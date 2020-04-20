@@ -53,7 +53,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			playToken,
 			executionMode: "active",
 			allowedUrls: null,
-			externalValue: {hoge: () => "hoge1", foo: () => "foo1" }
+			externalValue: { hoge: () => "hoge1", foo: () => "foo1" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		expect(runner.runnerId).toBe("0");
