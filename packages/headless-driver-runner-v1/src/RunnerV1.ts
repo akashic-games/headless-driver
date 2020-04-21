@@ -97,6 +97,11 @@ export class RunnerV1 extends Runner {
 			);
 
 			driver.gameCreatedTrigger.handle((game: RunnerV1Game) => {
+				if (this.externalValue) {
+					Object.keys(this.externalValue).forEach((key) => {
+						game.external[key] = this.externalValue[key];
+					});
+				}
 				game._started.handle(() => {
 					resolve(game);
 					return true;
