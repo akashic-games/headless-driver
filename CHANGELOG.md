@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.1.5 (2020-04-21)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#133](https://github.com/akashic-games/headless-driver/pull/133) Add externalValue to Runner ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v1.1.4 (2020-04-13)
 
 #### Enhancement
