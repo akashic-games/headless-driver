@@ -60,14 +60,14 @@ export class ResourceFactory implements g.ResourceFactoryLike {
 	}
 
 	createGlyphFactory(
-		fontFamily: g.FontFamily | string | (g.FontFamily | string)[],
+		fontFamily: string | string[],
 		fontSize: number,
 		baselineHeight?: number,
 		fontColor?: string,
 		strokeWidth?: number,
 		strokeColor?: string,
 		strokeOnly?: boolean,
-		fontWeight?: g.FontWeight
+		fontWeight?: g.FontWeightString
 	): g.GlyphFactoryLike {
 		return new NullGlyphFactory(fontFamily, fontSize, baselineHeight, fontColor, strokeWidth, strokeColor, strokeOnly, fontWeight);
 	}

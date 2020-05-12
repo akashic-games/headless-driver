@@ -62,7 +62,7 @@ export class NullRenderer implements g.RendererLike {
 		//
 	}
 
-	setCompositeOperation(_operation: g.CompositeOperation): void {
+	setCompositeOperation(_operation: g.CompositeOperationString): void {
 		//
 	}
 
