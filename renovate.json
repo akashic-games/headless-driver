@@ -24,7 +24,6 @@
       "groupName": "all dependencies"
     },
     {
-      "__NOTE__": "seems broken at v3.9.2. keep using v3.9.1",
       "packageNames": ["vm2"],
       "enabled": false
     }
