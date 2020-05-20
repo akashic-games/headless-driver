@@ -1,6 +1,6 @@
 script:
   - npm install
-  - npm test
+  - travis_wait 30 npm test
 language: node_js
 node_js:
   - 10
@@ -8,4 +8,3 @@ node_js:
 os:
   - windows
   - linux
-install: travis_wait 30 npm install # TODO: 一時的にタイムアウトを伸ばす
