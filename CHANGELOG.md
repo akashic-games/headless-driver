@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.1.8 (2020-05-21)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#142](https://github.com/akashic-games/headless-driver/pull/142) 【v1.1.8】内部コンポーネントの更新(engineFiles@3.0.0-beta.5, engineFiles@2.1.40, engineFiles@1.1.14) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#135](https://github.com/akashic-games/headless-driver/pull/135) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#134](https://github.com/akashic-games/headless-driver/pull/134) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.1.7 (2020-05-13)
 
 #### Enhancement
