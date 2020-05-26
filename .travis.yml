@@ -1,9 +1,5 @@
 script:
   - npm install
-  - |
-    while sleep 9m; do
-      echo "====[ $SECONDS seconds still running ]===="
-    done &
   - npm test
 language: node_js
 node_js:
