@@ -5,5 +5,3 @@ log/
 
 *.log
 *.tgz
-
-/.npmrc
