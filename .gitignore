@@ -6,4 +6,4 @@ log/
 *.log
 *.tgz
 
-.npmrc
+/.npmrc
