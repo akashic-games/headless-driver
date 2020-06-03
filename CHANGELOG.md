@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v1.1.13 (2020-06-03)
+
+#### Bug Fix
+* [#147](https://github.com/akashic-games/headless-driver/pull/147) 直下の.npmrcの削除 ([@dera-](https://github.com/dera-))
+
+#### Republish
+* [#148](https://github.com/akashic-games/headless-driver/pull/148) Republish ([@xnv](https://github.com/xnv))
+
+#### Committers: 2
+- [@dera-](https://github.com/dera-)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.1.11 (2020-05-26)
 
 #### Update Dependencies
