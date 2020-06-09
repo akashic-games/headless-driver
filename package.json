@@ -14,7 +14,7 @@
     "publish:major": "node build/publishAndUpdateChangelog.js major",
     "publish:force-patch-all": "node build/prepareRepublish.js && cross-env PUBLISH_MODE=force node build/publishAndUpdateChangelog.js patch",
     "publish:force-minor-all": "node build/prepareRepublish.js && cross-env PUBLISH_MODE=force node build/publishAndUpdateChangelog.js minor",
-    "publish:prerelease": "lerna publish prerelease --dist-tag ${TARGET_TAG:-next} --yes",
+    "publish:prerelease": "lerna publish prerelease --dist-tag ${PUBLISH_DIST_TAG:-next} --yes",
     "build": "lerna run build",
     "test": "lerna run test && npm run lint:md",
     "lint:md": "remark . --frail --no-stdout --quiet --rc-path ./.remarkrc"

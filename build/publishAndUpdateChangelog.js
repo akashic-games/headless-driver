@@ -34,7 +34,7 @@ try {
 	// CHANGELOG作成時に必要になるのでpublish前のバージョンを保持しておく
 	const beforeVersion = require(path.join(__dirname, "..", "lerna.json")).version;
 	const forcePublishOption = process.env.PUBLISH_MODE === "force" ? "--force-publish=*" : "";
-	const distTagOption = process.env.TARGET_TAG ? `--dist-tag ${process.env.TARGET_TAG}` : "";
+	const distTagOption = process.env.PUBLISH_DIST_TAG ? `--dist-tag ${process.env.PUBLISH_DIST_TAG}` : "";
 	execSync(`${lernaPath} publish ${target} ${forcePublishOption} ${distTagOption} --yes`);
 	console.log("end to publish");
 
