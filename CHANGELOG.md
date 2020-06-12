@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v1.1.15 (2020-06-13)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#152](https://github.com/akashic-games/headless-driver/pull/152) Update dependency @types/jest to v26 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Other Change
+* [#149](https://github.com/akashic-games/headless-driver/pull/149) publishスクリプトにタグ指定オプションを追加 ([@dera-](https://github.com/dera-))
+
+#### Committers: 1
+- [@dera-](https://github.com/dera-)
+
 ## v1.1.14 (2020-06-09)
 
 #### Update Dependencies
