@@ -1,5 +1,5 @@
 import { AMFlow, GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
-import { Event, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
+import { Event, EventFlagsMask, EventIndex, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
 import { getSystemLogger } from "../../Logger";
 import { AMFlowStore, DumpedPlaylog } from "./AMFlowStore";
 import { createError } from "./ErrorFactory";
@@ -132,7 +132,9 @@ export class AMFlowClient implements AMFlow {
 			throw createError("permission_error", "Permission denied");
 		}
 		// Max Priority
-		event[1] = Math.min(event[1], this.permission.maxEventPriority);
+		const prio = event[EventIndex.EventFlags] & EventFlagsMask.Priority;
+		const tran = event[EventIndex.EventFlags] & EventFlagsMask.Transient;
+		event[EventIndex.EventFlags] = tran | Math.min(prio, this.permission.maxEventPriority);
 		this.store.sendEvent(event);
 	}
 

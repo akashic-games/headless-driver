@@ -291,17 +291,59 @@ describe("AMFlow の動作テスト", () => {
 			})
 			.then(() => {
 				return new Promise((resolve, reject) => {
-					// Tick を送信できる
+					// Transient Event を含む Tick を送信できる
 					activeAMFlow.sendTick([0]);
+					activeAMFlow.sendTick([
+						1,
+						[
+							[0, 0b1000, "dummy-1-1"],
+							[1, 0b0010, "dummy-1-2"],
+							[2, 0b1111, "dummy-1-3"]
+						]
+					]);
+					activeAMFlow.sendTick([2]);
+					activeAMFlow.sendTick([
+						3,
+						[
+							[0, 0b1000, "dummy-2-1"],
+							[1, 0b1010, "dummy-2-2"],
+							[2, 0b1111, "dummy-2-3"]
+						]
+					]);
+					activeAMFlow.sendTick([4]);
+					activeAMFlow.sendTick([
+						5,
+						[
+							[0, 0b0000, "dummy-3-1"],
+							[1, 0b0010, "dummy-3-2"],
+							[2, 0b0111, "dummy-3-3"]
+						]
+					]);
+					activeAMFlow.sendTick([6, [[0, 0b0000, "dummy-4-1"]]]);
 
 					// TickList を取得できる
-					passiveAMFlow.getTickList(0, 1, (err, tickList) => {
+					passiveAMFlow.getTickList(0, 5, (err, tickList) => {
 						if (err) {
 							reject(err);
 							return;
 						}
-						expect(err).toBe(null);
-						expect(tickList).toEqual([0, 0, []]);
+						expect(err).toBeNull();
+						expect(tickList).toEqual([
+							0,
+							5,
+							[
+								[1, [[1, 0b0010, "dummy-1-2"]]],
+								[3, []],
+								[
+									5,
+									[
+										[0, 0b0000, "dummy-3-1"],
+										[1, 0b0010, "dummy-3-2"],
+										[2, 0b0111, "dummy-3-3"]
+									]
+								]
+							]
+						]);
 						resolve();
 					});
 				});
@@ -318,7 +360,22 @@ describe("AMFlow の動作テスト", () => {
 					activeAMFlow.onEvent(eventHandler);
 
 					// Event を送信できる
-					passiveAMFlow.sendEvent([0, 5, "dummy-player-id"]);
+					passiveAMFlow.sendEvent([0, 0b011, "dummy-player-id"]);
+				});
+			})
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					// Event の受信ハンドラを登録できる
+					const eventHandler = (event: number[]) => {
+						// Transient および Max Priority の確認
+						expect(event).toEqual([0, 0b1000 | 0b0010, "dummy-player-id"]);
+						activeAMFlow.offEvent(eventHandler);
+						resolve();
+					};
+					activeAMFlow.onEvent(eventHandler);
+
+					// Transient Event を送信できる
+					passiveAMFlow.sendEvent([0, 0b1111, "dummy-player-id"]);
 				});
 			})
 			.then(() => {
@@ -341,12 +398,28 @@ describe("AMFlow の動作テスト", () => {
 			.then(() => {
 				return new Promise((resolve, reject) => {
 					// Play を suspend した後でも TickList を取得できる
-					passiveAMFlow.getTickList(0, 1, (err, tickList) => {
+					passiveAMFlow.getTickList(0, 10, (err, tickList) => {
 						if (err) {
 							reject(err);
 							return;
 						}
-						expect(tickList).toEqual([0, 0, []]);
+						expect(tickList).toEqual([
+							0,
+							6,
+							[
+								[1, [[1, 0b0010, "dummy-1-2"]]],
+								[3, []],
+								[
+									5,
+									[
+										[0, 0b0000, "dummy-3-1"],
+										[1, 0b0010, "dummy-3-2"],
+										[2, 0b0111, "dummy-3-3"]
+									]
+								],
+								[6, [[0, 0b0000, "dummy-4-1"]]]
+							]
+						]);
 						resolve();
 					});
 				});
@@ -413,12 +486,28 @@ describe("AMFlow の動作テスト", () => {
 			.then(() => {
 				return new Promise((resolve, reject) => {
 					// Play を resume した後に TickList を取得できる
-					passiveAMFlow.getTickList(0, 1, (err, tickList) => {
+					passiveAMFlow.getTickList(0, 10, (err, tickList) => {
 						if (err) {
 							reject(err);
 							return;
 						}
-						expect(tickList).toEqual([0, 1, []]);
+						expect(tickList).toEqual([
+							0,
+							6,
+							[
+								[1, [[1, 0b0010, "dummy-1-2"]]],
+								[3, []],
+								[
+									5,
+									[
+										[0, 0b0000, "dummy-3-1"],
+										[1, 0b0010, "dummy-3-2"],
+										[2, 0b0111, "dummy-3-3"]
+									]
+								],
+								[6, [[0, 0b0000, "dummy-4-1"]]]
+							]
+						]);
 						resolve();
 					});
 				});
