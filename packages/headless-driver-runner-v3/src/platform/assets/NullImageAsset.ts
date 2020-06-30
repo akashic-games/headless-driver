@@ -2,13 +2,13 @@ import { akashicEngine as g } from "@akashic/engine-files";
 import { NullSurface } from "../NullSurface";
 import { Asset } from "./Asset";
 
-export class NullImageAsset extends Asset implements g.ImageAssetLike {
+export class NullImageAsset extends Asset implements g.ImageAsset {
 	type: "image" = "image";
 	width: number;
 	height: number;
 	hint: g.ImageAssetHint;
 
-	_surface: g.SurfaceLike | null = null;
+	_surface: g.Surface | null = null;
 
 	constructor(id: string, assetPath: string, width: number, height: number) {
 		super(id, assetPath);
@@ -20,7 +20,7 @@ export class NullImageAsset extends Asset implements g.ImageAssetLike {
 		loader._onAssetLoad(this);
 	}
 
-	asSurface(): g.SurfaceLike {
+	asSurface(): g.Surface {
 		return this._surface || (this._surface = new NullSurface(this.width, this.height, null));
 	}
 

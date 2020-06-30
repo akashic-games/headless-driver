@@ -22,13 +22,13 @@
     "lib"
   ],
   "dependencies": {
-    "@akashic/amflow": "~1.0.0",
+    "@akashic/amflow": "~2.0.0",
     "@akashic/headless-driver-runner": "1.1.14",
     "@akashic/headless-driver-runner-v1": "1.1.14",
     "@akashic/headless-driver-runner-v2": "1.1.14",
     "@akashic/headless-driver-runner-v3": "1.1.14",
-    "@akashic/playlog": "~2.0.0",
-    "@akashic/trigger": "~0.1.7",
+    "@akashic/playlog": "~3.0.0",
+    "@akashic/trigger": "~1.0.0",
     "js-sha256": "0.9.0",
     "lodash.clonedeep": "4.5.0",
     "node-fetch": "2.6.0",

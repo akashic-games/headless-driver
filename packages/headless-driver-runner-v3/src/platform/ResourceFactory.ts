@@ -9,14 +9,14 @@ import { NullGlyphFactory } from "./NullGlyphFactory";
 import { NullSurface } from "./NullSurface";
 import { NullSurfaceAtlas } from "./NullSurfaceAtlas";
 
-export class ResourceFactory implements g.ResourceFactoryLike {
+export class ResourceFactory implements g.ResourceFactory {
 	private errorHandler: (err: any) => void;
 
 	constructor(errorHandler: (err: any) => void) {
 		this.errorHandler = errorHandler;
 	}
 
-	createImageAsset(id: string, assetPath: string, width: number, height: number): g.ImageAssetLike {
+	createImageAsset(id: string, assetPath: string, width: number, height: number): g.ImageAsset {
 		return new NullImageAsset(id, assetPath, width, height);
 	}
 
@@ -25,10 +25,10 @@ export class ResourceFactory implements g.ResourceFactoryLike {
 		assetPath: string,
 		width: number,
 		height: number,
-		system: g.VideoSystemLike,
+		system: g.VideoSystem,
 		loop: boolean,
 		useRealSize: boolean
-	): g.VideoAssetLike {
+	): g.VideoAsset {
 		return new NullVideoAsset(id, assetPath, width, height, system, loop, useRealSize);
 	}
 
@@ -36,26 +36,26 @@ export class ResourceFactory implements g.ResourceFactoryLike {
 		id: string,
 		assetPath: string,
 		duration: number,
-		system: g.AudioSystemLike,
+		system: g.AudioSystem,
 		loop: boolean,
 		hint: g.AudioAssetHint
-	): g.AudioAssetLike {
+	): g.AudioAsset {
 		return new NullAudioAsset(id, assetPath, duration, system, loop, hint);
 	}
 
-	createAudioPlayer(system: g.AudioSystemLike): g.AudioPlayerLike {
+	createAudioPlayer(system: g.AudioSystem): g.AudioPlayer {
 		return new NullAudioPlayer(system);
 	}
 
-	createTextAsset(id: string, assetPath: string): g.TextAssetLike {
+	createTextAsset(id: string, assetPath: string): g.TextAsset {
 		return new NodeTextAsset(id, assetPath);
 	}
 
-	createScriptAsset(id: string, assetPath: string): g.ScriptAssetLike {
+	createScriptAsset(id: string, assetPath: string): g.ScriptAsset {
 		return new NodeScriptAsset(id, assetPath, this.errorHandler);
 	}
 
-	createSurface(width: number, height: number): g.SurfaceLike {
+	createSurface(width: number, height: number): g.Surface {
 		return new NullSurface(width, height);
 	}
 
@@ -68,11 +68,11 @@ export class ResourceFactory implements g.ResourceFactoryLike {
 		strokeColor?: string,
 		strokeOnly?: boolean,
 		fontWeight?: g.FontWeightString
-	): g.GlyphFactoryLike {
+	): g.GlyphFactory {
 		return new NullGlyphFactory(fontFamily, fontSize, baselineHeight, fontColor, strokeWidth, strokeColor, strokeOnly, fontWeight);
 	}
 
-	createSurfaceAtlas(width: number, height: number): g.SurfaceAtlasLike {
+	createSurfaceAtlas(width: number, height: number): g.SurfaceAtlas {
 		return new NullSurfaceAtlas(this.createSurface(width, height));
 	}
 }

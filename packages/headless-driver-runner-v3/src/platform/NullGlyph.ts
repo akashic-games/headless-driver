@@ -1,17 +1,17 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
-export class NullGlyph implements g.GlyphLike {
+export class NullGlyph implements g.Glyph {
 	code: number;
 	x: number;
 	y: number;
 	width: number;
 	height: number;
-	surface: g.SurfaceLike;
+	surface: g.Surface;
 	offsetX: number;
 	offsetY: number;
 	advanceWidth: number;
 	isSurfaceValid: boolean;
-	_atlas: g.SurfaceAtlasLike | null;
+	_atlas: g.SurfaceAtlas | null;
 
 	constructor(
 		code: number,
@@ -22,7 +22,7 @@ export class NullGlyph implements g.GlyphLike {
 		offsetX: number = 0,
 		offsetY: number = 0,
 		advanceWidth: number = width,
-		surface: g.SurfaceLike,
+		surface: g.Surface,
 		isSurfaceValid: boolean
 	) {
 		this.code = code;

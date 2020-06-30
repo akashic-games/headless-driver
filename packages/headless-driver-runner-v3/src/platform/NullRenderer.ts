@@ -1,6 +1,6 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
-export class NullRenderer implements g.RendererLike {
+export class NullRenderer implements g.Renderer {
 	begin(): void {
 		//
 	}
@@ -14,7 +14,7 @@ export class NullRenderer implements g.RendererLike {
 	}
 
 	drawImage(
-		_surface: g.SurfaceLike,
+		_surface: g.Surface,
 		_offsetX: number,
 		_offsetY: number,
 		_width: number,
@@ -26,7 +26,7 @@ export class NullRenderer implements g.RendererLike {
 	}
 
 	drawSprites(
-		_surface: g.SurfaceLike,
+		_surface: g.Surface,
 		_offsetX: number[],
 		_offsetY: number[],
 		_width: number[],
@@ -78,7 +78,7 @@ export class NullRenderer implements g.RendererLike {
 		return false;
 	}
 
-	setShaderProgram(shaderProgram: g.ShaderProgramLike | null): void {
+	setShaderProgram(shaderProgram: g.ShaderProgram | null): void {
 		//
 	}
 
