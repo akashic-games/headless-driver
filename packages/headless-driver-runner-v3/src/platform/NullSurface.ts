@@ -1,7 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 import { NullRenderer } from "./NullRenderer";
 
-export class NullSurface implements g.SurfaceLike {
+export class NullSurface implements g.Surface {
 	width: number;
 	height: number;
 	isDynamic: boolean;
@@ -19,7 +19,7 @@ export class NullSurface implements g.SurfaceLike {
 		this._renderer = new NullRenderer();
 	}
 
-	renderer(): g.RendererLike {
+	renderer(): g.Renderer {
 		return this._renderer;
 	}
 

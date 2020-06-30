@@ -1,17 +1,17 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
-export abstract class Asset implements g.AssetLike {
+export abstract class Asset implements g.Asset {
 	type: string;
 	id: string;
 	path: string;
 	originalPath: string;
-	onDestroyed: g.Trigger<g.AssetLike>;
+	onDestroyed: g.Trigger<g.Asset>;
 
 	constructor(id: string, path: string) {
 		this.id = id;
 		this.originalPath = path;
 		this.path = this._assetPathFilter(path);
-		this.onDestroyed = new g.Trigger<g.AssetLike>();
+		this.onDestroyed = new g.Trigger<g.Asset>();
 	}
 
 	destroy(): void {

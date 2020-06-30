@@ -22,7 +22,8 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@akashic/engine-files": "3.0.0-beta.6",
-    "@akashic/headless-driver-runner": "1.1.14"
+    "@akashic/headless-driver-runner": "1.1.14",
+    "@akashic/pdi-common-impl": "0.0.2"
   },
   "devDependencies": {
     "prettier": "2.0.5",

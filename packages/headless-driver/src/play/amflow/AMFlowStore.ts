@@ -1,5 +1,5 @@
 import { GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
-import { Event, Tick, TickList } from "@akashic/playlog";
+import { Event, EventFlagsMask, EventIndex, Tick, TickIndex, TickList, TickListIndex } from "@akashic/playlog";
 import { Trigger } from "@akashic/trigger";
 import { sha256 } from "js-sha256";
 import cloneDeep = require("lodash.clonedeep");
@@ -46,17 +46,18 @@ export class AMFlowStore {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		if (this.tickList) {
-			if (this.tickList[0] <= tick[0] && tick[0] <= this.tickList[1]) {
+			if (this.tickList[TickListIndex.From] <= tick[TickIndex.Frame] && tick[TickIndex.Frame] <= this.tickList[TickListIndex.To]) {
 				// illegal age tick
 				return;
 			}
-			this.tickList[1] = tick[0];
+			this.tickList[TickListIndex.To] = tick[TickIndex.Frame];
 		} else {
-			this.tickList = [tick[0], tick[0], []];
+			this.tickList = [tick[TickIndex.Frame], tick[TickIndex.Frame], []];
 		}
-		if (tick[1] || tick[2]) {
-			tick = this.cloneDeep<Tick>(tick);
-			this.tickList[2].push(tick);
+		if (tick[TickIndex.Events] || tick[TickIndex.StorageData]) {
+			const storedTick = this.cloneDeep<Tick>(tick);
+			storedTick[TickIndex.Events] = tick[TickIndex.Events].filter((event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient));
+			this.tickList[TickListIndex.Ticks].push(storedTick);
 		}
 		this.sendTickTrigger.fire(tick);
 	}

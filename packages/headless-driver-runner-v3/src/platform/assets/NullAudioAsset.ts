@@ -1,15 +1,15 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 import { Asset } from "./Asset";
 
-export class NullAudioAsset extends Asset implements g.AudioAssetLike {
+export class NullAudioAsset extends Asset implements g.AudioAsset {
 	type: "audio" = "audio";
 	data: any;
 	duration: number;
 	loop: boolean;
 	hint: g.AudioAssetHint;
-	_system: g.AudioSystemLike;
+	_system: g.AudioSystem;
 
-	constructor(id: string, assetPath: string, duration: number, system: g.AudioSystemLike, loop: boolean, hint: g.AudioAssetHint) {
+	constructor(id: string, assetPath: string, duration: number, system: g.AudioSystem, loop: boolean, hint: g.AudioAssetHint) {
 		super(id, assetPath);
 		this.duration = duration;
 		this.loop = loop;
@@ -22,7 +22,7 @@ export class NullAudioAsset extends Asset implements g.AudioAssetLike {
 		loader._onAssetLoad(this);
 	}
 
-	play(): g.AudioPlayerLike {
+	play(): g.AudioPlayer {
 		return this._system.createPlayer();
 	}
 
