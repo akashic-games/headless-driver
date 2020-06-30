@@ -4,7 +4,7 @@ import { SurfaceAtlasSlot } from "@akashic/pdi-common-impl";
 export class NullSurfaceAtlas implements g.SurfaceAtlas {
 	_surface: g.Surface;
 	_accessScore: number;
-	_emptySurfaceAtlasSlotHead: g.SurfaceAtlasSlot;
+	_emptySurfaceAtlasSlotHead: SurfaceAtlasSlot;
 	_usedRectangleAreaSize: g.CommonSize;
 
 	constructor(surface: g.Surface) {
@@ -14,7 +14,7 @@ export class NullSurfaceAtlas implements g.SurfaceAtlas {
 		this._usedRectangleAreaSize = { width: 0, height: 0 };
 	}
 
-	addSurface(_surface: g.Surface, _offsetX: number, _offsetY: number, _width: number, _height: number): g.SurfaceAtlasSlot {
+	addSurface(_surface: g.Surface, _offsetX: number, _offsetY: number, _width: number, _height: number): SurfaceAtlasSlot {
 		return this._emptySurfaceAtlasSlotHead;
 	}
 
