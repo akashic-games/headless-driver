@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.1.22 (2020-07-19)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#162](https://github.com/akashic-games/headless-driver/pull/162) Update dependency @types/jest to v26.0.5 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
 ## v1.1.21 (2020-07-18)
 
 #### Update Dependencies
