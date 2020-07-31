@@ -7,7 +7,6 @@ import { NullVideoAsset } from "./assets/NullVideoAsset";
 import { NullAudioPlayer } from "./NullAudioPlayer";
 import { NullGlyphFactory } from "./NullGlyphFactory";
 import { NullSurface } from "./NullSurface";
-import { NullSurfaceAtlas } from "./NullSurfaceAtlas";
 
 export class ResourceFactory implements g.ResourceFactory {
 	private errorHandler: (err: any) => void;
@@ -70,9 +69,5 @@ export class ResourceFactory implements g.ResourceFactory {
 		fontWeight?: g.FontWeightString
 	): g.GlyphFactory {
 		return new NullGlyphFactory(fontFamily, fontSize, baselineHeight, fontColor, strokeWidth, strokeColor, strokeOnly, fontWeight);
-	}
-
-	createSurfaceAtlas(width: number, height: number): g.SurfaceAtlas {
-		return new NullSurfaceAtlas(this.createSurface(width, height));
 	}
 }
