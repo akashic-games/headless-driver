@@ -56,7 +56,9 @@ export class AMFlowStore {
 		}
 		if (tick[TickIndex.Events] || tick[TickIndex.StorageData]) {
 			const storedTick = this.cloneDeep<Tick>(tick);
-			storedTick[TickIndex.Events] = tick[TickIndex.Events].filter((event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient));
+			storedTick[TickIndex.Events] = tick[TickIndex.Events].filter(
+				(event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient)
+			);
 			this.tickList[TickListIndex.Ticks].push(storedTick);
 		}
 		this.sendTickTrigger.fire(tick);
