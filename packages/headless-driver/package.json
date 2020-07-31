@@ -41,7 +41,7 @@
     "@types/node": "13.13.15",
     "@types/node-fetch": "2.5.7",
     "get-port": "5.1.1",
-    "jest": "26.1.0",
+    "jest": "26.2.2",
     "prettier": "2.0.5",
     "rimraf": "3.0.2",
     "serve-handler": "6.1.3",
