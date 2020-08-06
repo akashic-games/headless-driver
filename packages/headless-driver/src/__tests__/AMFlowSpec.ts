@@ -1,5 +1,5 @@
-import { GetStartPointOptions, StartPoint } from "@akashic/amflow";
-import { Event } from "@akashic/playlog";
+import { GetStartPointOptions, StartPoint, GetTickListOptions } from "@akashic/amflow";
+import { Event, TickList } from "@akashic/playlog";
 import { setSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { BadRequestError, PermissionError } from "../play/amflow/ErrorFactory";
@@ -289,64 +289,136 @@ describe("AMFlow の動作テスト", () => {
 					});
 				});
 			})
-			.then(() => {
-				return new Promise((resolve, reject) => {
-					// Transient Event を含む Tick を送信できる
-					activeAMFlow.sendTick([0]);
-					activeAMFlow.sendTick([
-						1,
-						[
-							[0, 0b1000, "dummy-1-1"],
-							[1, 0b0010, "dummy-1-2"],
-							[2, 0b1111, "dummy-1-3"]
-						]
-					]);
-					activeAMFlow.sendTick([2]);
-					activeAMFlow.sendTick([
-						3,
-						[
-							[0, 0b1000, "dummy-2-1"],
-							[1, 0b1010, "dummy-2-2"],
-							[2, 0b1111, "dummy-2-3"]
-						]
-					]);
-					activeAMFlow.sendTick([4]);
-					activeAMFlow.sendTick([
-						5,
-						[
-							[0, 0b0000, "dummy-3-1"],
-							[1, 0b0010, "dummy-3-2"],
-							[2, 0b0111, "dummy-3-3"]
-						]
-					]);
-					activeAMFlow.sendTick([6, [[0, 0b0000, "dummy-4-1"]]]);
+			.then(async () => {
+				// EventFlags を含む Tick を送信できる
+				activeAMFlow.sendTick([0]);
+				activeAMFlow.sendTick([
+					1,
+					[
+						[0, 0b01000, "dummy-1-1"], // transient
+						[1, 0b00010, "dummy-1-2"],
+						[2, 0b01111, "dummy-1-3"] // transient
+					]
+				]);
+				activeAMFlow.sendTick([2]);
+				activeAMFlow.sendTick([
+					3,
+					[
+						[0, 0b01000, "dummy-2-1"], // transient
+						[1, 0b01010, "dummy-2-2"], // transient
+						[2, 0b11111, "dummy-2-3"] // transient & ignorable
+					]
+				]);
+				activeAMFlow.sendTick([4]);
+				activeAMFlow.sendTick([
+					5,
+					[
+						[0, 0b10000, "dummy-3-1"], // ignorable
+						[1, 0b10010, "dummy-3-2"], // ignorable
+						[2, 0b00111, "dummy-3-3"]
+					]
+				]);
+				activeAMFlow.sendTick([6, [[0, 0b00000, "dummy-4-1"]]]);
 
-					// TickList を取得できる
-					passiveAMFlow.getTickList(0, 5, (err, tickList) => {
-						if (err) {
-							reject(err);
-							return;
-						}
-						expect(err).toBeNull();
-						expect(tickList).toEqual([
-							0,
+				const getTickListLegacy = (begin: number, end: number) =>
+					new Promise<TickList>((res, rej) => {
+						// NOTE: 非推奨の引数による動作確認
+						passiveAMFlow.getTickList(begin, end, (err, ticks) => (err ? rej(err) : res(ticks)));
+					});
+
+				const getTickList = (opts: GetTickListOptions) =>
+					new Promise<TickList>((res, rej) => {
+						passiveAMFlow.getTickList(opts, (err, ticks) => (err ? rej(err) : res(ticks)));
+					});
+
+				// 非推奨の引数でも TickList を取得できることを確認
+				expect(await getTickListLegacy(0, 10)).toEqual([
+					0,
+					6,
+					[
+						[1, [[1, 0b00010, "dummy-1-2"]]],
+						[3, []],
+						[
 							5,
 							[
-								[1, [[1, 0b0010, "dummy-1-2"]]],
-								[3, []],
-								[
-									5,
-									[
-										[0, 0b0000, "dummy-3-1"],
-										[1, 0b0010, "dummy-3-2"],
-										[2, 0b0111, "dummy-3-3"]
-									]
-								]
+								[0, 0b10000, "dummy-3-1"],
+								[1, 0b10010, "dummy-3-2"],
+								[2, 0b00111, "dummy-3-3"]
 							]
-						]);
-						resolve();
-					});
-				});
+						],
+						[6, [[0, 0b00000, "dummy-4-1"]]]
+					]
+				]);
+
+				// 部分的に TickList を取得できる
+				expect(await getTickList({ begin: 3, end: 5 })).toEqual([
+					3,
+					4,
+					[
+						[3, []]
+					]
+				]);
+
+				// すべての TickList を取得できる
+				const unfilteredTickList = await getTickList({ begin: 0, end: 10 });
+
+				expect(unfilteredTickList).toEqual([
+					0,
+					6,
+					[
+						[1, [[1, 0b00010, "dummy-1-2"]]],
+						[3, []],
+						[
+							5,
+							[
+								[0, 0b10000, "dummy-3-1"],
+								[1, 0b10010, "dummy-3-2"],
+								[2, 0b00111, "dummy-3-3"]
+							]
+						],
+						[6, [[0, 0b00000, "dummy-4-1"]]]
+					]
+				]);
+
+				// すべての TickList を取得できる
+				expect(
+					await getTickList({
+						begin: 0,
+						end: 10,
+						excludeEventFlags: {}
+					}
+				)).toEqual(unfilteredTickList);
+
+				// すべての TickList を取得できる
+				expect(
+					await getTickList({
+						begin: 0,
+						end: 10,
+						excludeEventFlags: {
+							ignorable: false
+						}
+					}
+				)).toEqual(unfilteredTickList);
+
+				// Ignorable Event を除外した TickList を取得できる
+				expect(
+					await getTickList({
+						begin: 0,
+						end: 10,
+						excludeEventFlags: {
+							ignorable: true
+						}
+					})
+				).toEqual([
+					0,
+					6,
+					[
+						[1, [[1, 0b00010, "dummy-1-2"]]],
+						[3, []],
+						[5, [[2, 0b00111, "dummy-3-3"]]],
+						[6, [[0, 0b00000, "dummy-4-1"]]]
+					]
+				]);
 			})
 			.then(() => {
 				return new Promise((resolve, reject) => {
@@ -407,17 +479,17 @@ describe("AMFlow の動作テスト", () => {
 							0,
 							6,
 							[
-								[1, [[1, 0b0010, "dummy-1-2"]]],
+								[1, [[1, 0b00010, "dummy-1-2"]]],
 								[3, []],
 								[
 									5,
 									[
-										[0, 0b0000, "dummy-3-1"],
-										[1, 0b0010, "dummy-3-2"],
-										[2, 0b0111, "dummy-3-3"]
+										[0, 0b10000, "dummy-3-1"],
+										[1, 0b10010, "dummy-3-2"],
+										[2, 0b00111, "dummy-3-3"]
 									]
 								],
-								[6, [[0, 0b0000, "dummy-4-1"]]]
+								[6, [[0, 0b00000, "dummy-4-1"]]]
 							]
 						]);
 						resolve();
@@ -495,17 +567,17 @@ describe("AMFlow の動作テスト", () => {
 							0,
 							6,
 							[
-								[1, [[1, 0b0010, "dummy-1-2"]]],
+								[1, [[1, 0b00010, "dummy-1-2"]]],
 								[3, []],
 								[
 									5,
 									[
-										[0, 0b0000, "dummy-3-1"],
-										[1, 0b0010, "dummy-3-2"],
-										[2, 0b0111, "dummy-3-3"]
+										[0, 0b10000, "dummy-3-1"],
+										[1, 0b10010, "dummy-3-2"],
+										[2, 0b00111, "dummy-3-3"]
 									]
 								],
-								[6, [[0, 0b0000, "dummy-4-1"]]]
+								[6, [[0, 0b00000, "dummy-4-1"]]]
 							]
 						]);
 						resolve();

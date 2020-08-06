@@ -1,4 +1,4 @@
-import { AMFlow, GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
+import { AMFlow, GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, EventFlagsMask, EventIndex, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
 import { getSystemLogger } from "../../Logger";
 import { AMFlowStore, DumpedPlaylog } from "./AMFlowStore";
@@ -166,8 +166,35 @@ export class AMFlowClient implements AMFlow {
 		this.eventHandlers = this.eventHandlers.filter((h) => h !== handler);
 	}
 
-	getTickList(from: number, to: number, callback: (error: Error, tickList: TickList) => void): void {
+	/**
+	 * @deprecated この引数は非推奨である。 `amflow.GetTickListOptions` を指定する方を利用すべきである。
+	 */
+	getTickList(begin: number, end: number, callback: (error: Error | null, tickList?: TickList) => void): void;
+	/**
+	 * 保存された `playlog.Tick` のリスト `[opts.begin, opts.end)` を `playlog.TickList` の形式で取得する。
+	 */
+	getTickList(opts: GetTickListOptions, callback: (error: Error | null, tickList?: TickList) => void): void;
+
+	getTickList(
+		optsOrBegin: number | GetTickListOptions,
+		endOrCallback: number | ((error: Error | null, tickList?: TickList) => void),
+		callbackOrUndefined?: (error: Error | null, tickList?: TickList) => void
+	): void {
 		setImmediate(() => {
+			let opts: GetTickListOptions;
+			let callback: (error: Error | null, tickList?: TickList) => void;
+			if (typeof optsOrBegin === "number") {
+				// NOTE: optsOrBegin === "number" であれば必ず amflow@2 以前の引数だとみなしてキャストする
+				opts = {
+					begin: optsOrBegin,
+					end: endOrCallback as number
+				};
+				callback = callbackOrUndefined;
+			} else {
+				// NOTE: optsOrBegin !== "number" であれば必ず amflow@3 以降の引数だとみなしてキャストする
+				opts = optsOrBegin;
+				callback = endOrCallback as (error: Error | null, tickList?: TickList) => void;
+			}
 			if (this.state !== "open") {
 				callback(createError("invalid_status", "Client is not open"), null);
 				return;
@@ -180,7 +207,7 @@ export class AMFlowClient implements AMFlow {
 				callback(createError("permission_error", "Permission denied"), null);
 				return;
 			}
-			const tickList = this.store.getTickList(from, to);
+			const tickList = this.store.getTickList(opts);
 			if (tickList) {
 				callback(null, tickList);
 			} else {

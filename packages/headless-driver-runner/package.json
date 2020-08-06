@@ -21,7 +21,7 @@
   "license": "MIT",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@akashic/amflow": "~2.0.0",
+    "@akashic/amflow": "~3.0.0",
     "@akashic/trigger": "~1.0.0"
   },
   "devDependencies": {
