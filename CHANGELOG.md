@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v1.2.0 (2020-08-06)
+
+#### Breaking Change
+* `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#173](https://github.com/akashic-games/headless-driver/pull/173) Follow amflow@3.0.0 (supports ignorable event) ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#172](https://github.com/akashic-games/headless-driver/pull/172) 【v1.1.27】内部コンポーネントの更新(engineFiles@3.0.0-beta.7, engineFiles@2.1.46, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+* `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#173](https://github.com/akashic-games/headless-driver/pull/173) Follow amflow@3.0.0 (supports ignorable event) ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 2
+- [@yu-ogi](https://github.com/yu-ogi)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.1.26 (2020-08-03)
 
 #### Enhancement
