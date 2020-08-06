@@ -59,10 +59,10 @@ export class AMFlowStore {
 		}
 		const tickList = opts.excludeEventFlags && opts.excludeEventFlags.ignorable ? this.filteredTickList : this.unfilteredTickList;
 		const from = Math.max(opts.begin, tickList[TickListIndex.From]);
-		const to = Math.min(opts.end, tickList[TickListIndex.To]);
+		const to = Math.min(opts.end - 1, tickList[TickListIndex.To]);
 		const ticks = tickList[TickListIndex.Ticks].filter((tick) => {
-			const age = tick[TickIndex.Frame];
-			return from <= age && age <= to;
+			const frame = tick[TickIndex.Frame];
+			return from <= frame && frame <= to;
 		});
 
 		return [from, to, ticks];

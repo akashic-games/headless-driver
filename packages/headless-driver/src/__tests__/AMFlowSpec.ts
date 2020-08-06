@@ -318,7 +318,7 @@ describe("AMFlow の動作テスト", () => {
 						[2, 0b00111, "dummy-3-3"]
 					]
 				]);
-				activeAMFlow.sendTick([6, [[0, 0b0000, "dummy-4-1"]]]);
+				activeAMFlow.sendTick([6, [[0, 0b00000, "dummy-4-1"]]]);
 
 				const getTickListLegacy = (begin: number, end: number) =>
 					new Promise<TickList>((res, rej) => {
@@ -332,9 +332,9 @@ describe("AMFlow の動作テスト", () => {
 					});
 
 				// 非推奨の引数でも TickList を取得できることを確認
-				expect(await getTickListLegacy(0, 5)).toEqual([
+				expect(await getTickListLegacy(0, 10)).toEqual([
 					0,
-					5,
+					6,
 					[
 						[1, [[1, 0b00010, "dummy-1-2"]]],
 						[3, []],
@@ -345,16 +345,26 @@ describe("AMFlow の動作テスト", () => {
 								[1, 0b10010, "dummy-3-2"],
 								[2, 0b00111, "dummy-3-3"]
 							]
-						]
+						],
+						[6, [[0, 0b00000, "dummy-4-1"]]]
+					]
+				]);
+
+				// 部分的に TickList を取得できる
+				expect(await getTickList({ begin: 3, end: 5 })).toEqual([
+					3,
+					4,
+					[
+						[3, []]
 					]
 				]);
 
 				// すべての TickList を取得できる
-				const unfilteredTickList = await getTickList({ begin: 0, end: 5 });
+				const unfilteredTickList = await getTickList({ begin: 0, end: 10 });
 
 				expect(unfilteredTickList).toEqual([
 					0,
-					5,
+					6,
 					[
 						[1, [[1, 0b00010, "dummy-1-2"]]],
 						[3, []],
@@ -365,7 +375,8 @@ describe("AMFlow の動作テスト", () => {
 								[1, 0b10010, "dummy-3-2"],
 								[2, 0b00111, "dummy-3-3"]
 							]
-						]
+						],
+						[6, [[0, 0b00000, "dummy-4-1"]]]
 					]
 				]);
 
@@ -373,7 +384,7 @@ describe("AMFlow の動作テスト", () => {
 				expect(
 					await getTickList({
 						begin: 0,
-						end: 5,
+						end: 10,
 						excludeEventFlags: {}
 					}
 				)).toEqual(unfilteredTickList);
@@ -382,7 +393,7 @@ describe("AMFlow の動作テスト", () => {
 				expect(
 					await getTickList({
 						begin: 0,
-						end: 5,
+						end: 10,
 						excludeEventFlags: {
 							ignorable: false
 						}
@@ -393,18 +404,19 @@ describe("AMFlow の動作テスト", () => {
 				expect(
 					await getTickList({
 						begin: 0,
-						end: 5,
+						end: 10,
 						excludeEventFlags: {
 							ignorable: true
 						}
 					})
 				).toEqual([
 					0,
-					5,
+					6,
 					[
 						[1, [[1, 0b00010, "dummy-1-2"]]],
 						[3, []],
-						[5, [[2, 0b00111, "dummy-3-3"]]]
+						[5, [[2, 0b00111, "dummy-3-3"]]],
+						[6, [[0, 0b00000, "dummy-4-1"]]]
 					]
 				]);
 			})
