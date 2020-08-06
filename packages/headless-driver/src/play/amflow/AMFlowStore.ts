@@ -1,4 +1,4 @@
-import { GetStartPointOptions, Permission, StartPoint } from "@akashic/amflow";
+import { GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, EventFlagsMask, EventIndex, Tick, TickIndex, TickList, TickListIndex } from "@akashic/playlog";
 import { Trigger } from "@akashic/trigger";
 import { sha256 } from "js-sha256";
@@ -21,7 +21,8 @@ export class AMFlowStore {
 
 	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] | null = [];
-	private tickList: TickList = null;
+	private unfilteredTickList: TickList = null;
+	private filteredTickList: TickList = null;
 	private suspended: boolean;
 
 	constructor(playId: string) {
@@ -37,30 +38,11 @@ export class AMFlowStore {
 		return permission;
 	}
 
-	setTickList(tickList: TickList): void {
-		this.tickList = tickList;
-	}
-
 	sendTick(tick: Tick): void {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		if (this.tickList) {
-			if (this.tickList[TickListIndex.From] <= tick[TickIndex.Frame] && tick[TickIndex.Frame] <= this.tickList[TickListIndex.To]) {
-				// illegal age tick
-				return;
-			}
-			this.tickList[TickListIndex.To] = tick[TickIndex.Frame];
-		} else {
-			this.tickList = [tick[TickIndex.Frame], tick[TickIndex.Frame], []];
-		}
-		if (tick[TickIndex.Events] || tick[TickIndex.StorageData]) {
-			const storedTick = this.cloneDeep<Tick>(tick);
-			storedTick[TickIndex.Events] = tick[TickIndex.Events].filter(
-				(event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient)
-			);
-			this.tickList[TickListIndex.Ticks].push(storedTick);
-		}
+		this.pushTick(tick);
 		this.sendTickTrigger.fire(tick);
 	}
 
@@ -71,15 +53,16 @@ export class AMFlowStore {
 		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
 	}
 
-	getTickList(from: number, to: number): TickList | null {
-		if (!this.tickList) {
+	getTickList(opts: GetTickListOptions): TickList | null {
+		if (!(this.unfilteredTickList && this.filteredTickList)) {
 			return null;
 		}
-		from = Math.max(from, this.tickList[0]);
-		to = Math.min(to, this.tickList[1]);
-		const ticks = this.tickList[2].filter((tick) => {
-			const age = tick[0];
-			return from <= age && age <= to;
+		const tickList = opts.excludeEventFlags && opts.excludeEventFlags.ignorable ? this.filteredTickList : this.unfilteredTickList;
+		const from = Math.max(opts.begin, tickList[TickListIndex.From]);
+		const to = Math.min(opts.end - 1, tickList[TickListIndex.To]);
+		const ticks = tickList[TickListIndex.Ticks].filter((tick) => {
+			const frame = tick[TickIndex.Frame];
+			return from <= frame && frame <= to;
 		});
 
 		return [from, to, ticks];
@@ -149,6 +132,11 @@ export class AMFlowStore {
 		this.suspended = false;
 	}
 
+	setTickList(tickList: TickList): void {
+		this.unfilteredTickList = this.cloneDeep(tickList);
+		this.filteredTickList = this.cloneDeep(tickList);
+	}
+
 	destroy(): void {
 		if (this.isDestroyed()) {
 			return;
@@ -182,7 +170,7 @@ export class AMFlowStore {
 
 	dump(): DumpedPlaylog {
 		return {
-			tickList: this.tickList,
+			tickList: this.unfilteredTickList,
 			startPoints: this.startPoints
 		};
 	}
@@ -210,5 +198,43 @@ export class AMFlowStore {
 			r += str[Math.floor(Math.random() * cl)];
 		}
 		return r;
+	}
+
+	private pushTick(tick: Tick): void {
+		if (this.unfilteredTickList) {
+			if (
+				this.unfilteredTickList[TickListIndex.From] <= tick[TickIndex.Frame] &&
+				tick[TickIndex.Frame] <= this.unfilteredTickList[TickListIndex.To]
+			) {
+				// illegal age tick
+				return;
+			}
+			this.unfilteredTickList[TickListIndex.To] = tick[TickIndex.Frame];
+		} else {
+			this.unfilteredTickList = [tick[TickIndex.Frame], tick[TickIndex.Frame], []];
+		}
+
+		if (this.filteredTickList) {
+			this.filteredTickList[TickListIndex.To] = tick[TickIndex.Frame];
+		} else {
+			this.filteredTickList = [tick[TickIndex.Frame], tick[TickIndex.Frame], []];
+		}
+
+		if (tick[TickIndex.Events] || tick[TickIndex.StorageData]) {
+			// store unfiltered tick
+			const unfilteredTick = this.cloneDeep<Tick>(tick);
+			unfilteredTick[TickIndex.Events] = tick[TickIndex.Events].filter(
+				(event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient)
+			);
+			this.unfilteredTickList[TickListIndex.Ticks].push(unfilteredTick);
+
+			// store filtered tick
+			const filteredTick = this.cloneDeep<Tick>(tick);
+			filteredTick[TickIndex.Events] = tick[TickIndex.Events].filter(
+				(event) =>
+					!(event[EventIndex.EventFlags] & EventFlagsMask.Transient) && !(event[EventIndex.EventFlags] & EventFlagsMask.Ignorable)
+			);
+			this.filteredTickList[TickListIndex.Ticks].push(filteredTick);
+		}
 	}
 }
