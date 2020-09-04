@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.2.5 (2020-09-04)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#180](https://github.com/akashic-games/headless-driver/pull/180) 【v1.2.5】内部コンポーネントの更新(engineFiles@3.0.0-beta.8, engineFiles@2.1.47, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.2.4 (2020-08-25)
 
 #### Update Dependencies
