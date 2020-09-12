@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.2.6 (2020-09-12)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#182](https://github.com/akashic-games/headless-driver/pull/182) Update dependency node-fetch to v2.6.1 [SECURITY] ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
 ## v1.2.5 (2020-09-04)
 
 #### Enhancement
