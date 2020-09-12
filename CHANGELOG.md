@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.2.8 (2020-09-13)
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#179](https://github.com/akashic-games/headless-driver/pull/179) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
 ## v1.2.7 (2020-09-13)
 
 #### Update Dependencies
