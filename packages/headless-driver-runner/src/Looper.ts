@@ -7,7 +7,7 @@ export class Looper {
 	private _running: boolean;
 
 	/**
-	 * コンテンツを操作する主体がプレイを進める操作をしたかどうか
+	 * コンテンツの一時停止を外部からリクエストされているか
 	 */
 	private _userStarted: boolean;
 
@@ -59,10 +59,10 @@ export class Looper {
 	}
 
 	private _update() {
-		const needsMajiRunning = this._userStarted && this._platformStarted;
-		if (!this._running && needsMajiRunning) {
+		const needsCallRunning = this._userStarted && this._platformStarted;
+		if (!this._running && needsCallRunning) {
 			this._start();
-		} else if (this._running && !needsMajiRunning) {
+		} else if (this._running && !needsCallRunning) {
 			this._stop();
 		}
 	}
