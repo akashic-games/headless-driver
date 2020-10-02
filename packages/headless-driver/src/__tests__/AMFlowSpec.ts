@@ -351,13 +351,7 @@ describe("AMFlow の動作テスト", () => {
 				]);
 
 				// 部分的に TickList を取得できる
-				expect(await getTickList({ begin: 3, end: 5 })).toEqual([
-					3,
-					4,
-					[
-						[3, []]
-					]
-				]);
+				expect(await getTickList({ begin: 3, end: 5 })).toEqual([3, 4, [[3, []]]]);
 
 				// すべての TickList を取得できる
 				const unfilteredTickList = await getTickList({ begin: 0, end: 10 });
@@ -386,8 +380,8 @@ describe("AMFlow の動作テスト", () => {
 						begin: 0,
 						end: 10,
 						excludeEventFlags: {}
-					}
-				)).toEqual(unfilteredTickList);
+					})
+				).toEqual(unfilteredTickList);
 
 				// すべての TickList を取得できる
 				expect(
@@ -397,8 +391,8 @@ describe("AMFlow の動作テスト", () => {
 						excludeEventFlags: {
 							ignorable: false
 						}
-					}
-				)).toEqual(unfilteredTickList);
+					})
+				).toEqual(unfilteredTickList);
 
 				// Ignorable Event を除外した TickList を取得できる
 				expect(

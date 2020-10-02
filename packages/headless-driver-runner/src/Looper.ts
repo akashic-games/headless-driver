@@ -4,14 +4,71 @@ export class Looper {
 	private _prev: number;
 	private _errorHandler: (err: any) => void;
 
+	private _running: boolean;
+
+	/**
+	 * コンテンツを操作する主体がプレイを進める操作をしたかどうか
+	 */
+	private _userStarted: boolean;
+
+	/**
+	 * game-driverがプレイを続行する状態になっているかどうか
+	 */
+	private _platformStarted: boolean;
+
 	constructor(fun: (deltaTime: number) => number, errorHandler: (err: any) => void) {
 		this._fun = fun;
 		this._timerId = null;
 		this._prev = 0;
 		this._errorHandler = errorHandler;
+		this._running = false;
+		this._userStarted = true;
+		this._platformStarted = false;
 	}
 
-	start(): void {
+	start() {
+		this._platformStarted = true;
+		this._update();
+	}
+
+	stop() {
+		this._platformStarted = false;
+		this._update();
+	}
+
+	debugStart() {
+		this._userStarted = true;
+		this._update();
+	}
+
+	debugStop() {
+		this._userStarted = false;
+		this._update();
+	}
+
+	debugStep(): void {
+		try {
+			this._fun(16);
+		} catch (e) {
+			this._errorHandler(e);
+		}
+	}
+
+	isStarted(): boolean {
+		return !!this._timerId;
+	}
+
+	private _update() {
+		const needsMajiRunning = this._userStarted && this._platformStarted;
+		if (!this._running && needsMajiRunning) {
+			this._start();
+		} else if (this._running && !needsMajiRunning) {
+			this._stop();
+		}
+	}
+
+	private _start(): void {
+		this._running = true;
 		try {
 			this._fun(0);
 		} catch (e) {
@@ -25,13 +82,14 @@ export class Looper {
 				this._fun(now - this._prev);
 			} catch (e) {
 				this._errorHandler(e);
-				this.stop();
+				this._stop();
 			}
 			this._prev = now;
 		}, 16);
 	}
 
-	stop(): void {
+	private _stop(): void {
+		this._running = false;
 		clearInterval(this._timerId);
 		this._timerId = null;
 		this._prev = 0;
