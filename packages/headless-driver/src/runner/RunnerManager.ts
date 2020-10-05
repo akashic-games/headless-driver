@@ -248,7 +248,7 @@ export class RunnerManager {
 		}
 
 		await runner.stop();
-		//this.runners = this.runners.filter((r) => r !== runner); // test
+		this.runners = this.runners.filter((r) => r !== runner); // test
 	}
 
 	/**
