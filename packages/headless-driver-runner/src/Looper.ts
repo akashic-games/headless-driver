@@ -26,22 +26,22 @@ export class Looper {
 		this._platformStarted = false;
 	}
 
-	start() {
+	start(): void {
 		this._platformStarted = true;
 		this._update();
 	}
 
-	stop() {
+	stop(): void {
 		this._platformStarted = false;
 		this._update();
 	}
 
-	debugStart() {
+	debugStart(): void {
 		this._userStarted = true;
 		this._update();
 	}
 
-	debugStop() {
+	debugStop(): void {
 		this._userStarted = false;
 		this._update();
 	}
@@ -58,7 +58,7 @@ export class Looper {
 		return !!this._timerId;
 	}
 
-	private _update() {
+	private _update(): void {
 		const needsCallRunning = this._userStarted && this._platformStarted;
 		if (!this._running && needsCallRunning) {
 			this._start();
