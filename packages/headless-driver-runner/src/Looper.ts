@@ -9,7 +9,7 @@ export class Looper {
 	/**
 	 * コンテンツの一時停止を外部からリクエストされているか
 	 */
-	private _userStarted: boolean;
+	private _debugStarted: boolean;
 
 	/**
 	 * game-driverがプレイを続行する状態になっているかどうか
@@ -22,7 +22,7 @@ export class Looper {
 		this._prev = 0;
 		this._errorHandler = errorHandler;
 		this._running = false;
-		this._userStarted = true;
+		this._debugStarted = true;
 		this._platformStarted = false;
 	}
 
@@ -37,12 +37,12 @@ export class Looper {
 	}
 
 	debugStart(): void {
-		this._userStarted = true;
+		this._debugStarted = true;
 		this._update();
 	}
 
 	debugStop(): void {
-		this._userStarted = false;
+		this._debugStarted = false;
 		this._update();
 	}
 
@@ -54,12 +54,8 @@ export class Looper {
 		}
 	}
 
-	isStarted(): boolean {
-		return !!this._timerId;
-	}
-
 	private _update(): void {
-		const needsCallRunning = this._userStarted && this._platformStarted;
+		const needsCallRunning = this._debugStarted && this._platformStarted;
 		if (!this._running && needsCallRunning) {
 			this._start();
 		} else if (this._running && !needsCallRunning) {
@@ -82,6 +78,7 @@ export class Looper {
 				this._fun(now - this._prev);
 			} catch (e) {
 				this._errorHandler(e);
+				this._platformStarted = false;
 				this._stop();
 			}
 			this._prev = now;

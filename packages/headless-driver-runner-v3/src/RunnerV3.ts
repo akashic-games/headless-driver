@@ -33,15 +33,15 @@ export class RunnerV3 extends Runner {
 	}
 
 	pause(): void {
-		this.platform.pauseLooper();
+		this.platform.pauseLoopers();
 	}
 
 	resume(): void {
-		this.platform.resumeLooper();
+		this.platform.resumeLoopers();
 	}
 
 	step(): void {
-		this.platform.stepLooper();
+		this.platform.stepLoopers();
 	}
 
 	changeGameDriverState(param: gdr.GameDriverInitializeParameterObject): Promise<void> {

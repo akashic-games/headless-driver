@@ -41,15 +41,15 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 		return looper;
 	}
 
-	pauseLooper(): void {
+	pauseLoopers(): void {
 		this.loopers.forEach((looper) => looper.debugStop());
 	}
 
-	resumeLooper(): void {
+	resumeLoopers(): void {
 		this.loopers.forEach((looper) => looper.debugStart());
 	}
 
-	stepLooper(): void {
+	stepLoopers(): void {
 		this.loopers.forEach((looper) => looper.debugStep());
 	}
 }
