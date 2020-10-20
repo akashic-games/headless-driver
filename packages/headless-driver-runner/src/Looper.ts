@@ -16,6 +16,11 @@ export class Looper {
 	 */
 	private _platformStarted: boolean;
 
+	/**
+	 * 1stepで進める時間
+	 */
+	private _stepDelta: number;
+
 	constructor(fun: (deltaTime: number) => number, errorHandler: (err: any) => void) {
 		this._fun = fun;
 		this._timerId = null;
@@ -24,6 +29,7 @@ export class Looper {
 		this._running = false;
 		this._debugStarted = true;
 		this._platformStarted = false;
+		this._stepDelta = 1000 / 60;
 	}
 
 	start(): void {
@@ -48,7 +54,7 @@ export class Looper {
 
 	debugStep(): void {
 		try {
-			this._fun(16);
+			this._fun(this._stepDelta);
 		} catch (e) {
 			this._errorHandler(e);
 		}
@@ -79,7 +85,7 @@ export class Looper {
 			} catch (e) {
 				this._errorHandler(e);
 				this._platformStarted = false;
-				this._stop();
+				this._stop(); // TODO: 例外発生時止めてしまうのがいいのか検討
 			}
 			this._prev = now;
 		}, 16);
