@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.3.1 (2020-11-07)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#197](https://github.com/akashic-games/headless-driver/pull/197) Update dependency jest to v26.6.3 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
 
 ## v1.2.18 (2020-10-31)
 
