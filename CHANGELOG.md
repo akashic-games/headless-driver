@@ -1,5 +1,6 @@
 # CHANGELOG
 
+
 ## v1.2.18 (2020-10-31)
 
 #### Update Dependencies
