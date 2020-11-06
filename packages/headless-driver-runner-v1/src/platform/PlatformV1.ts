@@ -8,12 +8,14 @@ export class PlatformV1 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
 	private rendererReq: pdi.RendererRequirement;
 	private primarySurface: g.Surface;
+	private loopers: Looper[];
 
 	constructor(param: PlatformParameters) {
 		super(param);
 		this.resFac = new ResourceFactory((e: Error) => this.errorHandler(e));
 		this.rendererReq = null;
 		this.primarySurface = null;
+		this.loopers = [];
 	}
 
 	getResourceFactory(): g.ResourceFactory {
@@ -34,6 +36,20 @@ export class PlatformV1 extends Platform implements pdi.Platform {
 	}
 
 	createLooper(fun: (deltaTime: number) => number): Looper {
-		return new Looper(fun, (e: Error) => this.errorHandler(e));
+		const looper = new Looper(fun, (e: Error) => this.errorHandler(e));
+		this.loopers.push(looper);
+		return looper;
+	}
+
+	pauseLoopers(): void {
+		this.loopers.forEach((looper) => looper.debugStop());
+	}
+
+	resumeLoopers(): void {
+		this.loopers.forEach((looper) => looper.debugStart());
+	}
+
+	stepLoopers(): void {
+		this.loopers.forEach((looper) => looper.debugStep());
 	}
 }

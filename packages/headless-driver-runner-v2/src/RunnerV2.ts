@@ -6,6 +6,7 @@ export type RunnerV2Game = g.Game;
 
 export class RunnerV2 extends Runner {
 	private driver: gdr.GameDriver;
+	private platform: PlatformV2;
 
 	get engineVersion(): string {
 		return "2";
@@ -29,6 +30,18 @@ export class RunnerV2 extends Runner {
 			this.driver.stopGame();
 			this.driver = null;
 		}
+	}
+
+	pause(): void {
+		this.platform.pauseLoopers();
+	}
+
+	resume(): void {
+		this.platform.resumeLoopers();
+	}
+
+	step(): void {
+		this.platform.stepLoopers();
 	}
 
 	changeGameDriverState(param: gdr.GameDriverInitializeParameterObject): Promise<void> {
@@ -55,7 +68,7 @@ export class RunnerV2 extends Runner {
 
 			const executionMode = this.executionMode === "active" ? gdr.ExecutionMode.Active : gdr.ExecutionMode.Passive;
 
-			const platform = new PlatformV2({
+			this.platform = new PlatformV2({
 				configurationBaseUrl: this.configurationBaseUrl,
 				assetBaseUrl: this.assetBaseUrl,
 				amflow: this.amflow,
@@ -64,7 +77,7 @@ export class RunnerV2 extends Runner {
 			});
 
 			const driver = new gdr.GameDriver({
-				platform,
+				platform: this.platform,
 				player,
 				errorHandler: (e: any) => this.onError(e)
 			});

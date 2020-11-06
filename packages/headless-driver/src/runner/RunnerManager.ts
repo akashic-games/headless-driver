@@ -248,7 +248,49 @@ export class RunnerManager {
 		}
 
 		await runner.stop();
-		this.runners = this.runners.filter((r) => r !== runner);
+		this.runners = this.runners.filter((r) => r !== runner); // test
+	}
+
+	/**
+	 * Runner を一時停止する
+	 * @param runnerId RunnerID
+	 */
+	async pauseRunner(runnerId: string): Promise<void> {
+		const runner = this.getRunner(runnerId);
+
+		if (!runner) {
+			throw new Error("Runner is not found");
+		}
+
+		await runner.pause();
+	}
+
+	/**
+	 * Runner の一時停止を解除する
+	 * @param runnerId RunnerID
+	 */
+	async resumeRunner(runnerId: string): Promise<void> {
+		const runner = this.getRunner(runnerId);
+
+		if (!runner) {
+			throw new Error("Runner is not found");
+		}
+
+		await runner.resume();
+	}
+
+	/**
+	 * 一時停止中の Runner を1tick進める
+	 * @param runnerId RunnerID
+	 */
+	async stepRunner(runnerId: string): Promise<void> {
+		const runner = this.getRunner(runnerId);
+
+		if (!runner) {
+			throw new Error("Runner is not found");
+		}
+
+		await runner.step();
 	}
 
 	/**
