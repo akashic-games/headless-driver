@@ -16,7 +16,7 @@ function main(param) {
 	});
 
 	scene.onUpdate.add(function() {
-		if (game.external.isSendSceneUpdateCalled) {
+		if (game.external.isSendingSceneUpdateCalled) {
 			game.external.send("scene_update");
 		}
 	});

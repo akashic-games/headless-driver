@@ -45,7 +45,7 @@ async function readyRunner(gameJsonPath: string) {
 		allowedUrls: null,
 		externalValue: {
 			isSendSkipChanged: true,
-			isSendSceneUpdateCalled: true
+			isSendingSceneUpdateCalled: true
 		}
 	});
 	const runner = runnerManager.getRunner(runnerId);
