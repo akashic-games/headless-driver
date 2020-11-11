@@ -120,7 +120,7 @@ describe("Runner の動作確認 (v1)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (18000 ms)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
 		await runner.start();
@@ -211,7 +211,7 @@ describe("Runner の動作確認 (v2)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (18000 ms)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
 		await runner.start();
@@ -306,7 +306,7 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (18000 ms)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
 		await runner.start();
