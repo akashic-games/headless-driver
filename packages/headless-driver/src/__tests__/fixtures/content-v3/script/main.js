@@ -5,7 +5,23 @@ function main(param) {
 		game
 	});
 
-	scene.loaded.add(function() {
+	game.onSkipChange.add(function(skipped) {
+		if (game.external.isSendSkipChanged) {
+			if (skipped) {
+				game.external.send("start_skipping");
+			} else {
+				game.external.send("end_skipping");
+			}
+		}
+	});
+
+	scene.onUpdate.add(function() {
+		if (game.external.isSendSceneUpdateCalled) {
+			game.external.send("scene_update");
+		}
+	});
+
+	scene.onLoad.add(function() {
 		// 以下にゲームのロジックを記述します。
 		const rect = new g.FilledRect({
 			scene: scene,
@@ -13,7 +29,7 @@ function main(param) {
 			width: 32,
 			height: 32
 		});
-		rect.update.add(function () {
+		rect.onUpdate.add(function () {
 			// 以下のコードは毎フレーム実行されます。
 			rect.x += 10;
 			if (rect.x > game.width) {
@@ -25,7 +41,7 @@ function main(param) {
 		scene.append(rect);
 	});
 
-	scene.message.add(function(message) {
+	scene.onMessage.add(function(message) {
 		if (message.data.type === "throw_error") {
 			throw new Error("unknown error");
 		} else if (message.data.type === "send_event") {

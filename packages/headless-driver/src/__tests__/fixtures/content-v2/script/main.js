@@ -5,6 +5,22 @@ function main(param) {
 		game
 	});
 
+	game.skippingChanged.add(function(skipped) {
+		if (game.external.isSendSkipChanged) {
+			if (skipped) {
+				game.external.send("start_skipping");
+			} else {
+				game.external.send("end_skipping");
+			}
+		}
+	});
+
+	scene.update.add(function() {
+		if (game.external.isSendSceneUpdateCalled) {
+			game.external.send("scene_update");
+		}
+	});
+
 	scene.loaded.add(function() {
 		// 以下にゲームのロジックを記述します。
 		const rect = new g.FilledRect({

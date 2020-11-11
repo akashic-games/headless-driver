@@ -1,6 +1,5 @@
 import { akashicEngine as g, pdi } from "@akashic/engine-files";
 import { Looper, Platform, PlatformParameters } from "@akashic/headless-driver-runner";
-
 import { NullSurface } from "./NullSurface";
 import { ResourceFactory } from "./ResourceFactory";
 
@@ -41,15 +40,21 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 		return looper;
 	}
 
+	advanceLoopers(ms: number): void {
+		for (let i = 0; i < this.loopers.length; i++) {
+			this.loopers[i].advance(ms);
+		}
+	}
+
 	pauseLoopers(): void {
-		this.loopers.forEach((looper) => looper.debugStop());
+		for (let i = 0; i < this.loopers.length; i++) {
+			this.loopers[i].stop();
+		}
 	}
 
 	resumeLoopers(): void {
-		this.loopers.forEach((looper) => looper.debugStart());
-	}
-
-	stepLoopers(): void {
-		this.loopers.forEach((looper) => looper.debugStep());
+		for (let i = 0; i < this.loopers.length; i++) {
+			this.loopers[i].start();
+		}
 	}
 }

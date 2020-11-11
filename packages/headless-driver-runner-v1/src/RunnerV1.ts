@@ -5,12 +5,11 @@ import { PlatformV1 } from "./platform/PlatformV1";
 export type RunnerV1Game = g.Game;
 
 export class RunnerV1 extends Runner {
+	engineVersion: string = "1";
+
 	private driver: gdr.GameDriver;
 	private platform: PlatformV1;
-
-	get engineVersion(): string {
-		return "1";
-	}
+	private fps: number | null = null;
 
 	// NOTE: 暫定的にデバッグ用として g.Game を返している
 	async start(): Promise<RunnerV1Game | null> {
@@ -41,7 +40,42 @@ export class RunnerV1 extends Runner {
 	}
 
 	step(): void {
-		this.platform.stepLoopers();
+		if (this.fps == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
+			return;
+		}
+		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
+	}
+
+	async advance(ms: number): Promise<void> {
+		if (this.fps == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
+			return;
+		}
+
+		const { loopMode, skipThreshold } = this.driver.getLoopConfiguration();
+
+		// NOTE: skip の通知タイミングを一度に制限するため skipThreshold を一時的に変更する。
+		await this.changeGameDriverState({
+			loopConfiguration: {
+				loopMode,
+				skipThreshold: Math.ceil(ms / this.fps) + 1
+			}
+		});
+		const delta = Math.ceil(1000 / this.fps);
+		let progress = 0;
+		while (progress <= ms) {
+			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
+			// そのため一度に進める時間を fps に応じて分割する。
+			this.platform.advanceLoopers(delta);
+			progress += delta;
+		}
+		await this.changeGameDriverState({
+			loopConfiguration: {
+				loopMode,
+				skipThreshold
+			}
+		});
 	}
 
 	changeGameDriverState(param: gdr.GameDriverInitializeParameterObject): Promise<void> {
@@ -115,11 +149,11 @@ export class RunnerV1 extends Runner {
 						game.external[key] = this.externalValue[key];
 					});
 				}
+				this.fps = game.fps;
 				game._started.handle(() => {
 					resolve(game);
 					return true;
 				});
-
 				return true;
 			});
 		});
