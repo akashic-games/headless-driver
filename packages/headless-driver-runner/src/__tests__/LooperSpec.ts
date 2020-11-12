@@ -31,14 +31,13 @@ describe("Looper", () => {
 
 	it("Looper#debugStart(), debugStop(), advance()", async () => {
 		let loopCount = 0;
-		let latestErr: any;
 		const looper = new Looper(
 			(_delta: number) => {
 				loopCount++;
 				return 0;
 			},
-			(err: any) => {
-				latestErr = err;
+			(_err: any) => {
+				//
 			}
 		);
 
@@ -47,13 +46,6 @@ describe("Looper", () => {
 
 		// case 1-2: Looper#start() 前に Looper#debugStop() が呼ばれてはならない
 		expect(looper.debugStop()).toBe(false);
-
-		// case 1-3: Looper#start() 前に Looper#advande() が呼ばれたら何もせず error を出力
-		const count1_3 = loopCount;
-		looper.advance(100);
-		expect(count1_3).toBe(loopCount);
-		expect(latestErr).not.toBeUndefined();
-		latestErr = undefined;
 
 		looper.start();
 		await sleep(400);
@@ -67,7 +59,6 @@ describe("Looper", () => {
 		// case 2-1-1: Looper#debugStop() 後に Looper#advance() が呼ばれたらループを進めることができる
 		const count2_1_1 = loopCount;
 		looper.advance(1000);
-		expect(latestErr).toBeUndefined();
 		expect(loopCount).toBeGreaterThan(count2_1_1);
 
 		// case 2-2: Looper#debugStop() 後に Looper#debugStart() が呼ばれたらループを再開できる
@@ -75,13 +66,6 @@ describe("Looper", () => {
 		expect(looper.debugStart()).toBe(true);
 		await sleep(200);
 		expect(loopCount).toBeGreaterThan(count2_2);
-
-		// case 2-2-1: Looper#start() 中に Looper#advance() が呼ばれたら何もせず error を出力する
-		const count2_2_1 = loopCount;
-		looper.advance(1000);
-		expect(latestErr).not.toBeUndefined();
-		expect(loopCount).toBe(count2_2_1);
-		latestErr = undefined;
 
 		const lastLoopCount = loopCount;
 		looper.stop();
@@ -95,11 +79,5 @@ describe("Looper", () => {
 		expect(looper.debugStart()).toBe(false);
 		await sleep(200);
 		expect(loopCount).toBe(lastLoopCount);
-
-		// case 3-3: Looper#stop() 後に Looper#advance() が呼ばれても何もせず error を出力する
-		looper.advance(1000);
-		expect(latestErr).not.toBeUndefined();
-		expect(loopCount).toBe(lastLoopCount);
-		latestErr = undefined;
 	});
 });

@@ -61,18 +61,9 @@ export class Looper {
 
 	/**
 	 * この Looper による紐付いたハンドラを、指定ミリ秒進めて実行する。
-	 * `this.debugStop()` が呼ばれた後でないと実行できない。
 	 * @param ms 進めるミリ秒
 	 */
 	advance(ms: number): void {
-		if (!this._running) {
-			this._errorHandler(new Error("Looper#advance() must be called before calling Looper#start()"));
-			return;
-		}
-		if (this._timerId != null) {
-			this._errorHandler(new Error("Looper#advance() must be called before calling Looper#debugStop()"));
-			return;
-		}
 		try {
 			this._fun(ms);
 		} catch (e) {
