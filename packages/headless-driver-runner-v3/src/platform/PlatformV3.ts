@@ -48,13 +48,13 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 
 	pauseLoopers(): void {
 		for (let i = 0; i < this.loopers.length; i++) {
-			this.loopers[i].stop();
+			this.loopers[i].debugStop();
 		}
 	}
 
 	resumeLoopers(): void {
 		for (let i = 0; i < this.loopers.length; i++) {
-			this.loopers[i].start();
+			this.loopers[i].debugStart();
 		}
 	}
 }

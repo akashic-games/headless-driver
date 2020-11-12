@@ -328,3 +328,89 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.stop();
 	});
 });
+
+describe("Runner の動作確認 (異常系)", () => {
+	it("(v1) Runner#pause() せずに Runner#advance() を呼ぶことはできない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
+		await runner.start();
+		await sleep(500);
+		let err: any;
+		runner.errorTrigger.add((e) => {
+			err = e;
+		});
+		await runner.advance(1000);
+		// trigger 経由でエラーが通知されることを確認
+		expect(err).not.toBeUndefined();
+		runner.stop();
+	});
+
+	it("(v1) Runner#pause() せずに Runner#step() を呼ぶことはできない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
+		await runner.start();
+		await sleep(500);
+		let err: any;
+		runner.errorTrigger.add((e) => {
+			err = e;
+		});
+		runner.step();
+		// trigger 経由でエラーが通知されることを確認
+		expect(err).not.toBeUndefined();
+		runner.stop();
+	});
+
+	it("(v2) Runner#pause() せずに Runner#advance() を呼ぶことはできない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
+		await runner.start();
+		await sleep(500);
+		let err: any;
+		runner.errorTrigger.add((e) => {
+			err = e;
+		});
+		await runner.advance(1000);
+		// trigger 経由でエラーが通知されることを確認
+		expect(err).not.toBeUndefined();
+		runner.stop();
+	});
+
+	it("(v2) Runner#pause() せずに Runner#step() を呼ぶことはできない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
+		await runner.start();
+		await sleep(500);
+		let err: any;
+		runner.errorTrigger.add((e) => {
+			err = e;
+		});
+		runner.step();
+		// trigger 経由でエラーが通知されることを確認
+		expect(err).not.toBeUndefined();
+		runner.stop();
+	});
+
+	it("(v3) Runner#pause() せずに Runner#advance() を呼ぶことはできない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
+		await runner.start();
+		await sleep(500);
+		let err: any;
+		runner.errorTrigger.add((e) => {
+			err = e;
+		});
+		await runner.advance(1000);
+		// trigger 経由でエラーが通知されることを確認
+		expect(err).not.toBeUndefined();
+		runner.stop();
+	});
+
+	it("(v3) Runner#pause() せずに Runner#step() を呼ぶことはできない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
+		await runner.start();
+		await sleep(500);
+		let err: any;
+		runner.errorTrigger.add((e) => {
+			err = e;
+		});
+		runner.step();
+		// trigger 経由でエラーが通知されることを確認
+		expect(err).not.toBeUndefined();
+		runner.stop();
+	});
+});

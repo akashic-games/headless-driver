@@ -10,6 +10,7 @@ export class RunnerV3 extends Runner {
 	private driver: gdr.GameDriver;
 	private platform: PlatformV3;
 	private fps: number | null = null;
+	private running: boolean = false;
 
 	// NOTE: 暫定的にデバッグ用として g.Game を返している
 	async start(): Promise<RunnerV3Game | null> {
@@ -17,6 +18,7 @@ export class RunnerV3 extends Runner {
 
 		try {
 			game = await this.initGameDriver();
+			this.running = true;
 		} catch (e) {
 			this.onError(e);
 		}
@@ -29,14 +31,17 @@ export class RunnerV3 extends Runner {
 			this.driver.stopGame();
 			this.driver = null;
 		}
+		this.running = false;
 	}
 
 	pause(): void {
 		this.platform.pauseLoopers();
+		this.running = false;
 	}
 
 	resume(): void {
 		this.platform.resumeLoopers();
+		this.running = true;
 	}
 
 	step(): void {
@@ -44,12 +49,21 @@ export class RunnerV3 extends Runner {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
 		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#step() in running"));
+			return;
+		}
+
 		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
 	}
 
 	async advance(ms: number): Promise<void> {
 		if (this.fps == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#advance() in running"));
 			return;
 		}
 
