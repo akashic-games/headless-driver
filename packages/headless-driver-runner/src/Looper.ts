@@ -1,4 +1,5 @@
 export class Looper {
+	protected _running: boolean;
 	protected _fun: (deltaTime: number) => number;
 	protected _timerId: NodeJS.Timer;
 	protected _prev: number;
@@ -8,18 +9,70 @@ export class Looper {
 		this._fun = fun;
 		this._timerId = null;
 		this._prev = 0;
+		this._running = false;
 		this._errorHandler = errorHandler;
 	}
 
+	/**
+	 * この Looper に紐付いたハンドラを定期実行を開始する。
+	 * このメソッドは Platform を経由して暗黙的に呼ばれ、それ以外から呼び出してはならない。
+	 * 同様の機能を利用する場合は `this.debugStart()` を呼ぶこと。
+	 */
 	start(): void {
+		this._running = true;
 		this.setLooperInterval();
 	}
 
+	/**
+	 * この Looper に紐付いたハンドラの定期実行を停止する。
+	 * このメソッドは Platform を経由して暗黙的に呼ばれ、それ以外から呼び出してはならない。
+	 * 同様の機能を利用する場合は `this.debugStop()` を呼ぶこと。
+	 */
 	stop(): void {
+		this._running = false;
 		this.clearLooperInterval();
 	}
 
+	/**
+	 * この Looper に紐付いたハンドラの定期実行を開始する。
+	 * Looper#start() から Looper#stop() の間に呼ばれなければならない。
+	 * この範囲内で呼ばれた場合は `true` を、この範囲外で呼ばれた場合は何もせず `false` を返す。
+	 */
+	debugStart(): boolean {
+		if (!this._running) {
+			return false;
+		}
+		this.setLooperInterval();
+		return true;
+	}
+
+	/**
+	 * この Looper に紐付いたハンドラの定期実行を停止する。
+	 * Looper#start() から Looper#stop() の間に呼ばれなければならない。
+	 * この範囲内で呼ばれた場合は `true` を、この範囲外で呼ばれた場合は何もせず `false` を返す。
+	 */
+	debugStop(): boolean {
+		if (!this._running) {
+			return false;
+		}
+		this.clearLooperInterval();
+		return true;
+	}
+
+	/**
+	 * この Looper による紐付いたハンドラを、指定ミリ秒進めて実行する。
+	 * `this.debugStop()` が呼ばれた後でないと実行できない。
+	 * @param ms 進めるミリ秒
+	 */
 	advance(ms: number): void {
+		if (!this._running) {
+			this._errorHandler(new Error("Looper#advance() must be called before calling Looper#start()"));
+			return;
+		}
+		if (this._timerId != null) {
+			this._errorHandler(new Error("Looper#advance() must be called before calling Looper#debugStop()"));
+			return;
+		}
 		try {
 			this._fun(ms);
 		} catch (e) {
