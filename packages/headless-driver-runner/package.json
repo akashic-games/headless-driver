@@ -9,7 +9,7 @@
     "formatter": "prettier --write \"src/**/*.ts\" --config ../prettier.config.js",
     "test": "npm run run:jest && npm run lint",
     "run:jest": "jest",
-    "lint": "tslint -c ../tslint.json src/**/*.ts -p tsconfig.json -e \"**/node_modules/**\""
+    "lint": "tslint -c ../tslint.json -p tsconfig.json -e \"**/node_modules/**\""
   },
   "publishConfig": {
     "access": "public",
