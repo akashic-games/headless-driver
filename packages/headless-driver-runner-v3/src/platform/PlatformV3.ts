@@ -42,7 +42,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 
 	advanceLoopers(ms: number): void {
 		for (let i = 0; i < this.loopers.length; i++) {
-			this.loopers[i].advance(ms);
+			this.loopers[i].debugStep(ms);
 		}
 	}
 

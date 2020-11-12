@@ -1,69 +1,51 @@
 export class Looper {
-	protected _running: boolean;
-	protected _fun: (deltaTime: number) => number;
-	protected _timerId: NodeJS.Timer;
-	protected _prev: number;
-	protected _errorHandler: (err: any) => void;
+	private _running: boolean;
+	private _fun: (deltaTime: number) => number;
+	private _timerId: NodeJS.Timer;
+	private _prev: number;
+	private _errorHandler: (err: any) => void;
+
+	/**
+	 * コンテンツの一時停止を外部からリクエストされているか
+	 */
+	private _debugStarted: boolean;
+
+	/**
+	 * game-driverがプレイを続行する状態になっているかどうか
+	 */
+	private _platformStarted: boolean;
 
 	constructor(fun: (deltaTime: number) => number, errorHandler: (err: any) => void) {
 		this._fun = fun;
 		this._timerId = null;
 		this._prev = 0;
-		this._running = false;
 		this._errorHandler = errorHandler;
-	}
-
-	/**
-	 * この Looper に紐付いたハンドラを定期実行を開始する。
-	 * このメソッドは Platform を経由して暗黙的に呼ばれ、それ以外から呼び出してはならない。
-	 * 同様の機能を利用する場合は `this.debugStart()` を呼ぶこと。
-	 */
-	start(): void {
-		this._running = true;
-		this.setLooperInterval();
-	}
-
-	/**
-	 * この Looper に紐付いたハンドラの定期実行を停止する。
-	 * このメソッドは Platform を経由して暗黙的に呼ばれ、それ以外から呼び出してはならない。
-	 * 同様の機能を利用する場合は `this.debugStop()` を呼ぶこと。
-	 */
-	stop(): void {
 		this._running = false;
-		this.clearLooperInterval();
+		this._debugStarted = true;
+		this._platformStarted = false;
 	}
 
-	/**
-	 * この Looper に紐付いたハンドラの定期実行を開始する。
-	 * Looper#start() から Looper#stop() の間に呼ばれなければならない。
-	 * この範囲内で呼ばれた場合は `true` を、この範囲外で呼ばれた場合は何もせず `false` を返す。
-	 */
-	debugStart(): boolean {
-		if (!this._running) {
-			return false;
-		}
-		this.setLooperInterval();
-		return true;
+	start(): void {
+		this._platformStarted = true;
+		this._update();
 	}
 
-	/**
-	 * この Looper に紐付いたハンドラの定期実行を停止する。
-	 * Looper#start() から Looper#stop() の間に呼ばれなければならない。
-	 * この範囲内で呼ばれた場合は `true` を、この範囲外で呼ばれた場合は何もせず `false` を返す。
-	 */
-	debugStop(): boolean {
-		if (!this._running) {
-			return false;
-		}
-		this.clearLooperInterval();
-		return true;
+	stop(): void {
+		this._platformStarted = false;
+		this._update();
 	}
 
-	/**
-	 * この Looper による紐付いたハンドラを、指定ミリ秒進めて実行する。
-	 * @param ms 進めるミリ秒
-	 */
-	advance(ms: number): void {
+	debugStart(): void {
+		this._debugStarted = true;
+		this._update();
+	}
+
+	debugStop(): void {
+		this._debugStarted = false;
+		this._update();
+	}
+
+	debugStep(ms: number): void {
 		try {
 			this._fun(ms);
 		} catch (e) {
@@ -71,7 +53,17 @@ export class Looper {
 		}
 	}
 
-	protected setLooperInterval(): void {
+	private _update(): void {
+		const needsCallRunning = this._debugStarted && this._platformStarted;
+		if (!this._running && needsCallRunning) {
+			this._start();
+		} else if (this._running && !needsCallRunning) {
+			this._stop();
+		}
+	}
+
+	private _start(): void {
+		this._running = true;
 		try {
 			this._fun(0);
 		} catch (e) {
@@ -85,16 +77,15 @@ export class Looper {
 				this._fun(now - this._prev);
 			} catch (e) {
 				this._errorHandler(e);
-				this.stop(); // TODO: 例外発生時に止めてしまってよいか検討
+				this._platformStarted = false;
+				this._stop(); // TODO: 例外発生時止めてしまうのがいいのか検討
 			}
 			this._prev = now;
 		}, 16);
 	}
 
-	protected clearLooperInterval(): void {
-		if (this._timerId == null) {
-			return;
-		}
+	private _stop(): void {
+		this._running = false;
 		clearInterval(this._timerId);
 		this._timerId = null;
 		this._prev = 0;
