@@ -87,8 +87,31 @@ export abstract class Runner {
 		this.params = params;
 	}
 
+	/**
+	 * Runner を開始する。
+	 */
 	abstract start(): any;
+	/**
+	 * Runner を停止する。
+	 */
 	abstract stop(): void;
+	/**
+	 * Runner を一時停止する。
+	 */
+	abstract pause(): void;
+	/**
+	 * Runner を再開する。
+	 */
+	abstract resume(): void;
+	/**
+	 * Runner を指定ミリ秒だけ進行する。
+	 * @param ms 進行するミリ秒。
+	 */
+	abstract advance(ms: number): void;
+	/**
+	 * Runner を一フレーム進行する。
+	 */
+	abstract step(): void;
 
 	protected onError(error: Error): void {
 		this.stop();

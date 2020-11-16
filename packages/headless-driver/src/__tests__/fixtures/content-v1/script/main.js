@@ -5,6 +5,12 @@ function main(param) {
 		game
 	});
 
+	scene.update.handle(function() {
+		if (game.external.isSendingSceneUpdateCalled) {
+			game.external.send("scene_update");
+		}
+	});
+
 	scene.loaded.handle(function() {
 		// 以下にゲームのロジックを記述します。
 		const rect = new g.FilledRect({

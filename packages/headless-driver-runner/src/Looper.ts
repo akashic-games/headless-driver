@@ -1,10 +1,9 @@
 export class Looper {
+	private _running: boolean;
 	private _fun: (deltaTime: number) => number;
 	private _timerId: NodeJS.Timer;
 	private _prev: number;
 	private _errorHandler: (err: any) => void;
-
-	private _running: boolean;
 
 	/**
 	 * コンテンツの一時停止を外部からリクエストされているか
@@ -16,11 +15,6 @@ export class Looper {
 	 */
 	private _platformStarted: boolean;
 
-	/**
-	 * 1stepで進める時間
-	 */
-	private _stepDelta: number;
-
 	constructor(fun: (deltaTime: number) => number, errorHandler: (err: any) => void) {
 		this._fun = fun;
 		this._timerId = null;
@@ -29,7 +23,6 @@ export class Looper {
 		this._running = false;
 		this._debugStarted = true;
 		this._platformStarted = false;
-		this._stepDelta = 1000 / 60;
 	}
 
 	start(): void {
@@ -52,9 +45,9 @@ export class Looper {
 		this._update();
 	}
 
-	debugStep(): void {
+	debugStep(ms: number): void {
 		try {
-			this._fun(this._stepDelta);
+			this._fun(ms);
 		} catch (e) {
 			this._errorHandler(e);
 		}

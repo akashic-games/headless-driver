@@ -5,12 +5,12 @@ import { PlatformV3 } from "./platform/PlatformV3";
 export type RunnerV3Game = g.Game;
 
 export class RunnerV3 extends Runner {
+	engineVersion: string = "3";
+
 	private driver: gdr.GameDriver;
 	private platform: PlatformV3;
-
-	get engineVersion(): string {
-		return "3";
-	}
+	private fps: number | null = null;
+	private running: boolean = false;
 
 	// NOTE: 暫定的にデバッグ用として g.Game を返している
 	async start(): Promise<RunnerV3Game | null> {
@@ -18,6 +18,7 @@ export class RunnerV3 extends Runner {
 
 		try {
 			game = await this.initGameDriver();
+			this.running = true;
 		} catch (e) {
 			this.onError(e);
 		}
@@ -30,18 +31,65 @@ export class RunnerV3 extends Runner {
 			this.driver.stopGame();
 			this.driver = null;
 		}
+		this.running = false;
 	}
 
 	pause(): void {
 		this.platform.pauseLoopers();
+		this.running = false;
 	}
 
 	resume(): void {
 		this.platform.resumeLoopers();
+		this.running = true;
 	}
 
 	step(): void {
-		this.platform.stepLoopers();
+		if (this.fps == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#step() in running"));
+			return;
+		}
+
+		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
+	}
+
+	async advance(ms: number): Promise<void> {
+		if (this.fps == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#advance() in running"));
+			return;
+		}
+
+		const { loopMode, skipThreshold } = this.driver.getLoopConfiguration();
+
+		// NOTE: skip の通知タイミングを一度に制限するため skipThreshold を一時的に変更する。
+		await this.changeGameDriverState({
+			loopConfiguration: {
+				loopMode,
+				skipThreshold: Math.ceil(ms / this.fps) + 1
+			}
+		});
+		const delta = Math.ceil(1000 / this.fps);
+		let progress = 0;
+		while (progress <= ms) {
+			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
+			// そのため一度に進める時間を fps に応じて分割する。
+			this.platform.advanceLoopers(delta);
+			progress += delta;
+		}
+		await this.changeGameDriverState({
+			loopConfiguration: {
+				loopMode,
+				skipThreshold
+			}
+		});
 	}
 
 	changeGameDriverState(param: gdr.GameDriverInitializeParameterObject): Promise<void> {
@@ -115,7 +163,8 @@ export class RunnerV3 extends Runner {
 						game.external[key] = this.externalValue[key];
 					});
 				}
-				game._started.addOnce(() => resolve(game));
+				this.fps = game.fps;
+				game._onStart.addOnce(() => resolve(game));
 			});
 		});
 	}
