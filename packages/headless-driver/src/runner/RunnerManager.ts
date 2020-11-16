@@ -248,7 +248,7 @@ export class RunnerManager {
 		}
 
 		await runner.stop();
-		this.runners = this.runners.filter((r) => r !== runner); // test
+		this.runners = this.runners.filter((r) => r !== runner);
 	}
 
 	/**
@@ -280,7 +280,7 @@ export class RunnerManager {
 	}
 
 	/**
-	 * 一時停止中の Runner を1tick進める
+	 * 一時停止中の Runner を一フレーム進める
 	 * @param runnerId RunnerID
 	 */
 	async stepRunner(runnerId: string): Promise<void> {
@@ -291,6 +291,20 @@ export class RunnerManager {
 		}
 
 		await runner.step();
+	}
+
+	/**
+	 * 一時停止中の Runner を指定のミリ秒だけ進める
+	 * @param runnerId RunnerID
+	 */
+	async advanceRunner(runnerId: string, ms: number): Promise<void> {
+		const runner = this.getRunner(runnerId);
+
+		if (!runner) {
+			throw new Error("Runner is not found");
+		}
+
+		await runner.advance(ms);
 	}
 
 	/**
