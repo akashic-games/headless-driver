@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v1.4.0 (2020-11-16)
+
+#### Breaking Change
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#199](https://github.com/akashic-games/headless-driver/pull/199) feat: Add Runner#advance() ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#199](https://github.com/akashic-games/headless-driver/pull/199) feat: Add Runner#advance() ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.3.4 (2020-11-13)
 
 #### Enhancement
