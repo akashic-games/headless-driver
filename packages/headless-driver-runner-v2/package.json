@@ -21,7 +21,7 @@
   "license": "MIT",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@akashic/engine-files": "2.1.48",
+    "@akashic/engine-files": "2.1.49",
     "@akashic/headless-driver-runner": "1.4.0"
   },
   "devDependencies": {
