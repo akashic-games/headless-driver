@@ -84,12 +84,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 10, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point down event");
 
 		runner.firePointEvent({
@@ -98,12 +97,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 15, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point move event");
 
 		runner.firePointEvent({
@@ -112,12 +110,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 20, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point up event");
 
 		const handleError = () =>
@@ -188,12 +185,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 10, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point down event");
 
 		runner.firePointEvent({
@@ -202,12 +198,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 15, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point move event");
 
 		runner.firePointEvent({
@@ -216,12 +211,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 20, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point up event");
 
 		const handleEvent = () =>
@@ -290,12 +284,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 10, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point down event");
 
 		runner.firePointEvent({
@@ -304,12 +297,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 15, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point move event");
 
 		runner.firePointEvent({
@@ -318,12 +310,11 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 20, y: 10 }
 		});
 		expect(
-			await (() =>
-				new Promise<string>((resolve, reject) => {
-					runner.sendToExternalTrigger.addOnce((l: string) => {
-						resolve(l);
-					});
-				}))()
+			await new Promise<string>((resolve, reject) => {
+				runner.sendToExternalTrigger.addOnce((l: string) => {
+					resolve(l);
+				});
+			})
 		).toBe("fired point up event");
 
 		const handleEvent = () =>
