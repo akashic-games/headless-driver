@@ -77,6 +77,49 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const data = await handleData();
 		expect(data).toBe("reached right");
 
+		// コンテンツ側へのポイントイベントの発火が正しく機能している
+		runner.firePointEvent({
+			type: "down",
+			identifier: 0,
+			offset: { x: 10, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point down event");
+
+		runner.firePointEvent({
+			type: "move",
+			identifier: 0,
+			offset: { x: 15, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point move event");
+
+		runner.firePointEvent({
+			type: "up",
+			identifier: 0,
+			offset: { x: 20, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point up event");
+
 		const handleError = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
@@ -138,6 +181,49 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const data = await handleData();
 		expect(data).toBe("reached right");
 
+		// コンテンツ側へのポイントイベントの発火が正しく機能している
+		runner.firePointEvent({
+			type: "down",
+			identifier: 0,
+			offset: { x: 10, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point down event");
+
+		runner.firePointEvent({
+			type: "move",
+			identifier: 0,
+			offset: { x: 15, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point move event");
+
+		runner.firePointEvent({
+			type: "up",
+			identifier: 0,
+			offset: { x: 20, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point up event");
+
 		const handleEvent = () =>
 			new Promise<any>((resolve, reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
@@ -196,6 +282,49 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 
 		const data = await handleData();
 		expect(data).toBe("reached right");
+
+		// コンテンツ側へのポイントイベントの発火が正しく機能している
+		runner.firePointEvent({
+			type: "down",
+			identifier: 0,
+			offset: { x: 10, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point down event");
+
+		runner.firePointEvent({
+			type: "move",
+			identifier: 0,
+			offset: { x: 15, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point move event");
+
+		runner.firePointEvent({
+			type: "up",
+			identifier: 0,
+			offset: { x: 20, y: 10 }
+		});
+		expect(
+			await (() =>
+				new Promise<string>((resolve, reject) => {
+					runner.sendToExternalTrigger.addOnce((l: string) => {
+						resolve(l);
+					});
+				}))()
+		).toBe("fired point up event");
 
 		const handleEvent = () =>
 			new Promise<any>((resolve) => {
