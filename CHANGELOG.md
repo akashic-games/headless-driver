@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.5.0 (2020-11-18)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#202](https://github.com/akashic-games/headless-driver/pull/202) feat: add Runner#firePointEvent() ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.4.0 (2020-11-16)
 
 #### Breaking Change
