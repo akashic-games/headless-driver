@@ -19,6 +19,15 @@ export interface RunnerParameters {
 
 export type RunnerExecutionMode = "active" | "passive";
 
+export interface RunnerPointEvent {
+	type: "down" | "move" | "up";
+	identifier: number;
+	offset: {
+		x: number;
+		y: number;
+	};
+}
+
 export interface RunnerPlayer {
 	id: string;
 	name: string;
@@ -112,6 +121,11 @@ export abstract class Runner {
 	 * Runner を一フレーム進行する。
 	 */
 	abstract step(): void;
+	/**
+	 * Runner に対して任意のポイントイベントを発火させる。
+	 * @param event 発火させるポイントイベント
+	 */
+	abstract firePointEvent(event: RunnerPointEvent): void;
 
 	protected onError(error: Error): void {
 		this.stop();

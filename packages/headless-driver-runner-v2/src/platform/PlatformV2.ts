@@ -7,6 +7,7 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
 	private rendererReq: pdi.RendererRequirement;
 	private primarySurface: g.Surface;
+	private eventHandler: pdi.PlatformEventHandler | null = null;
 	private loopers: Looper[];
 
 	constructor(param: PlatformParameters) {
@@ -27,7 +28,11 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 	}
 
 	setPlatformEventHandler(handler: pdi.PlatformEventHandler): void {
-		// do nothing
+		this.eventHandler = handler;
+	}
+
+	getPlatformHandler(): pdi.PlatformEventHandler | null {
+		return this.eventHandler;
 	}
 
 	getPrimarySurface(): g.Surface {
@@ -56,5 +61,9 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 		for (let i = 0; i < this.loopers.length; i++) {
 			this.loopers[i].debugStart();
 		}
+	}
+
+	firePointEvent(event: pdi.PointEvent): void {
+		this.eventHandler?.onPointEvent(event);
 	}
 }

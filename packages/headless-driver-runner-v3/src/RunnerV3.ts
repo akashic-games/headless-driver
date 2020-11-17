@@ -1,5 +1,5 @@
 import { akashicEngine as g, gameDriver as gdr } from "@akashic/engine-files";
-import { Runner } from "@akashic/headless-driver-runner";
+import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
 import { PlatformV3 } from "./platform/PlatformV3";
 
 export type RunnerV3Game = g.Game;
@@ -99,6 +99,25 @@ export class RunnerV3 extends Runner {
 				return;
 			}
 			this.driver.changeState(param, (err) => (err ? reject(err) : resolve()));
+		});
+	}
+
+	firePointEvent(event: RunnerPointEvent): void {
+		let type: g.PlatformPointType;
+		if (event.type === "down") {
+			type = g.PlatformPointType.Down;
+		} else if (event.type === "move") {
+			type = g.PlatformPointType.Move;
+		} else if (event.type === "up") {
+			type = g.PlatformPointType.Up;
+		} else {
+			this.errorTrigger.fire(new Error(`RunnerV3#firePointEvent(): unknown event type: ${event.type}`));
+			return;
+		}
+		this.platform.firePointEvent({
+			type,
+			identifier: event.identifier,
+			offset: event.offset
 		});
 	}
 

@@ -41,6 +41,16 @@ function main(param) {
 		scene.append(rect);
 	});
 
+	scene.pointDownCapture.add(function() {
+		game.external.send("fired point down event");
+	});
+	scene.pointMoveCapture.add(function() {
+		game.external.send("fired point move event");
+	});
+	scene.pointUpCapture.add(function() {
+		game.external.send("fired point up event");
+	});
+
 	scene.message.add(function(message) {
 		if (message.data.type === "throw_error") {
 			throw new Error("unknown error");
