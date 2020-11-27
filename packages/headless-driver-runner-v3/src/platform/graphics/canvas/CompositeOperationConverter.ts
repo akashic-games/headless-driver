@@ -15,62 +15,56 @@ export type CompositeOperation =
 
 export class CompositeOperationConverter {
 	static toEngine(operation: CompositeOperation): g.CompositeOperationString {
-		let operationText: g.CompositeOperationString;
 		if (operation === "source-over") {
-			operationText = "source-over";
+			return "source-over";
 		} else if (operation === "source-atop") {
-			operationText = "source-atop";
+			return "source-atop";
 		} else if (operation === "lighter") {
-			operationText = "lighter";
+			return "lighter";
 		} else if (operation === "copy") {
-			operationText = "copy";
+			return "copy";
 		} else if (operation === "destination-out") {
-			operationText = "destination-out";
+			return "destination-out";
 		} else if (operation === "destination-over") {
-			operationText = "destination-over";
+			return "destination-over";
 		} else if (operation === "xor") {
-			operationText = "xor";
+			return "xor";
 		} else if (operation === "source-in") {
-			operationText = "experimental-source-in";
+			return "experimental-source-in";
 		} else if (operation === "source-out") {
-			operationText = "experimental-source-out";
+			return "experimental-source-out";
 		} else if (operation === "destination-in") {
-			operationText = "experimental-destination-in";
+			return "experimental-destination-in";
 		} else if (operation === "destination-atop") {
-			operationText = "experimental-destination-atop";
-		} else {
-			throw new Error(`unknown type: ${operation}`);
+			return "experimental-destination-atop";
 		}
-		return operationText;
+		throw new Error(`unknown composite operation: ${operation}`);
 	}
 
 	static toContext2D(operation: g.CompositeOperationString): CompositeOperation {
-		let operationText: CompositeOperation;
 		if (operation === "source-over") {
-			operationText = "source-over";
+			return "source-over";
 		} else if (operation === "source-atop") {
-			operationText = "source-atop";
+			return "source-atop";
 		} else if (operation === "lighter") {
-			operationText = "lighter";
+			return "lighter";
 		} else if (operation === "copy") {
-			operationText = "copy";
+			return "copy";
 		} else if (operation === "destination-out") {
-			operationText = "destination-out";
+			return "destination-out";
 		} else if (operation === "destination-over") {
-			operationText = "destination-over";
+			return "destination-over";
 		} else if (operation === "xor") {
-			operationText = "xor";
+			return "xor";
 		} else if (operation === "experimental-source-in") {
-			operationText = "source-in";
+			return "source-in";
 		} else if (operation === "experimental-source-out") {
-			operationText = "source-out";
+			return "source-out";
 		} else if (operation === "experimental-destination-in") {
-			operationText = "destination-in";
+			return "destination-in";
 		} else if (operation === "experimental-destination-atop") {
-			operationText = "destination-atop";
-		} else {
-			throw new Error(`unknown type: ${operation}`);
+			return "destination-atop";
 		}
-		return operationText;
+		throw new Error(`unknown composite operation: ${operation}`);
 	}
 }
