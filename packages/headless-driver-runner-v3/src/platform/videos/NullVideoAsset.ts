@@ -45,6 +45,6 @@ export class NullVideoAsset extends Asset implements g.VideoAsset {
 	}
 
 	stop(): void {
-		//
+		// do nothing
 	}
 }

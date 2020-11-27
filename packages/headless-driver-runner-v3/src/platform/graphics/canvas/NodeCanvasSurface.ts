@@ -24,7 +24,7 @@ export class NodeCanvasSurface implements g.Surface {
 	}
 
 	destroy(): void {
-		//
+		// do nothing
 	}
 
 	destroyed(): boolean {
