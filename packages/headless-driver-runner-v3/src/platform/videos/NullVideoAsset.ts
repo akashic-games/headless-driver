@@ -1,7 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
-import { NullSurface } from "../NullSurface";
-import { NullVideoPlayer } from "../NullVideoPlayer";
-import { Asset } from "./Asset";
+import { Asset } from "../assets/Asset";
+import { NullSurface } from "../graphics/null/NullSurface";
+import { NullVideoPlayer } from "./NullVideoPlayer";
 
 export class NullVideoAsset extends Asset implements g.VideoAsset {
 	type: "video" = "video";
@@ -45,6 +45,6 @@ export class NullVideoAsset extends Asset implements g.VideoAsset {
 	}
 
 	stop(): void {
-		//
+		// do nothing
 	}
 }
