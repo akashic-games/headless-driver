@@ -1,7 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
-import { Image } from "canvas";
+import { Canvas, Image } from "canvas";
 import { Asset } from "../../assets/Asset";
-import { NullSurface } from "../null/NullSurface";
+import { NodeCanvasSurface } from "./NodeCanvasSurface";
 
 interface ImageAssetDataCache {
 	data: Image;
@@ -77,10 +77,13 @@ export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 
 	asSurface(): g.Surface {
 		if (this.data == null) {
-			throw new Error("ImageAssetImpl#asSurface: not yet loaded.");
+			throw new Error("NodeCanvasImageAsset#asSurface(): not yet loaded.");
 		}
 		if (this._surface == null) {
-			this._surface = new NullSurface(this.width, this.height, this.data);
+			const canvas = new Canvas(this.width, this.height);
+			const context = canvas.getContext("2d");
+			context.drawImage(this.data, 0, 0, this.width, this.height);
+			this._surface = new NodeCanvasSurface(canvas);
 		}
 		return this._surface;
 	}
