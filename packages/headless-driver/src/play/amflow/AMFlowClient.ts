@@ -283,7 +283,6 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	destroy(): void {
-		console.log("DESTROY");
 		if (this.isDestroyed()) {
 			return;
 		}
@@ -297,8 +296,6 @@ export class AMFlowClient implements AMFlow {
 		this.tickHandlers = null;
 		this.eventHandlers = null;
 		this.unconsumedEvents = null;
-
-		console.log("DESTROY DONE");
 	}
 
 	isDestroyed(): boolean {
