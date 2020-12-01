@@ -68,7 +68,7 @@ export class AMFlowClient implements AMFlow {
 			try {
 				permission = this.store!.authenticate(token);
 			} catch (e) {
-				callback(e, undefined);
+				callback(e, null as any);
 				return;
 			}
 			if (permission) this.permission = permission;
@@ -76,7 +76,7 @@ export class AMFlowClient implements AMFlow {
 			if (permission) {
 				callback(null, permission);
 			} else {
-				callback(createError("invalid_status", "Invalid playToken"), undefined);
+				callback(createError("invalid_status", "Invalid playToken"), null as any);
 			}
 		});
 	}
@@ -283,6 +283,7 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	destroy(): void {
+		console.log("DESTROY");
 		if (this.isDestroyed()) {
 			return;
 		}
@@ -296,6 +297,8 @@ export class AMFlowClient implements AMFlow {
 		this.tickHandlers = null;
 		this.eventHandlers = null;
 		this.unconsumedEvents = null;
+
+		console.log("DESTROY DONE");
 	}
 
 	isDestroyed(): boolean {

@@ -22,7 +22,7 @@ describe("プレー周りのテスト", () => {
 	it("各インスタンスを生成できる", async () => {
 		const playManager = new PlayManager();
 		const playId0 = await playManager.createPlay({
-			contentUrl
+			contentUrl: contentUrl!
 		});
 		expect(playId0).toBe("0");
 
@@ -41,11 +41,11 @@ describe("プレー周りのテスト", () => {
 		});
 		const runner0 = runnerManager.getRunner(runnerId0);
 
-		expect(runner0.runnerId).toBe("0");
-		expect(runner0.engineVersion).toBe("2");
+		expect(runner0!.runnerId).toBe("0");
+		expect(runner0!.engineVersion).toBe("2");
 
 		const playId1 = await playManager.createPlay({
-			contentUrl
+			contentUrl: contentUrl!
 		});
 		expect(playId1).toBe("1");
 
@@ -63,8 +63,8 @@ describe("プレー周りのテスト", () => {
 		});
 		const runner1 = runnerManager.getRunner(runnerId1);
 
-		expect(runner1.runnerId).toBe("1");
-		expect(runner0.engineVersion).toBe("2");
+		expect(runner1!.runnerId).toBe("1");
+		expect(runner0!.engineVersion).toBe("2");
 
 		await runnerManager.startRunner("0");
 		await runnerManager.stopRunner("0");
@@ -74,7 +74,7 @@ describe("プレー周りのテスト", () => {
 		expect(playManager.getPlay("0")).toBe(null);
 
 		const playId2 = await playManager.createPlay({
-			contentUrl
+			contentUrl: contentUrl!
 		});
 		expect(playId2).toBe("2");
 
@@ -91,8 +91,8 @@ describe("プレー周りのテスト", () => {
 			allowedUrls: null
 		});
 		const runner2 = runnerManager.getRunner(runnerId2);
-		expect(runner2.runnerId).toBe("2");
-		expect(runner2.engineVersion).toBe("2");
+		expect(runner2!.runnerId).toBe("2");
+		expect(runner2!.engineVersion).toBe("2");
 	});
 
 	it("AMFlow, playTokenの管理ができる", () => {
@@ -120,9 +120,9 @@ describe("プレー周りのテスト", () => {
 
 	it("Play の管理ができる", async () => {
 		const playManager = new PlayManager();
-		const playId1 = await playManager.createPlay({ contentUrl });
-		const playId2 = await playManager.createPlay({ contentUrl });
-		const playId3 = await playManager.createPlay({ contentUrl });
+		const playId1 = await playManager.createPlay({ contentUrl: contentUrl! });
+		const playId2 = await playManager.createPlay({ contentUrl: contentUrl! });
+		const playId3 = await playManager.createPlay({ contentUrl: contentUrl! });
 
 		let playIds = playManager.getAllPlays().map((play) => play.playId);
 		expect(playIds).toEqual([playId1, playId2, playId3]);
