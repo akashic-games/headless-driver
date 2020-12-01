@@ -16,13 +16,13 @@ export interface DumpedPlaylog {
  */
 export class AMFlowStore {
 	playId: string;
-	sendEventTrigger: Trigger<Event> = new Trigger();
-	sendTickTrigger: Trigger<Tick> = new Trigger();
+	sendEventTrigger: Trigger<Event> | null = new Trigger();
+	sendTickTrigger: Trigger<Tick> | null = new Trigger();
 
-	private permissionMap: Map<string, Permission> = new Map();
+	private permissionMap: Map<string, Permission> | null = new Map();
 	private startPoints: StartPoint[] | null = [];
-	private unfilteredTickList: TickList = null;
-	private filteredTickList: TickList = null;
+	private unfilteredTickList: TickList | null = null;
+	private filteredTickList: TickList | null = null;
 	private suspended: boolean;
 
 	constructor(playId: string) {
@@ -35,7 +35,7 @@ export class AMFlowStore {
 		if (this.isSuspended() && permission && (permission.sendEvent || permission.writeTick)) {
 			throw createError("permission_error", "Play may be suspended");
 		}
-		return permission;
+		return permission!;
 	}
 
 	sendTick(tick: Tick): void {
@@ -43,14 +43,14 @@ export class AMFlowStore {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		this.pushTick(tick);
-		this.sendTickTrigger.fire(tick);
+		this.sendTickTrigger!.fire(tick);
 	}
 
 	sendEvent(event: Event): void {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
+		this.sendEventTrigger!.fire(this.cloneDeep<Event>(event));
 	}
 
 	getTickList(opts: GetTickListOptions): TickList | null {
@@ -60,7 +60,7 @@ export class AMFlowStore {
 		const tickList = opts.excludeEventFlags && opts.excludeEventFlags.ignorable ? this.filteredTickList : this.unfilteredTickList;
 		const from = Math.max(opts.begin, tickList[TickListIndex.From]);
 		const to = Math.min(opts.end - 1, tickList[TickListIndex.To]);
-		const ticks = tickList[TickListIndex.Ticks].filter((tick) => {
+		const ticks = tickList[TickListIndex.Ticks]!.filter((tick) => {
 			const frame = tick[TickIndex.Frame];
 			return from <= frame && frame <= to;
 		});
@@ -77,34 +77,34 @@ export class AMFlowStore {
 			this.startPoints = [startPoint];
 			return;
 		}
-		this.startPoints.push(startPoint);
+		this.startPoints!.push(startPoint);
 		// timestamp をもとに昇順で並び替え
-		this.startPoints.sort((a, b) => a.timestamp - b.timestamp);
+		this.startPoints!.sort((a, b) => a.timestamp - b.timestamp);
 	}
 
 	getStartPoint(opts: GetStartPointOptions): StartPoint | null {
 		if (opts.frame === 0) {
-			return this.startPoints[0] || null;
+			return this.startPoints![0] || null;
 		}
-		if (!this.startPoints.length) {
+		if (!this.startPoints!.length) {
 			return null;
 		}
 		if (opts.timestamp != null) {
-			for (let i = 0; i < this.startPoints.length; i++) {
-				if (opts.timestamp < this.startPoints[i].timestamp) {
-					return this.startPoints[i - 1] || null;
+			for (let i = 0; i < this.startPoints!.length; i++) {
+				if (opts.timestamp < this.startPoints![i].timestamp) {
+					return this.startPoints![i - 1] || null;
 				}
 			}
-			return this.startPoints[this.startPoints.length - 1];
+			return this.startPoints![this.startPoints!.length - 1];
 		} else if (opts.frame != null) {
-			for (let i = 0; i < this.startPoints.length; i++) {
-				if (opts.frame < this.startPoints[i].frame) {
-					return this.startPoints[i - 1] || null;
+			for (let i = 0; i < this.startPoints!.length; i++) {
+				if (opts.frame < this.startPoints![i].frame) {
+					return this.startPoints![i - 1] || null;
 				}
 			}
-			return this.startPoints[this.startPoints.length - 1];
+			return this.startPoints![this.startPoints!.length - 1];
 		}
-		return this.startPoints[0] || null;
+		return this.startPoints![0] || null;
 	}
 
 	/**
@@ -141,8 +141,8 @@ export class AMFlowStore {
 		if (this.isDestroyed()) {
 			return;
 		}
-		this.sendEventTrigger.destroy();
-		this.sendTickTrigger.destroy();
+		this.sendEventTrigger!.destroy();
+		this.sendTickTrigger!.destroy();
 		this.sendEventTrigger = null;
 		this.sendTickTrigger = null;
 		this.permissionMap = null;
@@ -156,30 +156,30 @@ export class AMFlowStore {
 	createPlayToken(permission: Permission): string {
 		const str = this.createRandomString(10);
 		const token = sha256(str);
-		this.permissionMap.set(token, permission);
+		this.permissionMap!.set(token, permission);
 		return token;
 	}
 
 	deletePlayToken(token: string): void {
-		this.permissionMap.delete(token);
+		this.permissionMap!.delete(token);
 	}
 
 	deleteAllPlayTokens(): void {
-		this.permissionMap.clear();
+		this.permissionMap!.clear();
 	}
 
 	dump(): DumpedPlaylog {
 		return {
-			tickList: this.unfilteredTickList,
-			startPoints: this.startPoints
+			tickList: this.unfilteredTickList!,
+			startPoints: this.startPoints!
 		};
 	}
 
 	private authenticatePlayToken(token: string, revoke?: boolean): Permission | null {
-		const permission = this.permissionMap.get(token);
+		const permission = this.permissionMap!.get(token);
 		if (permission) {
 			if (revoke) {
-				this.permissionMap.delete(token);
+				this.permissionMap!.delete(token);
 			}
 			return permission;
 		}
@@ -223,18 +223,18 @@ export class AMFlowStore {
 		if (tick[TickIndex.Events] || tick[TickIndex.StorageData]) {
 			// store unfiltered tick
 			const unfilteredTick = this.cloneDeep<Tick>(tick);
-			unfilteredTick[TickIndex.Events] = tick[TickIndex.Events].filter(
+			unfilteredTick[TickIndex.Events] = tick[TickIndex.Events]!.filter(
 				(event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient)
 			);
-			this.unfilteredTickList[TickListIndex.Ticks].push(unfilteredTick);
+			this.unfilteredTickList[TickListIndex.Ticks]!.push(unfilteredTick);
 
 			// store filtered tick
 			const filteredTick = this.cloneDeep<Tick>(tick);
-			filteredTick[TickIndex.Events] = tick[TickIndex.Events].filter(
+			filteredTick[TickIndex.Events] = tick[TickIndex.Events]!.filter(
 				(event) =>
 					!(event[EventIndex.EventFlags] & EventFlagsMask.Transient) && !(event[EventIndex.EventFlags] & EventFlagsMask.Ignorable)
 			);
-			this.filteredTickList[TickListIndex.Ticks].push(filteredTick);
+			this.filteredTickList[TickListIndex.Ticks]!.push(filteredTick);
 		}
 	}
 }

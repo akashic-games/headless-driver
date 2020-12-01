@@ -32,7 +32,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 	}
 
 	getPrimarySurface(): g.Surface {
-		return this.primarySurface;
+		return this.primarySurface!;
 	}
 
 	createLooper(fun: (deltaTime: number) => number): Looper {

@@ -5,8 +5,8 @@ import { ResourceFactory } from "./ResourceFactory";
 
 export class PlatformV1 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
-	private rendererReq: pdi.RendererRequirement;
-	private primarySurface: g.Surface;
+	private rendererReq: pdi.RendererRequirement | null;
+	private primarySurface: g.Surface | null;
 	private eventHandler: pdi.PlatformEventHandler | null = null;
 	private loopers: Looper[];
 
@@ -32,7 +32,7 @@ export class PlatformV1 extends Platform implements pdi.Platform {
 	}
 
 	getPrimarySurface(): g.Surface {
-		return this.primarySurface;
+		return this.primarySurface!;
 	}
 
 	createLooper(fun: (deltaTime: number) => number): Looper {

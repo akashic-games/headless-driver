@@ -1,5 +1,5 @@
-export class AMFlowError extends Error {
-	name: string;
+export abstract class AMFlowError extends Error {
+	abstract name: string;
 	message: any;
 
 	constructor(message?: any) {

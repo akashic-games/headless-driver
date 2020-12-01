@@ -28,8 +28,8 @@ export class AMFlowClient implements AMFlow {
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		if (this.store) this.store.sendEventTrigger.add(this.onEventSended, this);
-		if (this.store) this.store.sendTickTrigger.add(this.onTickSended, this);
+		this.store!.sendEventTrigger!.add(this.onEventSended, this);
+		this.store!.sendTickTrigger!.add(this.onTickSended, this);
 		this.state = "open";
 
 		if (callback) {
@@ -45,11 +45,9 @@ export class AMFlowClient implements AMFlow {
 
 	close(callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#close()");
-		if (callback) {
-			if (this.state !== "open") {
-				callback(createError("invalid_status", "Client is not open"));
-				return;
-			}
+		if (this.state !== "open") {
+			if (callback) callback(createError("invalid_status", "Client is not open"));
+			return;
 		}
 
 		this.destroy();
@@ -68,8 +66,7 @@ export class AMFlowClient implements AMFlow {
 			}
 			let permission: Permission;
 			try {
-				if (!this.store) return;
-				permission = this.store.authenticate(token);
+				permission = this.store!.authenticate(token);
 			} catch (e) {
 				callback(e, undefined);
 				return;
@@ -85,7 +82,7 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	setTickList(tickList: TickList): void {
-		if (this.store) this.store.setTickList(tickList);
+		this.store!.setTickList(tickList);
 	}
 
 	sendTick(tick: Tick): void {
@@ -98,7 +95,7 @@ export class AMFlowClient implements AMFlow {
 		if (!this.permission.writeTick) {
 			throw createError("permission_error", "Permission denied");
 		}
-		if (this.store) this.store.sendTick(tick);
+		this.store!.sendTick(tick);
 	}
 
 	onTick(handler: (tick: Tick) => void): void {
@@ -111,7 +108,7 @@ export class AMFlowClient implements AMFlow {
 		if (!this.permission.subscribeTick) {
 			throw createError("permission_error", "Permission denied");
 		}
-		if (this.tickHandlers) this.tickHandlers.push(handler);
+		this.tickHandlers!.push(handler);
 	}
 
 	offTick(handler: (tick: Tick) => void): void {
@@ -121,7 +118,7 @@ export class AMFlowClient implements AMFlow {
 		if (this.permission == null) {
 			throw createError("invalid_status", "Not authenticated");
 		}
-		if (this.tickHandlers) this.tickHandlers = this.tickHandlers.filter((h) => h !== handler);
+		this.tickHandlers = this.tickHandlers!.filter((h) => h !== handler);
 	}
 
 	sendEvent(event: Event): void {
@@ -138,7 +135,7 @@ export class AMFlowClient implements AMFlow {
 		const prio = event[EventIndex.EventFlags] & EventFlagsMask.Priority;
 		const tran = event[EventIndex.EventFlags] & EventFlagsMask.Transient;
 		event[EventIndex.EventFlags] = tran | Math.min(prio, this.permission.maxEventPriority);
-		if (this.store) this.store.sendEvent(event);
+		this.store!.sendEvent(event);
 	}
 
 	onEvent(handler: (event: Event) => void): void {
@@ -151,15 +148,12 @@ export class AMFlowClient implements AMFlow {
 		if (!this.permission.subscribeEvent) {
 			throw createError("permission_error", "Permission denied");
 		}
-		
-		if (!this.eventHandlers) return;
-		this.eventHandlers.push(handler);
 
-		if (!this.unconsumedEvents) return;
+		this.eventHandlers!.push(handler);
 
-		if (0 < this.unconsumedEvents.length) {
-			this.eventHandlers.forEach((h) => {
-				if (this.unconsumedEvents) this.unconsumedEvents.forEach((ev) => h(ev))
+		if (0 < this.unconsumedEvents!.length) {
+			this.eventHandlers!.forEach((h) => {
+				this.unconsumedEvents!.forEach((ev) => h(ev));
 			});
 			this.unconsumedEvents = [];
 		}
@@ -172,8 +166,7 @@ export class AMFlowClient implements AMFlow {
 		if (this.permission == null) {
 			throw createError("invalid_status", "Not authenticated");
 		}
-		if (this.eventHandlers)
-			this.eventHandlers = this.eventHandlers.filter((h) => h !== handler);
+		this.eventHandlers = this.eventHandlers!.filter((h) => h !== handler);
 	}
 
 	/**
@@ -206,28 +199,22 @@ export class AMFlowClient implements AMFlow {
 				callback = endOrCallback as (error: Error | null, tickList?: TickList) => void;
 			}
 			if (this.state !== "open") {
-				if (callback)
-					callback(createError("invalid_status", "Client is not open"), undefined);
+				if (callback) callback(createError("invalid_status", "Client is not open"), undefined);
 				return;
 			}
 			if (this.permission == null) {
-				if (callback)
-					callback(createError("invalid_status", "Not authenticated"), undefined);
+				if (callback) callback(createError("invalid_status", "Not authenticated"), undefined);
 				return;
 			}
 			if (!this.permission.readTick) {
-				if (callback)
-					callback(createError("permission_error", "Permission denied"), undefined);
+				if (callback) callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
-			if (!this.store) return;
-			const tickList = this.store.getTickList(opts);
+			const tickList = this.store!.getTickList(opts);
 			if (tickList) {
-				if (callback)
-					callback(null, tickList);
+				if (callback) callback(null, tickList);
 			} else {
-				if (callback)
-					callback(createError("runtime_error", "No tick list"), undefined);
+				if (callback) callback(createError("runtime_error", "No tick list"), undefined);
 			}
 		});
 	}
@@ -270,8 +257,7 @@ export class AMFlowClient implements AMFlow {
 				callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
-			if (!this.store) return;
-			const startPoint = this.store.getStartPoint(opts);
+			const startPoint = this.store!.getStartPoint(opts);
 			if (startPoint) {
 				callback(null, startPoint);
 			} else {
@@ -300,9 +286,9 @@ export class AMFlowClient implements AMFlow {
 		if (this.isDestroyed()) {
 			return;
 		}
-		if (this.store && !this.store.isDestroyed()) {
-			this.store.sendEventTrigger.remove(this.onEventSended, this);
-			this.store.sendTickTrigger.remove(this.onTickSended, this);
+		if (this.store!.isDestroyed()) {
+			this.store!.sendEventTrigger!.remove(this.onEventSended, this);
+			this.store!.sendTickTrigger!.remove(this.onTickSended, this);
 		}
 
 		this.store = null;
@@ -317,20 +303,18 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	dump(): DumpedPlaylog {
-		if (!this.store) return { tickList: [0, 0], startPoints: [] };
-		return this.store.dump();
+		return this.store!.dump();
 	}
 
 	private onTickSended(tick: Tick): void {
-		if (this.tickHandlers) this.tickHandlers.forEach((h) => h(tick));
+		this.tickHandlers!.forEach((h) => h(tick));
 	}
 
 	private onEventSended(event: Event): void {
-		if (!this.eventHandlers || !this.unconsumedEvents) return;
-		if (this.eventHandlers && this.eventHandlers.length <= 0) {
-			this.unconsumedEvents.push(event);
+		if (this.eventHandlers!.length <= 0) {
+			this.unconsumedEvents!.push(event);
 			return;
 		}
-		this.eventHandlers.forEach((h) => h(event));
+		this.eventHandlers!.forEach((h) => h(event));
 	}
 }

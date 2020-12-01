@@ -1,7 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
 export class NullVideoPlayer implements g.VideoPlayer {
-	currentVideo: g.VideoAsset;
+	currentVideo: g.VideoAsset | undefined;
 	onPlay: g.Trigger<g.VideoPlayerEvent>;
 	onStop: g.Trigger<g.VideoPlayerEvent>;
 	played: g.Trigger<g.VideoPlayerEvent>;
