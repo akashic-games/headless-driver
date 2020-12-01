@@ -200,4 +200,4 @@ export class RunnerV1 extends Runner {
 type RunnerPlayer = {
 	id: string;
 	name: string | undefined;
-}
+};
