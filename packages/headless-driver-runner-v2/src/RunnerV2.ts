@@ -35,11 +35,21 @@ export class RunnerV2 extends Runner {
 	}
 
 	pause(): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#pause() before initialized"));
+			return;
+		}
+
 		this.platform!.pauseLoopers();
 		this.running = false;
 	}
 
 	resume(): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#resume() before initialized"));
+			return;
+		}
+
 		this.platform!.resumeLoopers();
 		this.running = true;
 	}

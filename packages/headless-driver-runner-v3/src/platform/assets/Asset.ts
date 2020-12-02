@@ -16,11 +16,11 @@ export abstract class Asset implements g.Asset {
 
 	destroy(): void {
 		this.onDestroyed.fire(this);
-		(this as any).id = undefined;
-		(this as any).originalPath = undefined;
-		(this as any).path = undefined;
+		this.id = undefined!;
+		this.originalPath = undefined!;
+		this.path = undefined!;
 		this.onDestroyed.destroy();
-		(this as any).onDestroyed = undefined;
+		this.onDestroyed = undefined!;
 	}
 
 	destroyed(): boolean {

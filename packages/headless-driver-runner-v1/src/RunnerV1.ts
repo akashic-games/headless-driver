@@ -35,17 +35,27 @@ export class RunnerV1 extends Runner {
 	}
 
 	pause(): void {
-		this.platform!.pauseLoopers();
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#pause() before initialized"));
+			return;
+		}
+
+		this.platform.pauseLoopers();
 		this.running = false;
 	}
 
 	resume(): void {
-		this.platform!.resumeLoopers();
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#resume() before initialized"));
+			return;
+		}
+
+		this.platform.resumeLoopers();
 		this.running = true;
 	}
 
 	step(): void {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
 		}
@@ -54,11 +64,11 @@ export class RunnerV1 extends Runner {
 			return;
 		}
 
-		this.platform!.advanceLoopers(Math.ceil(1000 / this.fps));
+		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
 	}
 
 	async advance(ms: number): Promise<void> {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
 			return;
 		}
@@ -81,7 +91,7 @@ export class RunnerV1 extends Runner {
 		while (progress <= ms) {
 			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
 			// そのため一度に進める時間を fps に応じて分割する。
-			this.platform!.advanceLoopers(delta);
+			this.platform.advanceLoopers(delta);
 			progress += delta;
 		}
 		await this.changeGameDriverState({
@@ -103,6 +113,11 @@ export class RunnerV1 extends Runner {
 	}
 
 	firePointEvent(event: RunnerPointEvent): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#firePointEvent() before initialized"));
+			return;
+		}
+
 		let type: pdi.PointType;
 		if (event.type === "down") {
 			type = pdi.PointType.Down;
@@ -114,7 +129,7 @@ export class RunnerV1 extends Runner {
 			this.errorTrigger.fire(new Error(`RunnerV1#firePointEvent(): unknown event type: ${event.type}`));
 			return;
 		}
-		this.platform!.firePointEvent({
+		this.platform.firePointEvent({
 			type,
 			identifier: event.identifier,
 			offset: event.offset

@@ -39,10 +39,10 @@ describe("プレー周りのテスト", () => {
 			executionMode: "active",
 			allowedUrls: null
 		});
-		const runner0 = runnerManager.getRunner(runnerId0);
+		const runner0 = runnerManager.getRunner(runnerId0)!;
 
-		expect(runner0!.runnerId).toBe("0");
-		expect(runner0!.engineVersion).toBe("2");
+		expect(runner0.runnerId).toBe("0");
+		expect(runner0.engineVersion).toBe("2");
 
 		const playId1 = await playManager.createPlay({
 			contentUrl: contentUrl!
@@ -61,10 +61,10 @@ describe("プレー周りのテスト", () => {
 			executionMode: "active",
 			allowedUrls: null
 		});
-		const runner1 = runnerManager.getRunner(runnerId1);
+		const runner1 = runnerManager.getRunner(runnerId1)!;
 
-		expect(runner1!.runnerId).toBe("1");
-		expect(runner0!.engineVersion).toBe("2");
+		expect(runner1.runnerId).toBe("1");
+		expect(runner0.engineVersion).toBe("2");
 
 		await runnerManager.startRunner("0");
 		await runnerManager.stopRunner("0");
@@ -90,9 +90,9 @@ describe("プレー周りのテスト", () => {
 			executionMode: "active",
 			allowedUrls: null
 		});
-		const runner2 = runnerManager.getRunner(runnerId2);
-		expect(runner2!.runnerId).toBe("2");
-		expect(runner2!.engineVersion).toBe("2");
+		const runner2 = runnerManager.getRunner(runnerId2)!;
+		expect(runner2.runnerId).toBe("2");
+		expect(runner2.engineVersion).toBe("2");
 	});
 
 	it("AMFlow, playTokenの管理ができる", () => {

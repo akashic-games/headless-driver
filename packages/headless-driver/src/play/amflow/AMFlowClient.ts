@@ -13,7 +13,7 @@ export class AMFlowClient implements AMFlow {
 	playId: string;
 
 	protected state: AMFlowState = "connecting";
-	private store: AMFlowStore | null;
+	private store: AMFlowStore;
 
 	private permission: Permission | null = null;
 	private tickHandlers: ((tick: Tick) => void)[] | null = [];
@@ -28,8 +28,8 @@ export class AMFlowClient implements AMFlow {
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store!.sendEventTrigger!.add(this.onEventSended, this);
-		this.store!.sendTickTrigger!.add(this.onTickSended, this);
+		this.store.sendEventTrigger!.add(this.onEventSended, this);
+		this.store.sendTickTrigger!.add(this.onTickSended, this);
 		this.state = "open";
 
 		if (callback) {
@@ -66,23 +66,23 @@ export class AMFlowClient implements AMFlow {
 			}
 			let permission: Permission;
 			try {
-				permission = this.store!.authenticate(token);
+				permission = this.store.authenticate(token);
 			} catch (e) {
-				callback(e, null as any);
+				callback(e, undefined);
 				return;
 			}
-			if (permission) this.permission = permission;
+			this.permission = permission;
 			getSystemLogger().info("AMFlowClient#authenticate()", this.playId, token, permission);
 			if (permission) {
 				callback(null, permission);
 			} else {
-				callback(createError("invalid_status", "Invalid playToken"), null as any);
+				callback(createError("invalid_status", "Invalid playToken"), undefined);
 			}
 		});
 	}
 
 	setTickList(tickList: TickList): void {
-		this.store!.setTickList(tickList);
+		this.store.setTickList(tickList);
 	}
 
 	sendTick(tick: Tick): void {
@@ -95,7 +95,7 @@ export class AMFlowClient implements AMFlow {
 		if (!this.permission.writeTick) {
 			throw createError("permission_error", "Permission denied");
 		}
-		this.store!.sendTick(tick);
+		this.store.sendTick(tick);
 	}
 
 	onTick(handler: (tick: Tick) => void): void {
@@ -135,7 +135,7 @@ export class AMFlowClient implements AMFlow {
 		const prio = event[EventIndex.EventFlags] & EventFlagsMask.Priority;
 		const tran = event[EventIndex.EventFlags] & EventFlagsMask.Transient;
 		event[EventIndex.EventFlags] = tran | Math.min(prio, this.permission.maxEventPriority);
-		this.store!.sendEvent(event);
+		this.store.sendEvent(event);
 	}
 
 	onEvent(handler: (event: Event) => void): void {
@@ -210,7 +210,7 @@ export class AMFlowClient implements AMFlow {
 				if (callback) callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
-			const tickList = this.store!.getTickList(opts);
+			const tickList = this.store.getTickList(opts);
 			if (tickList) {
 				if (callback) callback(null, tickList);
 			} else {
@@ -257,7 +257,7 @@ export class AMFlowClient implements AMFlow {
 				callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
-			const startPoint = this.store!.getStartPoint(opts);
+			const startPoint = this.store.getStartPoint(opts);
 			if (startPoint) {
 				callback(null, startPoint);
 			} else {
@@ -286,12 +286,12 @@ export class AMFlowClient implements AMFlow {
 		if (this.isDestroyed()) {
 			return;
 		}
-		if (this.store!.isDestroyed()) {
-			this.store!.sendEventTrigger!.remove(this.onEventSended, this);
-			this.store!.sendTickTrigger!.remove(this.onTickSended, this);
+		if (!this.store.isDestroyed()) {
+			this.store.sendEventTrigger!.remove(this.onEventSended, this);
+			this.store.sendTickTrigger!.remove(this.onTickSended, this);
 		}
 
-		this.store = null;
+		this.store = null!;
 		this.permission = null;
 		this.tickHandlers = null;
 		this.eventHandlers = null;
@@ -303,7 +303,7 @@ export class AMFlowClient implements AMFlow {
 	}
 
 	dump(): DumpedPlaylog {
-		return this.store!.dump();
+		return this.store.dump();
 	}
 
 	private onTickSended(tick: Tick): void {

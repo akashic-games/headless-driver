@@ -14,7 +14,7 @@ export class NullAudioPlayer implements g.AudioPlayer {
 		this.onStop = new g.Trigger<g.AudioPlayerEvent>();
 		this.played = this.onPlay;
 		this.stopped = this.onStop;
-		(this as any).currentAudio = undefined;
+		this.currentAudio = undefined!;
 		this.volume = system.volume;
 		this._muted = system._muted;
 	}

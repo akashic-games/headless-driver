@@ -85,6 +85,9 @@ export class Looper {
 	}
 
 	private _stop(): void {
+		if (this._timerId == null) {
+			this._errorHandler(new Error("Cannot call Looper#_stop() while stopped"));
+		}
 		this._running = false;
 		clearInterval(this._timerId!);
 		this._timerId = null;

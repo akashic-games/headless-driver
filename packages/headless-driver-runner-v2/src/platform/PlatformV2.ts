@@ -36,7 +36,10 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 	}
 
 	getPrimarySurface(): g.Surface {
-		return this.primarySurface!;
+		if (this.primarySurface == null) {
+			throw (new Error("Cannot call Platform#getPrimarySurface() before setRenderer"));
+		}
+		return this.primarySurface;
 	}
 
 	createLooper(fun: (deltaTime: number) => number): Looper {
