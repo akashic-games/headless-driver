@@ -1,7 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
 export class NullAudioPlayer implements g.AudioPlayer {
-	currentAudio: g.AudioAsset;
+	currentAudio!: g.AudioAsset;
 	onPlay: g.Trigger<g.AudioPlayerEvent>;
 	onStop: g.Trigger<g.AudioPlayerEvent>;
 	played: g.Trigger<g.AudioPlayerEvent>;
@@ -14,7 +14,7 @@ export class NullAudioPlayer implements g.AudioPlayer {
 		this.onStop = new g.Trigger<g.AudioPlayerEvent>();
 		this.played = this.onPlay;
 		this.stopped = this.onStop;
-		this.currentAudio = undefined;
+		this.currentAudio = undefined!;
 		this.volume = system.volume;
 		this._muted = system._muted;
 	}

@@ -7,8 +7,8 @@ export type RunnerV3Game = g.Game;
 export class RunnerV3 extends Runner {
 	engineVersion: string = "3";
 
-	private driver: gdr.GameDriver;
-	private platform: PlatformV3;
+	private driver: gdr.GameDriver | null = null;
+	private platform: PlatformV3 | null = null;
 	private fps: number | null = null;
 	private running: boolean = false;
 
@@ -35,17 +35,27 @@ export class RunnerV3 extends Runner {
 	}
 
 	pause(): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#pause() before initialized"));
+			return;
+		}
+
 		this.platform.pauseLoopers();
 		this.running = false;
 	}
 
 	resume(): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#resume() before initialized"));
+			return;
+		}
+
 		this.platform.resumeLoopers();
 		this.running = true;
 	}
 
 	step(): void {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
 		}
@@ -58,7 +68,7 @@ export class RunnerV3 extends Runner {
 	}
 
 	async advance(ms: number): Promise<void> {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
 			return;
 		}
@@ -67,7 +77,7 @@ export class RunnerV3 extends Runner {
 			return;
 		}
 
-		const { loopMode, skipThreshold } = this.driver.getLoopConfiguration();
+		const { loopMode, skipThreshold } = this.driver!.getLoopConfiguration();
 
 		// NOTE: skip の通知タイミングを一度に制限するため skipThreshold を一時的に変更する。
 		await this.changeGameDriverState({
@@ -103,6 +113,11 @@ export class RunnerV3 extends Runner {
 	}
 
 	firePointEvent(event: RunnerPointEvent): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#firePointEvent() before initialized"));
+			return;
+		}
+
 		let type: g.PlatformPointType;
 		if (event.type === "down") {
 			type = g.PlatformPointType.Down;
@@ -128,7 +143,7 @@ export class RunnerV3 extends Runner {
 				this.driver = null;
 			}
 
-			const player = {
+			const player: unknown = {
 				id: this.player ? this.player.id : undefined,
 				name: this.player ? this.player.name : undefined
 			};
@@ -145,7 +160,7 @@ export class RunnerV3 extends Runner {
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
-				player,
+				player: player as RunnerPlayer,
 				errorHandler: (e: any) => this.onError(e)
 			});
 
@@ -192,3 +207,8 @@ export class RunnerV3 extends Runner {
 		this.sendToExternalTrigger.fire(data);
 	}
 }
+
+type RunnerPlayer = {
+	id: string;
+	name: string | undefined;
+};
