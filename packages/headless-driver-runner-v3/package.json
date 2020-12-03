@@ -1,14 +1,15 @@
 {
   "name": "@akashic/headless-driver-runner-v3",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A runner module for contents using Akashic Engine v3",
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm run build",
     "build": "rimraf ./lib && tsc -p ./tsconfig.json && npm run formatter",
     "formatter": "prettier --write \"src/**/*.ts\" --config ../prettier.config.js",
-    "test": "npm run lint",
-    "lint": "tslint -c ../tslint.json src/**/*.ts -p tsconfig.json -e \"**/node_modules/**\""
+    "test": "npm run run:jest && npm run lint",
+    "run:jest": "rimraf ./src/__tests__/out/**/*.png && jest",
+    "lint": "tslint -c ../tslint.json src/**/*.ts"
   },
   "publishConfig": {
     "access": "public",
@@ -21,14 +22,40 @@
   "license": "MIT",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@akashic/engine-files": "3.0.0-beta.11",
+    "@akashic/engine-files": "3.0.1",
     "@akashic/headless-driver-runner": "1.5.0",
     "@akashic/pdi-common-impl": "0.0.4"
   },
   "devDependencies": {
+    "@types/jest": "26.0.15",
+    "@types/pixelmatch": "^5.2.2",
+    "@types/pngjs": "^3.4.2",
+    "canvas": "^2.6.1",
+    "image-size": "^0.9.3",
+    "jest": "26.6.3",
+    "pixelmatch": "^5.2.1",
+    "pngjs": "^6.0.0",
     "prettier": "2.1.2",
     "rimraf": "3.0.2",
+    "ts-jest": "26.4.4",
     "tslint": "6.1.3",
     "typescript": "3.9.7"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.json"
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testMatch": [
+      "<rootDir>/src/__tests__/**/*.spec.ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    }
   }
 }

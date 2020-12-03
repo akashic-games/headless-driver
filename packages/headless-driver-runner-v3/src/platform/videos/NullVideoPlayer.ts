@@ -24,7 +24,7 @@ export class NullVideoPlayer implements g.VideoPlayer {
 	}
 
 	stop(): void {
-		//
+		// do nothing
 	}
 
 	changeVolume(volume: number): void {

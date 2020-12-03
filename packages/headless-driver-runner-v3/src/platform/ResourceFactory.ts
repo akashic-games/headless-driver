@@ -1,12 +1,12 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
-import { NullAudioAsset } from "./assets/NullAudioAsset";
-import { NullImageAsset } from "./assets/NullImageAsset";
-import { NullVideoAsset } from "./assets/NullVideoAsset";
-import { NullAudioPlayer } from "./NullAudioPlayer";
-import { NullGlyphFactory } from "./NullGlyphFactory";
-import { NullSurface } from "./NullSurface";
+import { NullAudioAsset } from "./audios/NullAudioAsset";
+import { NullAudioPlayer } from "./audios/NullAudioPlayer";
+import { NullGlyphFactory } from "./graphics/null/NullGlyphFactory";
+import { NullImageAsset } from "./graphics/null/NullImageAsset";
+import { NullSurface } from "./graphics/null/NullSurface";
+import { NullVideoAsset } from "./videos/NullVideoAsset";
 
 export class ResourceFactory implements g.ResourceFactory {
 	private errorHandler: (err: any) => void;

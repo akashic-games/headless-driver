@@ -1,6 +1,6 @@
 import { akashicEngine as g } from "@akashic/engine-files";
-import { NullSurface } from "../NullSurface";
-import { Asset } from "./Asset";
+import { Asset } from "../../assets/Asset";
+import { NullSurface } from "./NullSurface";
 
 export class NullImageAsset extends Asset implements g.ImageAsset {
 	type: "image" = "image";

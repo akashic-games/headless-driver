@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v1.5.1 (2020-12-02)
+
+#### Enhancement
+* `headless-driver-runner-v2`, `headless-driver-runner-v3`
+  * [#211](https://github.com/akashic-games/headless-driver/pull/211) 【v1.5.1】内部コンポーネントの更新(engineFiles@3.0.1, engineFiles@2.1.50, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+* `headless-driver-runner-v3`
+  * [#207](https://github.com/akashic-games/headless-driver/pull/207) feat(headless-driver-runner-v3): add a node-canvas implementation ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 2
+- [@yu-ogi](https://github.com/yu-ogi)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.5.0 (2020-11-18)
 
 #### Enhancement
