@@ -238,7 +238,7 @@ describe("AMFlow の動作テスト", () => {
 					passiveAMFlow.authenticate("dummy-token", (err, permission) => {
 						if (err) {
 							expect(err instanceof Error).toBe(true);
-							expect(permission).toBe(null);
+							expect(permission).toBe(undefined);
 							expect(err.name).toBe("InvalidStatus");
 							resolve();
 							return;

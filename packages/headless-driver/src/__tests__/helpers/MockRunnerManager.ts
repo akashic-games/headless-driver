@@ -12,7 +12,7 @@ const assetBaseUrlV3 = process.env.ASSET_BASE_URL_V3;
 const cascadeGameJsonUrlV2 = process.env.CASCADE_GAME_JSON_URL_V2;
 
 export class MockRunnerManager extends RunnerManager {
-	nvm: NodeVM;
+	nvm: NodeVM | null = null;
 
 	protected async resolveContent(contentUrl: string): Promise<any> {
 		const config = await loadFile<any>(contentUrl, { json: true });
@@ -63,6 +63,6 @@ export class MockRunnerManager extends RunnerManager {
 				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
 			}
 		});
-		return this.nvm;
+		return this.nvm!;
 	}
 }

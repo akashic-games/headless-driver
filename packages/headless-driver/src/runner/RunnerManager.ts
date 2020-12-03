@@ -116,7 +116,7 @@ export class RunnerManager {
 			const amflow = params.amflow;
 
 			let configurationBaseUrl: string | null = null;
-			let version: "1" | "2" | "3" = "1";
+			let version: SandboxRuntimeVerson = "1";
 
 			// NOTE: `sandbox-runtime` の値を解決する。
 			// TODO: akashic-runtime の値を参照するようにする。
@@ -124,10 +124,12 @@ export class RunnerManager {
 				const defs: GameConfiguration[] = [];
 				for (let i = 0; i < gameConfiguration.definitions.length; i++) {
 					const _url = url.resolve(engineConfiguration.asset_base_url, gameConfiguration.definitions[i]);
-					const _def = await this.loadJSON(_url);
+					const _def: GameConfiguration = await this.loadJSON(_url);
 					defs.push(_def);
 				}
-				version = defs.reduce((acc, def) => (def.environment && def.environment["sandbox-runtime"]) || acc, version);
+				version = defs.reduce((acc: SandboxRuntimeVerson, def) => {
+					return (def.environment && def.environment["sandbox-runtime"]) || acc;
+				}, version);
 				configurationBaseUrl = url.resolve(engineConfiguration.content_url, "./");
 			} else if (gameConfiguration.environment && gameConfiguration.environment["sandbox-runtime"]) {
 				version = gameConfiguration.environment["sandbox-runtime"];
@@ -154,7 +156,7 @@ export class RunnerManager {
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
-					configurationBaseUrl,
+					configurationBaseUrl: configurationBaseUrl || undefined,
 					runnerId,
 					playId: play.playId,
 					playToken: params.playToken,
@@ -175,7 +177,7 @@ export class RunnerManager {
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
-					configurationBaseUrl,
+					configurationBaseUrl: configurationBaseUrl || undefined,
 					runnerId,
 					playId: play.playId,
 					playToken: params.playToken,
@@ -196,7 +198,7 @@ export class RunnerManager {
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
-					configurationBaseUrl,
+					configurationBaseUrl: configurationBaseUrl || undefined,
 					runnerId,
 					playId: play.playId,
 					playToken: params.playToken,
@@ -364,3 +366,5 @@ export class RunnerManager {
 		});
 	}
 }
+
+type SandboxRuntimeVerson = "1" | "2" | "3";
