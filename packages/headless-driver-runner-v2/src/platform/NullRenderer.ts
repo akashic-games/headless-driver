@@ -92,7 +92,7 @@ export class NullRenderer extends g.Renderer {
 	}
 
 	_getImageData(sx: number, sy: number, sw: number, sh: number): g.ImageData {
-		return null;
+		return null as any;
 	}
 
 	_putImageData(
