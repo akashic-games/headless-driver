@@ -1,7 +1,7 @@
 export class Looper {
 	private _running: boolean;
 	private _fun: (deltaTime: number) => number;
-	private _timerId: NodeJS.Timer;
+	private _timerId: NodeJS.Timer | null;
 	private _prev: number;
 	private _errorHandler: (err: any) => void;
 
@@ -85,8 +85,11 @@ export class Looper {
 	}
 
 	private _stop(): void {
+		if (this._timerId == null) {
+			this._errorHandler(new Error("Cannot call Looper#_stop() while stopped"));
+		}
 		this._running = false;
-		clearInterval(this._timerId);
+		clearInterval(this._timerId!);
 		this._timerId = null;
 		this._prev = 0;
 	}

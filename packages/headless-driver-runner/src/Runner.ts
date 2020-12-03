@@ -34,7 +34,7 @@ export interface RunnerPlayer {
 }
 
 export abstract class Runner {
-	engineVersion: string;
+	abstract engineVersion: string;
 	errorTrigger: Trigger<any> = new Trigger();
 	sendToExternalTrigger: Trigger<any> = new Trigger();
 
@@ -65,7 +65,7 @@ export abstract class Runner {
 	}
 
 	get configurationBaseUrl(): string {
-		return this.params.configurationBaseUrl;
+		return this.params.configurationBaseUrl!;
 	}
 
 	get amflow(): AMFlow {
@@ -89,7 +89,7 @@ export abstract class Runner {
 	}
 
 	get externalValue(): { [key: string]: any } {
-		return this.params.externalValue;
+		return this.params.externalValue!;
 	}
 
 	constructor(params: RunnerParameters) {
