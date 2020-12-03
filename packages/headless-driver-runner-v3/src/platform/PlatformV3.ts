@@ -33,7 +33,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 
 	getPrimarySurface(): g.Surface {
 		if (this.primarySurface == null) {
-			throw (new Error("Cannot call Platform#getPrimarySurface() before setRenderer"));
+			throw new Error("Cannot call Platform#getPrimarySurface() before setRenderer");
 		}
 		return this.primarySurface;
 	}
