@@ -5,8 +5,8 @@ import { ResourceFactory } from "./ResourceFactory";
 
 export class PlatformV1 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
-	private rendererReq: pdi.RendererRequirement;
-	private primarySurface: g.Surface;
+	private rendererReq: pdi.RendererRequirement | null;
+	private primarySurface: g.Surface | null;
 	private eventHandler: pdi.PlatformEventHandler | null = null;
 	private loopers: Looper[];
 
@@ -32,6 +32,9 @@ export class PlatformV1 extends Platform implements pdi.Platform {
 	}
 
 	getPrimarySurface(): g.Surface {
+		if (this.primarySurface == null) {
+			throw (new Error("Cannot call Platform#getPrimarySurface() before setRenderer"));
+		}
 		return this.primarySurface;
 	}
 

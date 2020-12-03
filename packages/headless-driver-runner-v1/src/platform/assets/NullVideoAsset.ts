@@ -2,7 +2,7 @@ import { akashicEngine as g } from "@akashic/engine-files";
 import { NullSurface } from "../NullSurface";
 
 export class NullVideoAsset extends g.VideoAsset {
-	_surface: g.Surface = null;
+	_surface: g.Surface | null = null;
 	_player: g.VideoPlayer;
 
 	constructor(id: string, assetPath: string, width: number, height: number, system: any, loop: boolean, useRealSize: boolean) {
