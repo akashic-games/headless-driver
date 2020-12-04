@@ -68,7 +68,7 @@ export class RunnerV1 extends Runner {
 	}
 
 	async advance(ms: number): Promise<void> {
-		if (this.fps == null || this.platform == null) {
+		if (this.fps == null || this.platform == null || this.driver == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
 			return;
 		}
@@ -77,7 +77,7 @@ export class RunnerV1 extends Runner {
 			return;
 		}
 
-		const { loopMode, skipThreshold } = this.driver!.getLoopConfiguration();
+		const { loopMode, skipThreshold } = this.driver.getLoopConfiguration();
 
 		// NOTE: skip の通知タイミングを一度に制限するため skipThreshold を一時的に変更する。
 		await this.changeGameDriverState({
@@ -143,7 +143,7 @@ export class RunnerV1 extends Runner {
 				this.driver = null;
 			}
 
-			const player: unknown = {
+			const player = {
 				id: this.player ? this.player.id : undefined,
 				name: this.player ? this.player.name : undefined
 			};
