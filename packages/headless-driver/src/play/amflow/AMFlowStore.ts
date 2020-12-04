@@ -16,8 +16,8 @@ export interface DumpedPlaylog {
  */
 export class AMFlowStore {
 	playId: string;
-	sendEventTrigger: Trigger<Event> | null = new Trigger();
-	sendTickTrigger: Trigger<Tick> | null = new Trigger();
+	sendEventTrigger: Trigger<Event> = new Trigger();
+	sendTickTrigger: Trigger<Tick> = new Trigger();
 
 	private permissionMap: Map<string, Permission> | null = new Map();
 	private startPoints: StartPoint[] | null = [];
@@ -43,14 +43,14 @@ export class AMFlowStore {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		this.pushTick(tick);
-		this.sendTickTrigger!.fire(tick);
+		this.sendTickTrigger.fire(tick);
 	}
 
 	sendEvent(event: Event): void {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		this.sendEventTrigger!.fire(this.cloneDeep<Event>(event));
+		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
 	}
 
 	getTickList(opts: GetTickListOptions): TickList | null {
@@ -141,10 +141,10 @@ export class AMFlowStore {
 		if (this.isDestroyed()) {
 			return;
 		}
-		this.sendEventTrigger!.destroy();
-		this.sendTickTrigger!.destroy();
-		this.sendEventTrigger = null;
-		this.sendTickTrigger = null;
+		this.sendEventTrigger.destroy();
+		this.sendTickTrigger.destroy();
+		this.sendEventTrigger = null!;
+		this.sendTickTrigger = null!;
 		this.permissionMap = null;
 		this.startPoints = null;
 	}

@@ -115,7 +115,7 @@ export class RunnerManager {
 			}
 			const amflow = params.amflow;
 
-			let configurationBaseUrl: string | null = null;
+			let configurationBaseUrl: string | undefined;;
 			let version: SandboxRuntimeVerson = "1";
 
 			// NOTE: `sandbox-runtime` の値を解決する。
@@ -156,7 +156,7 @@ export class RunnerManager {
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
-					configurationBaseUrl: configurationBaseUrl || undefined,
+					configurationBaseUrl: configurationBaseUrl,
 					runnerId,
 					playId: play.playId,
 					playToken: params.playToken,
@@ -177,7 +177,7 @@ export class RunnerManager {
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
-					configurationBaseUrl: configurationBaseUrl || undefined,
+					configurationBaseUrl: configurationBaseUrl,
 					runnerId,
 					playId: play.playId,
 					playToken: params.playToken,
@@ -198,7 +198,7 @@ export class RunnerManager {
 					contentUrl,
 					assetBaseUrl: engineConfiguration.asset_base_url,
 					configurationUrl: engineConfiguration.content_url,
-					configurationBaseUrl: configurationBaseUrl || undefined,
+					configurationBaseUrl: configurationBaseUrl,
 					runnerId,
 					playId: play.playId,
 					playToken: params.playToken,
