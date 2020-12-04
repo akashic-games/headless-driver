@@ -36,7 +36,7 @@ export class MockRunnerManager extends RunnerManager {
 	}
 
 	protected createVm(allowedUrls: (string | RegExp)[] | null): NodeVM {
-		this.nvm = new NodeVM({
+		const nvm = new NodeVM({
 			sandbox: {
 				trustedFunctions: {
 					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
@@ -63,6 +63,7 @@ export class MockRunnerManager extends RunnerManager {
 				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
 			}
 		});
-		return this.nvm!;
+		this.nvm = nvm;
+		return nvm;
 	}
 }

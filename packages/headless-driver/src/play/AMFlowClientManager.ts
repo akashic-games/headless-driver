@@ -112,7 +112,7 @@ export class AMFlowClientManager {
 	}
 
 	private createAMFlowStore(playId: string): AMFlowStore {
-		let store: AMFlowStore | undefined = this.storeMap.get(playId);
+		let store = this.storeMap.get(playId);
 		if (!store) {
 			store = new AMFlowStore(playId);
 			this.storeMap.set(playId, store);
