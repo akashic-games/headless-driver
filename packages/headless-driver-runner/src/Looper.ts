@@ -85,12 +85,11 @@ export class Looper {
 	}
 
 	private _stop(): void {
-		if (this._timerId == null) {
-			this._errorHandler(new Error("Cannot call Looper#_stop() while stopped"));
+		if (this._timerId != null) {
+			this._running = false;
+			clearInterval(this._timerId);
+			this._timerId = null;
+			this._prev = 0;
 		}
-		this._running = false;
-		clearInterval(this._timerId!);
-		this._timerId = null;
-		this._prev = 0;
 	}
 }

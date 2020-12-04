@@ -12,14 +12,14 @@ export interface PlatformParameters {
 export abstract class Platform {
 	amflow: AMFlow;
 	assetBaseUrl: string;
-	configurationBaseUrl: string;
+	configurationBaseUrl: string | undefined;
 
 	protected sendToExternalHandler: (data: any) => void;
 	protected errorHandler: (err: any) => void;
 
 	constructor(param: PlatformParameters) {
 		this.assetBaseUrl = param.assetBaseUrl;
-		this.configurationBaseUrl = param.configurationBaseUrl!;
+		this.configurationBaseUrl = param.configurationBaseUrl;
 		this.amflow = param.amflow;
 		this.sendToExternalHandler = param.sendToExternalHandler;
 		this.errorHandler = param.errorHandler;

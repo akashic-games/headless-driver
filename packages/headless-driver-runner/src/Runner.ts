@@ -64,8 +64,8 @@ export abstract class Runner {
 		return this.params.configurationUrl;
 	}
 
-	get configurationBaseUrl(): string {
-		return this.params.configurationBaseUrl!;
+	get configurationBaseUrl(): string | undefined {
+		return this.params.configurationBaseUrl;
 	}
 
 	get amflow(): AMFlow {
