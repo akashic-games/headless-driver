@@ -85,11 +85,11 @@ export class Looper {
 	}
 
 	private _stop(): void {
+		if (this._timerId != null) {
+			clearInterval(this._timerId);
+		}
 		this._running = false;
 		this._timerId = null;
 		this._prev = 0;
-	if (this._timerId != null) {
-			clearInterval(this._timerId);
-		}
 	}
 }
