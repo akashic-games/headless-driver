@@ -12,9 +12,9 @@ import { activePermission, passivePermission } from "./constants";
 import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
 
-const contentUrlV1 = process.env.CONTENT_URL_V1;
-const contentUrlV2 = process.env.CONTENT_URL_V2;
-const contentUrlV3 = process.env.CONTENT_URL_V3;
+const contentUrlV1 = process.env.CONTENT_URL_V1!;
+const contentUrlV2 = process.env.CONTENT_URL_V2!;
+const contentUrlV3 = process.env.CONTENT_URL_V3!;
 const extContentUrlV1 = process.env.EXT_CONTENT_URL_V1;
 const extContentUrlV2 = process.env.EXT_CONTENT_URL_V2;
 const extContentUrlV3 = process.env.EXT_CONTENT_URL_V3;
@@ -38,7 +38,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V1 のコンテンツが動作できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV1!
+			contentUrl: contentUrlV1
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -140,7 +140,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V2 のコンテンツが動作できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -239,7 +239,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V3 のコンテンツが動作できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV3!
+			contentUrl: contentUrlV3
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -338,7 +338,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Passive で起動したコンテンツから Active で起動したコンテンツに対してメッセージを送信できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -427,7 +427,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V1 許可対象のURLのassetはloadできる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV1!
+			contentUrl: contentUrlV1
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -463,7 +463,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V2 許可対象のパスのassetはloadできる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -499,7 +499,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("Akashic V3 許可対象のパスのassetはloadできる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV3!
+			contentUrl: contentUrlV3
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -563,11 +563,11 @@ describe("ローカルコンテンツの動作テスト", () => {
 			});
 
 		try {
-			const game = await runner.start();
+			const game = (await runner.start())!;
 			const data = await handleData();
 			expect(data).toBe("reached right");
-			expect(game!.external.hoge()).toBe("hoge1");
-			expect(game!.external.foo()).toBe("foo1");
+			expect(game.external.hoge()).toBe("hoge1");
+			expect(game.external.foo()).toBe("foo1");
 		} finally {
 			runner.stop();
 		}
@@ -599,11 +599,11 @@ describe("ローカルコンテンツの動作テスト", () => {
 				});
 			});
 
-		const game = await runner.start();
+		const game = (await runner.start())!;
 		const data = await handleData();
 		expect(data).toBe("reached right");
-		expect(game!.external.hoge()).toBe("hoge2");
-		expect(game!.external.foo()).toBe("foo2");
+		expect(game.external.hoge()).toBe("hoge2");
+		expect(game.external.foo()).toBe("foo2");
 		runner.stop();
 	});
 
@@ -634,11 +634,11 @@ describe("ローカルコンテンツの動作テスト", () => {
 				});
 			});
 
-		const game = await runner.start();
+		const game = (await runner.start())!;
 		const data = await handleData();
 		expect(data).toBe("reached right");
-		expect(game!.external.hoge()).toBe("hoge3");
-		expect(game!.external.foo()).toBe("foo3");
+		expect(game.external.hoge()).toBe("hoge3");
+		expect(game.external.foo()).toBe("foo3");
 		runner.stop();
 	});
 });
@@ -675,7 +675,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V1 のコンテンツ内での例外を捕捉できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV1!
+			contentUrl: contentUrlV1
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -714,7 +714,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V2 のコンテンツ内での例外を捕捉できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -754,7 +754,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V3 のコンテンツ内での例外を捕捉できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV3!
+			contentUrl: contentUrlV3
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -794,7 +794,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V1 のコンテンツでは process を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV1!
+			contentUrl: contentUrlV1
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -831,7 +831,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V2 のコンテンツでは process を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -868,7 +868,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V3 のコンテンツでは process を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV3!
+			contentUrl: contentUrlV3
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -905,7 +905,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V1 のコンテンツでは node の require() を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV1!
+			contentUrl: contentUrlV1
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -944,7 +944,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V2 のコンテンツでは node の require() を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -983,7 +983,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V3 のコンテンツでは node の require() を触ることはできない。", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV3!
+			contentUrl: contentUrlV3
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -1022,7 +1022,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V1 許可されていないパスのassetはloadできない", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV1!
+			contentUrl: contentUrlV1
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -1059,7 +1059,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V2 許可されていないパスのassetはloadできない", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -1096,7 +1096,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("Akashic V3 許可されていないパスのassetはloadできない", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV3!
+			contentUrl: contentUrlV3
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -1133,7 +1133,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("許可対象の文字列の値が先頭一致しない場合はassetはloadできない", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
@@ -1171,7 +1171,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 	it("許可対象の正規表現の値が先頭一致しない場合はassetはloadできない", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2!
+			contentUrl: contentUrlV2
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);

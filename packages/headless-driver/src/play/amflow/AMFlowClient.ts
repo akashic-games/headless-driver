@@ -28,8 +28,8 @@ export class AMFlowClient implements AMFlow {
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store.sendEventTrigger!.add(this.onEventSended, this);
-		this.store.sendTickTrigger!.add(this.onTickSended, this);
+		this.store.sendEventTrigger.add(this.onEventSended, this);
+		this.store.sendTickTrigger.add(this.onTickSended, this);
 		this.state = "open";
 
 		if (callback) {
@@ -198,16 +198,19 @@ export class AMFlowClient implements AMFlow {
 				opts = optsOrBegin;
 				callback = endOrCallback as (error: Error | null, tickList?: TickList) => void;
 			}
+			if (!callback) {
+				throw createError("runtime_error", "Callback is undefined");
+			}
 			if (this.state !== "open") {
-				if (callback) callback(createError("invalid_status", "Client is not open"), undefined);
+				callback(createError("invalid_status", "Client is not open"), undefined);
 				return;
 			}
 			if (this.permission == null) {
-				if (callback) callback(createError("invalid_status", "Not authenticated"), undefined);
+				callback(createError("invalid_status", "Not authenticated"), undefined);
 				return;
 			}
 			if (!this.permission.readTick) {
-				if (callback) callback(createError("permission_error", "Permission denied"), undefined);
+				callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
 			const tickList = this.store.getTickList(opts);
@@ -234,7 +237,7 @@ export class AMFlowClient implements AMFlow {
 				return;
 			}
 			try {
-				if (this.store) this.store.putStartPoint(startPoint);
+				this.store.putStartPoint(startPoint);
 			} catch (e) {
 				callback(e);
 				return;
@@ -287,8 +290,8 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			this.store.sendEventTrigger!.remove(this.onEventSended, this);
-			this.store.sendTickTrigger!.remove(this.onTickSended, this);
+			this.store.sendEventTrigger.remove(this.onEventSended, this);
+			this.store.sendTickTrigger.remove(this.onTickSended, this);
 		}
 
 		this.store = null!;
