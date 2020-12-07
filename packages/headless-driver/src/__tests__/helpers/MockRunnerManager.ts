@@ -39,7 +39,7 @@ export class MockRunnerManager extends RunnerManager {
 		const nvm = new NodeVM({
 			sandbox: {
 				trustedFunctions: {
-					loadFile: async (targetUrl: string, opt?: LoadFileOption) => {
+					loadFile: async (targetUrl: string, opt: LoadFileOption = {}) => {
 						if (allowedUrls != null) {
 							const isAllowedUrl = allowedUrls.some((u) => {
 								if (typeof u === "string") {
