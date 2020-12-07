@@ -88,8 +88,8 @@ export abstract class Runner {
 		return this.params.external;
 	}
 
-	get externalValue(): { [key: string]: any } {
-		return this.params.externalValue!;
+	get externalValue(): { [key: string]: any } | undefined {
+		return this.params.externalValue;
 	}
 
 	constructor(params: RunnerParameters) {
