@@ -18,13 +18,13 @@ const contentUrlV3 = process.env.CONTENT_URL_V3!;
 const extContentUrlV1 = process.env.EXT_CONTENT_URL_V1;
 const extContentUrlV2 = process.env.EXT_CONTENT_URL_V2;
 const extContentUrlV3 = process.env.EXT_CONTENT_URL_V3;
-const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2;
-const assetBaseUrlV1 = process.env.ASSET_BASE_URL_V1;
-const assetBaseUrlV2 = process.env.ASSET_BASE_URL_V2;
-const assetBaseUrlV3 = process.env.ASSET_BASE_URL_V3;
-const extAssetBaseUrlV1 = process.env.EXT_ASSET_BASE_URL_V1;
-const extAssetBaseUrlV2 = process.env.EXT_ASSET_BASE_URL_V2;
-const extAssetBaseUrlV3 = process.env.EXT_ASSET_BASE_URL_V3;
+const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2!;
+const assetBaseUrlV1 = process.env.ASSET_BASE_URL_V1!;
+const assetBaseUrlV2 = process.env.ASSET_BASE_URL_V2!;
+const assetBaseUrlV3 = process.env.ASSET_BASE_URL_V3!;
+const extAssetBaseUrlV1 = process.env.EXT_ASSET_BASE_URL_V1!;
+const extAssetBaseUrlV2 = process.env.EXT_ASSET_BASE_URL_V2!;
+const extAssetBaseUrlV3 = process.env.EXT_ASSET_BASE_URL_V3!;
 
 setSystemLogger(new SilentLogger());
 
@@ -393,7 +393,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	it("akashic-sandbox のカスケードが正しく解釈できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
-			contentUrl: cascadeContentUrlV2!
+			contentUrl: cascadeContentUrlV2
 		});
 
 		const activeAMFlow = playManager.createAMFlow(playId);
@@ -437,7 +437,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV1!, extAssetBaseUrlV1!]
+			allowedUrls: [assetBaseUrlV1, extAssetBaseUrlV1]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runner.start();
@@ -473,7 +473,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV2!, extAssetBaseUrlV2!]
+			allowedUrls: [assetBaseUrlV2, extAssetBaseUrlV2]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runner.start();
@@ -509,7 +509,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV3!, extAssetBaseUrlV3!]
+			allowedUrls: [assetBaseUrlV3, extAssetBaseUrlV3]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		await runner.start();
@@ -1032,7 +1032,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV1!]
+			allowedUrls: [assetBaseUrlV1]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		await runnerManager.startRunner(runner.runnerId);
@@ -1069,7 +1069,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV2!]
+			allowedUrls: [assetBaseUrlV2]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
@@ -1106,7 +1106,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV3!]
+			allowedUrls: [assetBaseUrlV3]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		await runnerManager.startRunner(runner.runnerId);
@@ -1143,7 +1143,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV2!, extAssetBaseUrlV2!]
+			allowedUrls: [assetBaseUrlV2, extAssetBaseUrlV2]
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
@@ -1181,7 +1181,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			amflow: activeAMFlow,
 			playToken,
 			executionMode: "active",
-			allowedUrls: [assetBaseUrlV2!, /^http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定あり
+			allowedUrls: [assetBaseUrlV2, /^http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定あり
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
@@ -1212,7 +1212,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 				amflow: activeAMFlow,
 				playToken,
 				executionMode: "active",
-				allowedUrls: [assetBaseUrlV2!, /http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定なし
+				allowedUrls: [assetBaseUrlV2, /http:\/\/127.0.0.1:\d+\/content-v2\//] // 行頭指定なし
 			});
 			fail();
 		} catch (err) {

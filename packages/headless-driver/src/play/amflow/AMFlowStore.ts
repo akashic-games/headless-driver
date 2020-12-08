@@ -6,7 +6,7 @@ import cloneDeep = require("lodash.clonedeep");
 import { createError } from "./ErrorFactory";
 
 export interface DumpedPlaylog {
-	tickList: TickList;
+	tickList: TickList | null;
 	startPoints: StartPoint[];
 }
 
@@ -179,7 +179,7 @@ export class AMFlowStore {
 
 	dump(): DumpedPlaylog {
 		return {
-			tickList: this.unfilteredTickList!,
+			tickList: this.unfilteredTickList,
 			startPoints: this.startPoints
 		};
 	}

@@ -32,7 +32,7 @@ export class PlayManager {
 			lastSuspendedAt: null,
 			...playLocation
 		});
-		if (playlog) {
+		if (playlog && playlog.tickList) {
 			const amflow = this.createAMFlow(playId);
 			const activePermission = {
 				readTick: true,
