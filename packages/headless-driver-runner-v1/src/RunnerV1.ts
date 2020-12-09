@@ -144,7 +144,7 @@ export class RunnerV1 extends Runner {
 			}
 
 			const player = {
-				id: this.player ? this.player.id : undefined,
+				id: this.player ? this.player.id : "dummy",
 				name: this.player ? this.player.name : undefined
 			};
 
@@ -160,7 +160,7 @@ export class RunnerV1 extends Runner {
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
-				player: player as RunnerPlayer,
+				player: player,
 				errorHandler: (e: any) => this.onError(e)
 			});
 
@@ -211,8 +211,3 @@ export class RunnerV1 extends Runner {
 		this.sendToExternalTrigger.fire(data);
 	}
 }
-
-type RunnerPlayer = {
-	id: string;
-	name: string | undefined;
-};

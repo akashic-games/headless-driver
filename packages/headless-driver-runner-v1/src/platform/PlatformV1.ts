@@ -5,16 +5,14 @@ import { ResourceFactory } from "./ResourceFactory";
 
 export class PlatformV1 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
-	private rendererReq: pdi.RendererRequirement | null;
-	private primarySurface: g.Surface | null;
+	private rendererReq: pdi.RendererRequirement | null = null;
+	private primarySurface: g.Surface | null = null;
 	private eventHandler: pdi.PlatformEventHandler | null = null;
 	private loopers: Looper[];
 
 	constructor(param: PlatformParameters) {
 		super(param);
 		this.resFac = new ResourceFactory((e: Error) => this.errorHandler(e));
-		this.rendererReq = null;
-		this.primarySurface = null;
 		this.loopers = [];
 	}
 
