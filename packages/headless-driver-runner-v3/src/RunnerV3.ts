@@ -68,7 +68,7 @@ export class RunnerV3 extends Runner {
 	}
 
 	async advance(ms: number): Promise<void> {
-		if (this.fps == null || this.platform == null) {
+		if (this.fps == null || this.platform == null || this.driver == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
 			return;
 		}
@@ -143,8 +143,8 @@ export class RunnerV3 extends Runner {
 				this.driver = null;
 			}
 
-			const player: unknown = {
-				id: this.player ? this.player.id : undefined,
+			const player = {
+				id: this.player ? this.player.id : "dummy",
 				name: this.player ? this.player.name : undefined
 			};
 
@@ -160,7 +160,7 @@ export class RunnerV3 extends Runner {
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
-				player: player as RunnerPlayer,
+				player: player,
 				errorHandler: (e: any) => this.onError(e)
 			});
 
@@ -207,8 +207,3 @@ export class RunnerV3 extends Runner {
 		this.sendToExternalTrigger.fire(data);
 	}
 }
-
-type RunnerPlayer = {
-	id: string;
-	name: string | undefined;
-};
