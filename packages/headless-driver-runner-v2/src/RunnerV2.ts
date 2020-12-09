@@ -40,7 +40,7 @@ export class RunnerV2 extends Runner {
 			return;
 		}
 
-		this.platform!.pauseLoopers();
+		this.platform.pauseLoopers();
 		this.running = false;
 	}
 
@@ -50,12 +50,12 @@ export class RunnerV2 extends Runner {
 			return;
 		}
 
-		this.platform!.resumeLoopers();
+		this.platform.resumeLoopers();
 		this.running = true;
 	}
 
 	step(): void {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
 		}
@@ -64,11 +64,11 @@ export class RunnerV2 extends Runner {
 			return;
 		}
 
-		this.platform!.advanceLoopers(Math.ceil(1000 / this.fps));
+		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
 	}
 
 	async advance(ms: number): Promise<void> {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null || this.driver == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
 			return;
 		}
@@ -77,7 +77,7 @@ export class RunnerV2 extends Runner {
 			return;
 		}
 
-		const { loopMode, skipThreshold } = this.driver!.getLoopConfiguration();
+		const { loopMode, skipThreshold } = this.driver.getLoopConfiguration();
 
 		// NOTE: skip の通知タイミングを一度に制限するため skipThreshold を一時的に変更する。
 		await this.changeGameDriverState({
@@ -91,7 +91,7 @@ export class RunnerV2 extends Runner {
 		while (progress <= ms) {
 			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
 			// そのため一度に進める時間を fps に応じて分割する。
-			this.platform!.advanceLoopers(delta);
+			this.platform.advanceLoopers(delta);
 			progress += delta;
 		}
 		await this.changeGameDriverState({
@@ -113,6 +113,11 @@ export class RunnerV2 extends Runner {
 	}
 
 	firePointEvent(event: RunnerPointEvent): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#firePointEvent() before initialized"));
+			return;
+		}
+
 		let type: pdi.PointType;
 		if (event.type === "down") {
 			type = pdi.PointType.Down;
@@ -124,7 +129,7 @@ export class RunnerV2 extends Runner {
 			this.errorTrigger.fire(new Error(`RunnerV2#firePointEvent(): unknown event type: ${event.type}`));
 			return;
 		}
-		this.platform!.firePointEvent({
+		this.platform.firePointEvent({
 			type,
 			identifier: event.identifier,
 			offset: event.offset
@@ -138,8 +143,8 @@ export class RunnerV2 extends Runner {
 				this.driver = null;
 			}
 
-			const player: unknown = {
-				id: this.player ? this.player.id : undefined,
+			const player = {
+				id: this.player ? this.player.id : "dummy",
 				name: this.player ? this.player.name : undefined
 			};
 
@@ -155,7 +160,7 @@ export class RunnerV2 extends Runner {
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
-				player: player as RunnerPlayer,
+				player: player,
 				errorHandler: (e: any) => this.onError(e)
 			});
 
@@ -202,8 +207,3 @@ export class RunnerV2 extends Runner {
 		this.sendToExternalTrigger.fire(data);
 	}
 }
-
-type RunnerPlayer = {
-	id: string;
-	name: string | undefined;
-};
