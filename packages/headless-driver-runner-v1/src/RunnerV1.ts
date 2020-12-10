@@ -160,7 +160,7 @@ export class RunnerV1 extends Runner {
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
-				player: player,
+				player,
 				errorHandler: (e: any) => this.onError(e)
 			});
 
