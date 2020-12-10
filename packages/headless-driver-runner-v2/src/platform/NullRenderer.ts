@@ -92,7 +92,7 @@ export class NullRenderer extends g.Renderer {
 	}
 
 	_getImageData(sx: number, sy: number, sw: number, sh: number): g.ImageData {
-		return null as any; // TODO: pdi-types 側の型を修正 
+		return null as any; // TODO: pdi-types 側の型を修正
 	}
 
 	_putImageData(
