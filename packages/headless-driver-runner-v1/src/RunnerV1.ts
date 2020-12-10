@@ -144,7 +144,7 @@ export class RunnerV1 extends Runner {
 			}
 
 			const player = {
-				id: this.player ? this.player.id : "dummy",
+				id: this.player ? this.player.id : undefined!, // TODO: g.Player#id を string | undefined に修正するまでの暫定措置
 				name: this.player ? this.player.name : undefined
 			};
 
