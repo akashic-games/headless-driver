@@ -77,7 +77,7 @@ export class RunnerV3 extends Runner {
 			return;
 		}
 
-		const { loopMode, skipThreshold } = this.driver!.getLoopConfiguration();
+		const { loopMode, skipThreshold } = this.driver.getLoopConfiguration();
 
 		// NOTE: skip の通知タイミングを一度に制限するため skipThreshold を一時的に変更する。
 		await this.changeGameDriverState({

@@ -30,7 +30,8 @@ describe("NodeCanvasGlyphFactory", () => {
 				maxLineHeight = glyph.height;
 			}
 
-			outputRenderer.drawImage(glyph.surface!, 0, 0, glyph.surface!.width, glyph.surface!.height, offsetX, offsetY);
+			// @ts-ignore
+			outputRenderer.drawImage(glyph.surface, 0, 0, glyph.surface.width, glyph.surface.height, offsetX, offsetY);
 			offsetX += glyph.advanceWidth;
 		}
 

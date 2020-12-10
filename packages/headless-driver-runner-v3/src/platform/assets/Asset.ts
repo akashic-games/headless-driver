@@ -1,7 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
 export abstract class Asset implements g.Asset {
-	type!: string;
+	abstract type: string;
 	id: string;
 	path: string;
 	originalPath: string;

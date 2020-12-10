@@ -6,7 +6,7 @@ export class NullImageAsset extends Asset implements g.ImageAsset {
 	type: "image" = "image";
 	width: number;
 	height: number;
-	hint!: g.ImageAssetHint;
+	hint: g.ImageAssetHint | undefined;
 
 	_surface: g.Surface | null = null;
 

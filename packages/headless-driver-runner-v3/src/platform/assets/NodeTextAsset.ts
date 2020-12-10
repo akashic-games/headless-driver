@@ -4,7 +4,7 @@ import { Asset } from "./Asset";
 
 export class NodeTextAsset extends Asset implements g.TextAsset {
 	type: "text" = "text";
-	data!: string;
+	data: string = "";
 
 	_load(loader: g.AssetLoadHandler): void {
 		loadFileInSandbox<string>(this.path, { json: false })

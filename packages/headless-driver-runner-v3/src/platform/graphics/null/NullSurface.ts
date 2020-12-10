@@ -5,11 +5,9 @@ export class NullSurface implements g.Surface {
 	width: number;
 	height: number;
 	isDynamic: boolean | undefined;
-	animatingStarted!: g.Trigger<void>;
-	animatingStopped!: g.Trigger<void>;
 	_drawable: any;
 	_renderer: NullRenderer;
-	_destroyed!: boolean;
+	_destroyed: boolean = false;
 
 	constructor(width: number, height: number, drawable?: any, isDynamic?: boolean) {
 		this.width = width;

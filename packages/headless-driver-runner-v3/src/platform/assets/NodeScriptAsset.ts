@@ -7,7 +7,7 @@ export class NodeScriptAsset extends Asset implements g.ScriptAsset {
 	static POST_SCRIPT: string = "\n})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
 
 	type: "script" = "script";
-	script!: string;
+	script: string = "";
 	private errorHandler: (err: any) => void;
 
 	constructor(id: string, path: string, errorHandler: (err: any) => void) {
