@@ -4,7 +4,7 @@ import { NullRenderer } from "./NullRenderer";
 export class NullSurface implements g.Surface {
 	width: number;
 	height: number;
-	isDynamic: boolean | undefined;
+	isDynamic: boolean;
 	_drawable: any;
 	_renderer: NullRenderer;
 	_destroyed: boolean = false;
@@ -13,7 +13,7 @@ export class NullSurface implements g.Surface {
 		this.width = width;
 		this.height = height;
 		this._drawable = drawable;
-		this.isDynamic = isDynamic;
+		this.isDynamic = !!isDynamic;
 		this._renderer = new NullRenderer();
 	}
 

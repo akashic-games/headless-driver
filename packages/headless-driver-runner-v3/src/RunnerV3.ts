@@ -144,7 +144,7 @@ export class RunnerV3 extends Runner {
 			}
 
 			const player = {
-				id: this.player ? this.player.id : "dummy",
+				id: this.player ? this.player.id : undefined!, // TODO: g.Player#id を string | undefined に修正するまでの暫定措置
 				name: this.player ? this.player.name : undefined
 			};
 
@@ -160,7 +160,7 @@ export class RunnerV3 extends Runner {
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
-				player: player,
+				player,
 				errorHandler: (e: any) => this.onError(e)
 			});
 

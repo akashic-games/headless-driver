@@ -16,7 +16,8 @@ describe("NodeCanvasRenderer", () => {
 		return new Promise((resolve, reject) => {
 			const filename = path.basename(filepath);
 			const { width, height } = sizeOf(filepath);
-			const asset = new NodeCanvasImageAsset(filename, filepath, width!, height!);
+			// @ts-ignore
+			const asset = new NodeCanvasImageAsset(filename, filepath, width, height);
 			asset.initialize({});
 			asset._load({
 				_onAssetError(_asset: NodeCanvasImageAsset, error: Error): void {
