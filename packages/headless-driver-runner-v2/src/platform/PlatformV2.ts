@@ -8,12 +8,11 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 	private rendererReq: pdi.RendererRequirement | null = null;
 	private primarySurface: g.Surface | null = null;
 	private eventHandler: pdi.PlatformEventHandler | null = null;
-	private loopers: Looper[];
+	private loopers: Looper[] = [];
 
 	constructor(param: PlatformParameters) {
 		super(param);
 		this.resFac = new ResourceFactory((e: Error) => this.errorHandler(e));
-		this.loopers = [];
 	}
 
 	getResourceFactory(): g.ResourceFactory {
