@@ -21,7 +21,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 
 	setRendererRequirement(requirement: pdi.RendererRequirement): void {
 		this.rendererReq = requirement;
-		this.primarySurface = new NullSurface(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight, null);
+		this.primarySurface = new NullSurface(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight);
 	}
 
 	setPlatformEventHandler(handler: pdi.PlatformEventHandler): void {
