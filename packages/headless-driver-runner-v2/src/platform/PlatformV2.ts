@@ -5,17 +5,14 @@ import { ResourceFactory } from "./ResourceFactory";
 
 export class PlatformV2 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
-	private rendererReq: pdi.RendererRequirement;
-	private primarySurface: g.Surface;
+	private rendererReq: pdi.RendererRequirement | null = null;
+	private primarySurface: g.Surface | null = null;
 	private eventHandler: pdi.PlatformEventHandler | null = null;
-	private loopers: Looper[];
+	private loopers: Looper[] = [];
 
 	constructor(param: PlatformParameters) {
 		super(param);
 		this.resFac = new ResourceFactory((e: Error) => this.errorHandler(e));
-		this.rendererReq = null;
-		this.primarySurface = null;
-		this.loopers = [];
 	}
 
 	getResourceFactory(): g.ResourceFactory {
@@ -36,6 +33,9 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 	}
 
 	getPrimarySurface(): g.Surface {
+		if (this.primarySurface == null) {
+			throw new Error("Cannot call Platform#getPrimarySurface() before setRenderer");
+		}
 		return this.primarySurface;
 	}
 
