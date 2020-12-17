@@ -194,7 +194,7 @@ export class RunnerV3 extends Runner {
 			driver.gameCreatedTrigger.addOnce((game: RunnerV3Game) => {
 				if (this.externalValue) {
 					Object.keys(this.externalValue).forEach((key) => {
-						game.external[key] = this.externalValue[key];
+						game.external[key] = this.externalValue![key];
 					});
 				}
 				this.fps = game.fps;
