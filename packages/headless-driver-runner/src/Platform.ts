@@ -12,7 +12,7 @@ export interface PlatformParameters {
 export abstract class Platform {
 	amflow: AMFlow;
 	assetBaseUrl: string;
-	configurationBaseUrl: string;
+	configurationBaseUrl: string | undefined;
 
 	protected sendToExternalHandler: (data: any) => void;
 	protected errorHandler: (err: any) => void;
@@ -29,7 +29,7 @@ export abstract class Platform {
 		this.sendToExternalHandler(data);
 	}
 
-	loadGameConfiguration(url: string, callback: (err: Error, data?: object) => void): void {
+	loadGameConfiguration(url: string, callback: (err: Error | null, data?: object) => void): void {
 		loadFileInSandbox<any>(url, { json: true })
 			.then((json) => callback(null, json))
 			.catch((e) => callback(e));
