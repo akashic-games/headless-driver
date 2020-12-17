@@ -1,7 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
 export abstract class Asset implements g.Asset {
-	type: string;
+	abstract type: string;
 	id: string;
 	path: string;
 	originalPath: string;
@@ -16,11 +16,11 @@ export abstract class Asset implements g.Asset {
 
 	destroy(): void {
 		this.onDestroyed.fire(this);
-		this.id = undefined;
-		this.originalPath = undefined;
-		this.path = undefined;
+		this.id = undefined!;
+		this.originalPath = undefined!;
+		this.path = undefined!;
 		this.onDestroyed.destroy();
-		this.onDestroyed = undefined;
+		this.onDestroyed = undefined!;
 	}
 
 	destroyed(): boolean {
