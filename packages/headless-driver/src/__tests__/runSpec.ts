@@ -12,19 +12,19 @@ import { activePermission, passivePermission } from "./constants";
 import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
 
-const contentUrlV1 = process.env.CONTENT_URL_V1;
-const contentUrlV2 = process.env.CONTENT_URL_V2;
-const contentUrlV3 = process.env.CONTENT_URL_V3;
+const contentUrlV1 = process.env.CONTENT_URL_V1!;
+const contentUrlV2 = process.env.CONTENT_URL_V2!;
+const contentUrlV3 = process.env.CONTENT_URL_V3!;
 const extContentUrlV1 = process.env.EXT_CONTENT_URL_V1;
 const extContentUrlV2 = process.env.EXT_CONTENT_URL_V2;
 const extContentUrlV3 = process.env.EXT_CONTENT_URL_V3;
-const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2;
-const assetBaseUrlV1 = process.env.ASSET_BASE_URL_V1;
-const assetBaseUrlV2 = process.env.ASSET_BASE_URL_V2;
-const assetBaseUrlV3 = process.env.ASSET_BASE_URL_V3;
-const extAssetBaseUrlV1 = process.env.EXT_ASSET_BASE_URL_V1;
-const extAssetBaseUrlV2 = process.env.EXT_ASSET_BASE_URL_V2;
-const extAssetBaseUrlV3 = process.env.EXT_ASSET_BASE_URL_V3;
+const cascadeContentUrlV2 = process.env.CASCADE_CONTENT_URL_V2!;
+const assetBaseUrlV1 = process.env.ASSET_BASE_URL_V1!;
+const assetBaseUrlV2 = process.env.ASSET_BASE_URL_V2!;
+const assetBaseUrlV3 = process.env.ASSET_BASE_URL_V3!;
+const extAssetBaseUrlV1 = process.env.EXT_ASSET_BASE_URL_V1!;
+const extAssetBaseUrlV2 = process.env.EXT_ASSET_BASE_URL_V2!;
+const extAssetBaseUrlV3 = process.env.EXT_ASSET_BASE_URL_V3!;
 
 setSystemLogger(new SilentLogger());
 
@@ -127,7 +127,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			});
 
 		// AMFlow 経由でイベントを送信でき、それをコンテンツで捕捉できる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { hoge: "fuga" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { hoge: "fuga" }]);
 
 		// 読み込んだコンテンツ側で受信したメッセージイベントを出力しているので、ここで内容を取得する
 		const event = await handleError();
@@ -227,7 +227,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			});
 
 		// AMFlow 経由でイベントを送信でき、それをコンテンツで捕捉できる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { hoge: "fuga" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { hoge: "fuga" }]);
 
 		// 読み込んだコンテンツで受信したメッセージイベントを出力しているので、ここで内容を取得する
 		const event = await handleEvent();
@@ -326,7 +326,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			});
 
 		// AMFlow 経由でイベントを送信でき、それをコンテンツで捕捉できる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { hoge: "fuga" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { hoge: "fuga" }]);
 
 		// 読み込んだコンテンツで受信したメッセージイベントを出力しているので、ここで内容を取得する
 		const event = await handleEvent();
@@ -370,7 +370,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		await runnerManager.startRunner(passiveRunner.runnerId);
 
 		// (1) AMFlow 経由で Passive のコンテンツにメッセージを送信させる
-		passiveAMFlow.sendEvent([0x20, null, ":akashic", { type: "send_event" }]);
+		passiveAMFlow.sendEvent([0x20, 0, ":akashic", { type: "send_event" }]);
 
 		// (2) (1) 送信後に Active 側のメッセージ受信ハンドラを登録
 		// NOTE: "data_from_content" 以外のメッセージイベントの捕捉を防ぐため、このタイミングで出力をハンドルする
@@ -453,7 +453,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 				});
 			});
 
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("loaded_external_asset");
@@ -489,7 +489,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 				});
 			});
 
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("loaded_external_asset");
@@ -525,7 +525,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 				});
 			});
 
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV3 }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV3 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("loaded_external_asset");
@@ -563,7 +563,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 			});
 
 		try {
-			const game = await runner.start();
+			const game = (await runner.start())!;
 			const data = await handleData();
 			expect(data).toBe("reached right");
 			expect(game.external.hoge()).toBe("hoge1");
@@ -599,7 +599,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 				});
 			});
 
-		const game = await runner.start();
+		const game = (await runner.start())!;
 		const data = await handleData();
 		expect(data).toBe("reached right");
 		expect(game.external.hoge()).toBe("hoge2");
@@ -634,7 +634,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 				});
 			});
 
-		const game = await runner.start();
+		const game = (await runner.start())!;
 		const data = await handleData();
 		expect(data).toBe("reached right");
 		expect(game.external.hoge()).toBe("hoge3");
@@ -704,7 +704,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "throw_error" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "throw_error" }]);
 
 		const error = await handleError();
 		expect(error.message).toBe("unknown error");
@@ -743,7 +743,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "throw_error" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "throw_error" }]);
 
 		const error = await handleError();
 		expect(error.message).toBe("unknown error");
@@ -783,7 +783,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "throw_error" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "throw_error" }]);
 
 		const error = await handleError();
 		expect(error.message).toBe("unknown error");
@@ -820,7 +820,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
 		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "process" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -857,7 +857,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
 		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "process" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -894,7 +894,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
 		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "process" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -933,7 +933,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "require" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "require" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -972,7 +972,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "require" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "require" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -1011,7 +1011,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "require" }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "require" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
@@ -1049,7 +1049,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 
 		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");
@@ -1086,7 +1086,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 
 		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");
@@ -1123,7 +1123,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			});
 
 		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV2 }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");
@@ -1161,7 +1161,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 
 		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求。先頭一致しないURL
 		const errorUrl = `http://localhost:3300/content-v2?q=${extContentUrlV2}`;
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: errorUrl }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: errorUrl }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");
@@ -1199,7 +1199,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 
 		// 許可されていない場所のアセットの読み込みをコンテンツ側で要求。先頭一致しないURL
 		const errorUrl = `http://localhost:3300/content-v2?q=${extContentUrlV2}`;
-		activeAMFlow.sendEvent([0x20, null, ":akashic", { type: "load_external_asset", url: errorUrl }]);
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: errorUrl }]);
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");

@@ -32,7 +32,7 @@ export class PlayManager {
 			lastSuspendedAt: null,
 			...playLocation
 		});
-		if (playlog) {
+		if (playlog && playlog.tickList) {
 			const amflow = this.createAMFlow(playId);
 			const activePermission = {
 				readTick: true,
@@ -45,9 +45,11 @@ export class PlayManager {
 			const token = this.createPlayToken(playId, activePermission);
 
 			// TODO: プレイ生成時に AMFlowStore 生成し playlog を渡して初期化できるようにし、 AMFlowClient 経由で playlog を渡さず済むようにする
-			await new Promise((resolve, reject) => amflow.open(playId, (e: Error) => (e ? reject(e) : resolve())));
-			await new Promise((resolve, reject) => amflow.authenticate(token, (e: Error) => (e ? reject(e) : resolve())));
-			await new Promise((resolve, reject) => amflow.putStartPoint(playlog.startPoints[0], (e: Error) => (e ? reject(e) : resolve())));
+			await new Promise((resolve, reject) => amflow.open(playId, (e: Error | null) => (e ? reject(e) : resolve())));
+			await new Promise((resolve, reject) => amflow.authenticate(token, (e: Error | null) => (e ? reject(e) : resolve())));
+			await new Promise((resolve, reject) =>
+				amflow.putStartPoint(playlog.startPoints[0], (e: Error | null) => (e ? reject(e) : resolve()))
+			);
 			amflow.setTickList(playlog.tickList);
 		}
 		return playId;
