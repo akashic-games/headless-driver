@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.5.2 (2020-12-21)
+
+#### Update Dependencies
+* `headless-driver-runner-v3`
+  * [#210](https://github.com/akashic-games/headless-driver/pull/210) chore(deps): pin dependencies ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- kamakiri_ys ([@kamakiri01](https://github.com/kamakiri01))
+
 ## v1.5.1 (2020-12-02)
 
 #### Enhancement
