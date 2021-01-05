@@ -27,7 +27,7 @@
     "@akashic/pdi-common-impl": "0.0.4"
   },
   "devDependencies": {
-    "@types/jest": "26.0.15",
+    "@types/jest": "26.0.19",
     "@types/pixelmatch": "5.2.2",
     "@types/pngjs": "3.4.2",
     "canvas": "2.6.1",

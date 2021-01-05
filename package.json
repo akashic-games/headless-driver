@@ -34,7 +34,7 @@
     }
   },
   "devDependencies": {
-    "cross-env": "7.0.2",
+    "cross-env": "7.0.3",
     "lerna": "3.22.1",
     "lerna-changelog": "1.0.1",
     "remark-cli": "9.0.0",
