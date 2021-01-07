@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v1.5.3 (2021-01-07)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#223](https://github.com/akashic-games/headless-driver/pull/223) 【v1.5.3】内部コンポーネントの更新(engineFiles@3.0.3, engineFiles@2.1.50, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+  * [#222](https://github.com/akashic-games/headless-driver/pull/222) 【v1.5.3】内部コンポーネントの更新(engineFiles@3.0.2, engineFiles@2.1.50, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#206](https://github.com/akashic-games/headless-driver/pull/206) Update dependency prettier to v2.2.1 ([@renovate[bot]](https://github.com/apps/renovate))
+* Other
+  * [#221](https://github.com/akashic-games/headless-driver/pull/221) Update actions/setup-node action to v2 ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v3`, `headless-driver`
+  * [#205](https://github.com/akashic-games/headless-driver/pull/205) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.5.2 (2020-12-21)
 
 #### Update Dependencies
