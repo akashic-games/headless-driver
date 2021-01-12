@@ -21,8 +21,8 @@ describe("AMFlow の動作テスト", () => {
 					new Promise<StartPoint>((resolve, reject) => {
 						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data)));
 					});
-				const putStartPoint: (sp: StartPoint) => Promise<StartPoint> = (sp) =>
-					new Promise((resolve, reject) => {
+				const putStartPoint: (sp: StartPoint) => Promise<void> = (sp) =>
+					new Promise<void>((resolve, reject) => {
 						amflowClient.putStartPoint(sp, (e) => (e ? reject(e) : resolve()));
 					});
 
@@ -106,7 +106,7 @@ describe("AMFlow の動作テスト", () => {
 				contentUrl: "dummy"
 			})
 			.then((p) => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					playId = p;
 					activeAMFlow = playManager.createAMFlow(playId);
 					activeAMFlow.open(playId, (err) => {
@@ -119,7 +119,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					passiveAMFlow = playManager.createAMFlow(playId);
 					passiveAMFlow.open(playId, (err) => {
 						if (err) {
@@ -131,7 +131,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// 認証できる
 					const playToken = playManager.createPlayToken(playId, passivePermission);
 					passiveAMFlow.authenticate(playToken, (err) => {
@@ -149,7 +149,7 @@ describe("AMFlow の動作テスト", () => {
 				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 2, foo: "bar" }]);
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// Active の認証
 					const playToken = playManager.createPlayToken(playId, activePermission);
 					activeAMFlow.authenticate(playToken, (err) => {
@@ -197,7 +197,7 @@ describe("AMFlow の動作テスト", () => {
 				playId = p;
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					activeAMFlow = playManager.createAMFlow(playId);
 					activeAMFlow.open(playId, (err) => {
 						if (err) {
@@ -209,7 +209,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					passiveAMFlow = playManager.createAMFlow(playId);
 					passiveAMFlow.open(playId, (err) => {
 						if (err) {
@@ -221,7 +221,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					failureAMFlow = playManager.createAMFlow(playId);
 					failureAMFlow.open(playId, (err) => {
 						if (err) {
@@ -233,7 +233,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// 認証できない
 					passiveAMFlow.authenticate("dummy-token", (err, permission) => {
 						if (err) {
@@ -248,7 +248,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// 認証できる
 					const playToken = playManager.createPlayToken(playId, passivePermission);
 					passiveAMFlow.authenticate(playToken, (err, permission) => {
@@ -269,7 +269,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// 認証できる
 					const playToken = playManager.createPlayToken(playId, activePermission);
 					activeAMFlow.authenticate(playToken, (err, permission) => {
@@ -323,7 +323,7 @@ describe("AMFlow の動作テスト", () => {
 				const getTickListLegacy = (begin: number, end: number) =>
 					new Promise<TickList>((res, rej) => {
 						// NOTE: 非推奨の引数による動作確認
-						passiveAMFlow.getTickList(begin, end, (err, ticks) => (err ? rej(err) : res(ticks)));
+						passiveAMFlow.getTickList({ begin, end }, (err, ticks) => (err ? rej(err) : res(ticks)));
 					});
 
 				const getTickList = (opts: GetTickListOptions) =>
@@ -415,7 +415,7 @@ describe("AMFlow の動作テスト", () => {
 				]);
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// Event の受信ハンドラを登録できる
 					const eventHandler = (event: number[]) => {
 						// Max Priority の確認
@@ -430,7 +430,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// Event の受信ハンドラを登録できる
 					const eventHandler = (event: number[]) => {
 						// Transient および Max Priority の確認
@@ -448,7 +448,7 @@ describe("AMFlow の動作テスト", () => {
 				return playManager.suspendPlay(playId);
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// suspend 時に write, send 権限を含む permission は認証できない
 					const playToken = playManager.createPlayToken(playId, activePermission);
 					failureAMFlow.authenticate(playToken, (err, permission) => {
@@ -462,9 +462,9 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// Play を suspend した後でも TickList を取得できる
-					passiveAMFlow.getTickList(0, 10, (err, tickList) => {
+					passiveAMFlow.getTickList({ begin: 0, end: 10 }, (err, tickList) => {
 						if (err) {
 							reject(err);
 							return;
@@ -491,7 +491,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// Play を suspend した後に sendTick することはできない
 					try {
 						activeAMFlow.sendTick([1]);
@@ -527,7 +527,7 @@ describe("AMFlow の動作テスト", () => {
 				return playManager.resumePlay(playId);
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// Play を resume した後に sendTick できる
 					activeAMFlow.sendTick([1]);
 					// Play を resume した後に sendEvent できる
@@ -550,9 +550,9 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// Play を resume した後に TickList を取得できる
-					passiveAMFlow.getTickList(0, 10, (err, tickList) => {
+					passiveAMFlow.getTickList({ begin: 0, end: 10 }, (err, tickList) => {
 						if (err) {
 							reject(err);
 							return;
@@ -579,7 +579,7 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// resume 後に write, send 権限を含む permission が認証できる
 					const playToken = playManager.createPlayToken(playId, activePermission);
 					failureAMFlow.authenticate(playToken, (err, permission) => {
@@ -593,7 +593,7 @@ describe("AMFlow の動作テスト", () => {
 			})
 			.then(() => playManager.deletePlay(playId))
 			.then(() => {
-				return new Promise((resolve, reject) => {
+				return new Promise<void>((resolve, reject) => {
 					// すでに delete したプレーの AMFlowClient に対して close() を呼び出しても問題ない
 					passiveAMFlow.close((err) => (err ? reject(err) : resolve()));
 				});
