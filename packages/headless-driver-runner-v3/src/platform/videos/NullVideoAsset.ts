@@ -33,7 +33,7 @@ export class NullVideoAsset extends Asset implements g.VideoAsset {
 	}
 
 	asSurface(): g.Surface {
-		return this._surface || (this._surface = new NullSurface(this.width, this.height, null));
+		return this._surface || (this._surface = new NullSurface(this.width, this.height));
 	}
 
 	getPlayer(): g.VideoPlayer {

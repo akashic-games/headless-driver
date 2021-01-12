@@ -6,7 +6,7 @@ import cloneDeep = require("lodash.clonedeep");
 import { createError } from "./ErrorFactory";
 
 export interface DumpedPlaylog {
-	tickList: TickList;
+	tickList: TickList | null;
 	startPoints: StartPoint[];
 }
 
@@ -20,9 +20,9 @@ export class AMFlowStore {
 	sendTickTrigger: Trigger<Tick> = new Trigger();
 
 	private permissionMap: Map<string, Permission> = new Map();
-	private startPoints: StartPoint[] | null = [];
-	private unfilteredTickList: TickList = null;
-	private filteredTickList: TickList = null;
+	private startPoints: StartPoint[] = [];
+	private unfilteredTickList: TickList | null = null;
+	private filteredTickList: TickList | null = null;
 	private suspended: boolean;
 
 	constructor(playId: string) {
@@ -32,9 +32,13 @@ export class AMFlowStore {
 
 	authenticate(token: string, revoke?: boolean): Permission {
 		const permission = this.authenticatePlayToken(token, revoke);
-		if (this.isSuspended() && permission && (permission.sendEvent || permission.writeTick)) {
+		if (!permission) {
+			throw createError("invalid_status", "Cannot call AMFlowStore#authenticate without authenticated token");
+		}
+		if (this.isSuspended() && (permission.sendEvent || permission.writeTick)) {
 			throw createError("permission_error", "Play may be suspended");
 		}
+
 		return permission;
 	}
 
@@ -60,7 +64,12 @@ export class AMFlowStore {
 		const tickList = opts.excludeEventFlags && opts.excludeEventFlags.ignorable ? this.filteredTickList : this.unfilteredTickList;
 		const from = Math.max(opts.begin, tickList[TickListIndex.From]);
 		const to = Math.min(opts.end - 1, tickList[TickListIndex.To]);
-		const ticks = tickList[TickListIndex.Ticks].filter((tick) => {
+
+		const tickListTicks = tickList[TickListIndex.Ticks];
+		if (tickListTicks == null) {
+			return [from, to];
+		}
+		const ticks = tickListTicks.filter((tick) => {
 			const frame = tick[TickIndex.Frame];
 			return from <= frame && frame <= to;
 		});
@@ -143,10 +152,10 @@ export class AMFlowStore {
 		}
 		this.sendEventTrigger.destroy();
 		this.sendTickTrigger.destroy();
-		this.sendEventTrigger = null;
-		this.sendTickTrigger = null;
-		this.permissionMap = null;
-		this.startPoints = null;
+		this.sendEventTrigger = null!;
+		this.sendTickTrigger = null!;
+		this.permissionMap = null!;
+		this.startPoints = null!;
 	}
 
 	isDestroyed(): boolean {
@@ -220,21 +229,20 @@ export class AMFlowStore {
 			this.filteredTickList = [tick[TickIndex.Frame], tick[TickIndex.Frame], []];
 		}
 
-		if (tick[TickIndex.Events] || tick[TickIndex.StorageData]) {
+		const tickEvents = tick[TickIndex.Events];
+		if (tickEvents) {
 			// store unfiltered tick
 			const unfilteredTick = this.cloneDeep<Tick>(tick);
-			unfilteredTick[TickIndex.Events] = tick[TickIndex.Events].filter(
-				(event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient)
-			);
-			this.unfilteredTickList[TickListIndex.Ticks].push(unfilteredTick);
+			unfilteredTick[TickIndex.Events] = tickEvents.filter((event) => !(event[EventIndex.EventFlags] & EventFlagsMask.Transient));
+			this.unfilteredTickList[TickListIndex.Ticks]!.push(unfilteredTick);
 
 			// store filtered tick
 			const filteredTick = this.cloneDeep<Tick>(tick);
-			filteredTick[TickIndex.Events] = tick[TickIndex.Events].filter(
+			filteredTick[TickIndex.Events] = tickEvents.filter(
 				(event) =>
 					!(event[EventIndex.EventFlags] & EventFlagsMask.Transient) && !(event[EventIndex.EventFlags] & EventFlagsMask.Ignorable)
 			);
-			this.filteredTickList[TickListIndex.Ticks].push(filteredTick);
+			this.filteredTickList[TickListIndex.Ticks]!.push(filteredTick);
 		}
 	}
 }

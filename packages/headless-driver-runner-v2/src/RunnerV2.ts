@@ -7,8 +7,8 @@ export type RunnerV2Game = g.Game;
 export class RunnerV2 extends Runner {
 	engineVersion: string = "2";
 
-	private driver: gdr.GameDriver;
-	private platform: PlatformV2;
+	private driver: gdr.GameDriver | null = null;
+	private platform: PlatformV2 | null = null;
 	private fps: number | null = null;
 	private running: boolean = false;
 
@@ -35,17 +35,27 @@ export class RunnerV2 extends Runner {
 	}
 
 	pause(): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#pause() before initialized"));
+			return;
+		}
+
 		this.platform.pauseLoopers();
 		this.running = false;
 	}
 
 	resume(): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#resume() before initialized"));
+			return;
+		}
+
 		this.platform.resumeLoopers();
 		this.running = true;
 	}
 
 	step(): void {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
 		}
@@ -58,7 +68,7 @@ export class RunnerV2 extends Runner {
 	}
 
 	async advance(ms: number): Promise<void> {
-		if (this.fps == null) {
+		if (this.fps == null || this.platform == null || this.driver == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
 			return;
 		}
@@ -103,6 +113,11 @@ export class RunnerV2 extends Runner {
 	}
 
 	firePointEvent(event: RunnerPointEvent): void {
+		if (this.platform == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#firePointEvent() before initialized"));
+			return;
+		}
+
 		let type: pdi.PointType;
 		if (event.type === "down") {
 			type = pdi.PointType.Down;
@@ -129,7 +144,7 @@ export class RunnerV2 extends Runner {
 			}
 
 			const player = {
-				id: this.player ? this.player.id : undefined,
+				id: this.player ? this.player.id : undefined!, // TODO: g.Player#id を string | undefined に修正するまでの暫定措置
 				name: this.player ? this.player.name : undefined
 			};
 
@@ -179,7 +194,7 @@ export class RunnerV2 extends Runner {
 			driver.gameCreatedTrigger.addOnce((game: RunnerV2Game) => {
 				if (this.externalValue) {
 					Object.keys(this.externalValue).forEach((key) => {
-						game.external[key] = this.externalValue[key];
+						game.external[key] = this.externalValue![key];
 					});
 				}
 				this.fps = game.fps;

@@ -11,9 +11,9 @@ import { RunnerManager } from "../runner/RunnerManager";
 import { activePermission } from "./constants";
 import { SilentLogger } from "./helpers/SilentLogger";
 
-const gameJsonUrlV1 = process.env.GAME_JSON_URL_V1;
-const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2;
-const gameJsonUrlV3 = process.env.GAME_JSON_URL_V3;
+const gameJsonUrlV1 = process.env.GAME_JSON_URL_V1!;
+const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2!;
+const gameJsonUrlV3 = process.env.GAME_JSON_URL_V3!;
 
 setSystemLogger(new SilentLogger());
 

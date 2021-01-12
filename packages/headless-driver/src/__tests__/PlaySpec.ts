@@ -11,7 +11,7 @@ import { SilentLogger } from "./helpers/SilentLogger";
 
 setSystemLogger(new SilentLogger());
 
-const contentUrl = process.env.CONTENT_URL_V2;
+const contentUrl = process.env.CONTENT_URL_V2!;
 
 beforeAll(() => {
 	jest.spyOn(ExecuteVmScriptV1, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV1.js"));
@@ -39,7 +39,7 @@ describe("プレー周りのテスト", () => {
 			executionMode: "active",
 			allowedUrls: null
 		});
-		const runner0 = runnerManager.getRunner(runnerId0);
+		const runner0 = runnerManager.getRunner(runnerId0)!;
 
 		expect(runner0.runnerId).toBe("0");
 		expect(runner0.engineVersion).toBe("2");
@@ -61,7 +61,7 @@ describe("プレー周りのテスト", () => {
 			executionMode: "active",
 			allowedUrls: null
 		});
-		const runner1 = runnerManager.getRunner(runnerId1);
+		const runner1 = runnerManager.getRunner(runnerId1)!;
 
 		expect(runner1.runnerId).toBe("1");
 		expect(runner0.engineVersion).toBe("2");
@@ -90,7 +90,7 @@ describe("プレー周りのテスト", () => {
 			executionMode: "active",
 			allowedUrls: null
 		});
-		const runner2 = runnerManager.getRunner(runnerId2);
+		const runner2 = runnerManager.getRunner(runnerId2)!;
 		expect(runner2.runnerId).toBe("2");
 		expect(runner2.engineVersion).toBe("2");
 	});

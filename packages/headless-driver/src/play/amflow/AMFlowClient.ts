@@ -15,7 +15,7 @@ export class AMFlowClient implements AMFlow {
 	protected state: AMFlowState = "connecting";
 	private store: AMFlowStore;
 
-	private permission: Permission = null;
+	private permission: Permission | null = null;
 	private tickHandlers: ((tick: Tick) => void)[] = [];
 	private eventHandlers: ((event: Event) => void)[] = [];
 	private unconsumedEvents: Event[] = [];
@@ -25,7 +25,7 @@ export class AMFlowClient implements AMFlow {
 		this.store = store;
 	}
 
-	open(playId: string, callback?: (error?: Error) => void): void {
+	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
 		this.store.sendEventTrigger.add(this.onEventSended, this);
@@ -37,16 +37,16 @@ export class AMFlowClient implements AMFlow {
 				if (this.playId !== playId) {
 					callback(createError("runtime_error", "Invalid PlayID"));
 				} else {
-					callback();
+					callback(null);
 				}
 			});
 		}
 	}
 
-	close(callback?: (error?: Error) => void): void {
+	close(callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#close()");
 		if (this.state !== "open") {
-			callback(createError("invalid_status", "Client is not open"));
+			if (callback) callback(createError("invalid_status", "Client is not open"));
 			return;
 		}
 
@@ -54,21 +54,21 @@ export class AMFlowClient implements AMFlow {
 		this.state = "closed";
 
 		if (callback) {
-			setImmediate(() => callback());
+			setImmediate(() => callback(null));
 		}
 	}
 
-	authenticate(token: string, callback: (error: Error, permission: Permission) => void): void {
+	authenticate(token: string, callback: (error: Error | null, permission?: Permission) => void): void {
 		setImmediate(() => {
 			if (this.state !== "open") {
-				callback(createError("invalid_status", "Client is not open"), null);
+				callback(createError("invalid_status", "Client is not open"), undefined);
 				return;
 			}
 			let permission: Permission;
 			try {
 				permission = this.store.authenticate(token);
 			} catch (e) {
-				callback(e, null);
+				callback(e, undefined);
 				return;
 			}
 			this.permission = permission;
@@ -76,7 +76,7 @@ export class AMFlowClient implements AMFlow {
 			if (permission) {
 				callback(null, permission);
 			} else {
-				callback(createError("invalid_status", "Invalid playToken"), null);
+				callback(createError("invalid_status", "Invalid playToken"), undefined);
 			}
 		});
 	}
@@ -148,10 +148,13 @@ export class AMFlowClient implements AMFlow {
 		if (!this.permission.subscribeEvent) {
 			throw createError("permission_error", "Permission denied");
 		}
+
 		this.eventHandlers.push(handler);
 
 		if (0 < this.unconsumedEvents.length) {
-			this.eventHandlers.forEach((h) => this.unconsumedEvents.forEach((ev) => h(ev)));
+			this.eventHandlers.forEach((h) => {
+				this.unconsumedEvents.forEach((ev) => h(ev));
+			});
 			this.unconsumedEvents = [];
 		}
 	}
@@ -182,7 +185,7 @@ export class AMFlowClient implements AMFlow {
 	): void {
 		setImmediate(() => {
 			let opts: GetTickListOptions;
-			let callback: (error: Error | null, tickList?: TickList) => void;
+			let callback: ((error: Error | null, tickList?: TickList) => void) | undefined;
 			if (typeof optsOrBegin === "number") {
 				// NOTE: optsOrBegin === "number" であれば必ず amflow@2 以前の引数だとみなしてキャストする
 				opts = {
@@ -195,28 +198,31 @@ export class AMFlowClient implements AMFlow {
 				opts = optsOrBegin;
 				callback = endOrCallback as (error: Error | null, tickList?: TickList) => void;
 			}
+			if (!callback) {
+				throw createError("runtime_error", "Callback is undefined");
+			}
 			if (this.state !== "open") {
-				callback(createError("invalid_status", "Client is not open"), null);
+				callback(createError("invalid_status", "Client is not open"), undefined);
 				return;
 			}
 			if (this.permission == null) {
-				callback(createError("invalid_status", "Not authenticated"), null);
+				callback(createError("invalid_status", "Not authenticated"), undefined);
 				return;
 			}
 			if (!this.permission.readTick) {
-				callback(createError("permission_error", "Permission denied"), null);
+				callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
 			const tickList = this.store.getTickList(opts);
 			if (tickList) {
 				callback(null, tickList);
 			} else {
-				callback(createError("runtime_error", "No tick list"), null);
+				callback(createError("runtime_error", "No tick list"), undefined);
 			}
 		});
 	}
 
-	putStartPoint(startPoint: StartPoint, callback: (err: Error) => void): void {
+	putStartPoint(startPoint: StartPoint, callback: (err: Error | null) => void): void {
 		setImmediate(() => {
 			if (this.state !== "open") {
 				callback(createError("invalid_status", "Client is not open"));
@@ -240,25 +246,25 @@ export class AMFlowClient implements AMFlow {
 		});
 	}
 
-	getStartPoint(opts: GetStartPointOptions, callback: (error: Error, startPoint: StartPoint) => void): void {
+	getStartPoint(opts: GetStartPointOptions, callback: (error: Error | null, startPoint?: StartPoint) => void): void {
 		setImmediate(() => {
 			if (this.state !== "open") {
-				callback(createError("invalid_status", "Client is not open"), null);
+				callback(createError("invalid_status", "Client is not open"), undefined);
 				return;
 			}
 			if (this.permission == null) {
-				callback(createError("invalid_status", "Not authenticated"), null);
+				callback(createError("invalid_status", "Not authenticated"), undefined);
 				return;
 			}
 			if (!this.permission.readTick) {
-				callback(createError("permission_error", "Permission denied"), null);
+				callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
 			const startPoint = this.store.getStartPoint(opts);
 			if (startPoint) {
 				callback(null, startPoint);
 			} else {
-				callback(createError("runtime_error", "No start point"), null);
+				callback(createError("runtime_error", "No start point"), undefined);
 			}
 		});
 	}
@@ -269,9 +275,9 @@ export class AMFlowClient implements AMFlow {
 		});
 	}
 
-	getStorageData(keys: StorageReadKey[], callback: (error: Error, values: StorageData[]) => void): void {
+	getStorageData(keys: StorageReadKey[], callback: (error: Error, values?: StorageData[]) => void): void {
 		setImmediate(() => {
-			callback(createError("not_implemented", "Not implemented"), null);
+			callback(createError("not_implemented", "Not implemented"), undefined);
 		});
 	}
 
@@ -287,11 +293,12 @@ export class AMFlowClient implements AMFlow {
 			this.store.sendEventTrigger.remove(this.onEventSended, this);
 			this.store.sendTickTrigger.remove(this.onTickSended, this);
 		}
-		this.store = null;
+
+		this.store = null!;
 		this.permission = null;
-		this.tickHandlers = null;
-		this.eventHandlers = null;
-		this.unconsumedEvents = null;
+		this.tickHandlers = null!;
+		this.eventHandlers = null!;
+		this.unconsumedEvents = null!;
 	}
 
 	isDestroyed(): boolean {

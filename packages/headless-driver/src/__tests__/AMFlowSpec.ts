@@ -17,8 +17,8 @@ describe("AMFlow の動作テスト", () => {
 		amflowClient.open("0", () => {
 			const token = amflowClientManager.createPlayToken("0", activePermission);
 			amflowClient.authenticate(token, async () => {
-				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint> = (opts) =>
-					new Promise<StartPoint>((resolve, reject) => {
+				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint | undefined> = (opts) =>
+					new Promise<StartPoint | undefined>((resolve, reject) => {
 						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data)));
 					});
 				const putStartPoint: (sp: StartPoint) => Promise<void> = (sp) =>
@@ -49,25 +49,25 @@ describe("AMFlow の動作テスト", () => {
 
 				// default: frame === 0
 				const frame = await getStartPoint({});
-				expect(frame.data).toBe("frame0");
+				expect(frame?.data).toBe("frame0");
 
 				// only frame
 				const frame0 = await getStartPoint({ frame: 0 });
 				const frame100 = await getStartPoint({ frame: 100 });
 				const frame700 = await getStartPoint({ frame: 700 });
 
-				expect(frame0.data).toBe("frame0");
-				expect(frame100.data).toBe("frame100");
-				expect(frame700.data).toBe("frame500");
+				expect(frame0?.data).toBe("frame0");
+				expect(frame100?.data).toBe("frame100");
+				expect(frame700?.data).toBe("frame500");
 
 				// only timestamp
 				const timestamp10000 = await getStartPoint({ timestamp: 10000 });
 				const timestamp30000 = await getStartPoint({ timestamp: 30000 });
 				const timestamp60000 = await getStartPoint({ timestamp: 60000 });
 
-				expect(timestamp10000.data).toBe("frame100");
-				expect(timestamp30000.data).toBe("frame200");
-				expect(timestamp60000.data).toBe("frame500");
+				expect(timestamp10000?.data).toBe("frame100");
+				expect(timestamp30000?.data).toBe("frame200");
+				expect(timestamp60000?.data).toBe("frame500");
 
 				// frame and timestamp
 				const sp1 = await getStartPoint({ frame: 0, timestamp: 100 });
@@ -238,7 +238,7 @@ describe("AMFlow の動作テスト", () => {
 					passiveAMFlow.authenticate("dummy-token", (err, permission) => {
 						if (err) {
 							expect(err instanceof Error).toBe(true);
-							expect(permission).toBe(null);
+							expect(permission).toBe(undefined);
 							expect(err.name).toBe("InvalidStatus");
 							resolve();
 							return;
@@ -321,13 +321,13 @@ describe("AMFlow の動作テスト", () => {
 				activeAMFlow.sendTick([6, [[0, 0b00000, "dummy-4-1"]]]);
 
 				const getTickListLegacy = (begin: number, end: number) =>
-					new Promise<TickList>((res, rej) => {
+					new Promise<TickList | undefined>((res, rej) => {
 						// NOTE: 非推奨の引数による動作確認
 						passiveAMFlow.getTickList({ begin, end }, (err, ticks) => (err ? rej(err) : res(ticks)));
 					});
 
 				const getTickList = (opts: GetTickListOptions) =>
-					new Promise<TickList>((res, rej) => {
+					new Promise<TickList | undefined>((res, rej) => {
 						passiveAMFlow.getTickList(opts, (err, ticks) => (err ? rej(err) : res(ticks)));
 					});
 

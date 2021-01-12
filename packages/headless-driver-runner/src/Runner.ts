@@ -34,7 +34,7 @@ export interface RunnerPlayer {
 }
 
 export abstract class Runner {
-	engineVersion: string;
+	abstract engineVersion: string;
 	errorTrigger: Trigger<any> = new Trigger();
 	sendToExternalTrigger: Trigger<any> = new Trigger();
 
@@ -64,7 +64,7 @@ export abstract class Runner {
 		return this.params.configurationUrl;
 	}
 
-	get configurationBaseUrl(): string {
+	get configurationBaseUrl(): string | undefined {
 		return this.params.configurationBaseUrl;
 	}
 
@@ -88,7 +88,7 @@ export abstract class Runner {
 		return this.params.external;
 	}
 
-	get externalValue(): { [key: string]: any } {
+	get externalValue(): { [key: string]: any } | undefined {
 		return this.params.externalValue;
 	}
 

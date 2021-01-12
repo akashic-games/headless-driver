@@ -15,9 +15,9 @@ export async function loadFile(url: string): Promise<string>;
  * @param url url または path
  * @param opt オプション
  */
-export async function loadFile<T>(url: string, opt?: LoadFileOption): Promise<T>;
+export async function loadFile<T>(url: string, opt: LoadFileOption): Promise<T>;
 
-export async function loadFile<T>(url: string, opt?: LoadFileOption): Promise<T> {
+export async function loadFile<T>(url: string, opt: LoadFileOption = {}): Promise<T> {
 	if (isHttpProtocol(url)) {
 		const res = await fetch(url, { method: "GET" });
 		return opt.json ? res.json() : res.text();

@@ -13,7 +13,7 @@ export class AMFlowClientManager {
 	 * @param playId PlayID
 	 */
 	createAMFlow(playId: string): AMFlowClient {
-		let store: AMFlowStore = this.storeMap.get(playId);
+		let store = this.storeMap.get(playId);
 		if (!store) {
 			store = this.createAMFlowStore(playId);
 		}
@@ -112,7 +112,7 @@ export class AMFlowClientManager {
 	}
 
 	private createAMFlowStore(playId: string): AMFlowStore {
-		let store: AMFlowStore = this.storeMap.get(playId);
+		let store = this.storeMap.get(playId);
 		if (!store) {
 			store = new AMFlowStore(playId);
 			this.storeMap.set(playId, store);
