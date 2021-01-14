@@ -17,9 +17,9 @@ describe("AMFlow の動作テスト", () => {
 		amflowClient.open("0", () => {
 			const token = amflowClientManager.createPlayToken("0", activePermission);
 			amflowClient.authenticate(token, async () => {
-				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint | undefined> = (opts) =>
-					new Promise<StartPoint | undefined>((resolve, reject) => {
-						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data)));
+				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint> = (opts) =>
+					new Promise<StartPoint>((resolve, reject) => {
+						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data!)));
 					});
 				const putStartPoint: (sp: StartPoint) => Promise<void> = (sp) =>
 					new Promise<void>((resolve, reject) => {
@@ -321,14 +321,14 @@ describe("AMFlow の動作テスト", () => {
 				activeAMFlow.sendTick([6, [[0, 0b00000, "dummy-4-1"]]]);
 
 				const getTickListLegacy = (begin: number, end: number) =>
-					new Promise<TickList | undefined>((res, rej) => {
+					new Promise<TickList>((res, rej) => {
 						// NOTE: 非推奨の引数による動作確認
-						passiveAMFlow.getTickList({ begin, end }, (err, ticks) => (err ? rej(err) : res(ticks)));
+						passiveAMFlow.getTickList({ begin, end }, (err, ticks) => (err ? rej(err) : res(ticks!)));
 					});
 
 				const getTickList = (opts: GetTickListOptions) =>
-					new Promise<TickList | undefined>((res, rej) => {
-						passiveAMFlow.getTickList(opts, (err, ticks) => (err ? rej(err) : res(ticks)));
+					new Promise<TickList>((res, rej) => {
+						passiveAMFlow.getTickList(opts, (err, ticks) => (err ? rej(err) : res(ticks!)));
 					});
 
 				// 非推奨の引数でも TickList を取得できることを確認
