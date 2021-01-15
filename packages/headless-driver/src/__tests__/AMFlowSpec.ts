@@ -323,7 +323,7 @@ describe("AMFlow の動作テスト", () => {
 				const getTickListLegacy = (begin: number, end: number) =>
 					new Promise<TickList>((res, rej) => {
 						// NOTE: 非推奨の引数による動作確認
-						passiveAMFlow.getTickList({ begin, end }, (err, ticks) => (err ? rej(err) : res(ticks!)));
+						passiveAMFlow.getTickList(begin, end, (err, ticks) => (err ? rej(err) : res(ticks!)));
 					});
 
 				const getTickList = (opts: GetTickListOptions) =>
