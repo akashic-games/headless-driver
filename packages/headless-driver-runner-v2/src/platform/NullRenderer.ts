@@ -1,5 +1,7 @@
 import { akashicEngine as g } from "@akashic/engine-files";
 
+/* eslint  @typescript-eslint/no-unused-vars: 0 */
+// NullRenderer class は定義のみあれば良いので、no-unused-vars を無効とする。
 export class NullRenderer extends g.Renderer {
 	clear(): void {
 		//
