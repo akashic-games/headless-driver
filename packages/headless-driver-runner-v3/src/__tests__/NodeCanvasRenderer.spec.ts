@@ -1,7 +1,7 @@
-import { Canvas, loadImage } from "canvas";
 import * as fs from "fs";
-import sizeOf from "image-size";
 import * as path from "path";
+import { Canvas, loadImage } from "canvas";
+import sizeOf from "image-size";
 import * as pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import { CompositeOperation, CompositeOperationConverter } from "../platform/graphics/canvas/CompositeOperationConverter";
@@ -168,7 +168,7 @@ describe("NodeCanvasRenderer", () => {
 			outputRenderer.drawImage(surface, 0, 0, 200, 200, offsetX, offsetY);
 		}
 
-		fs.writeFileSync(path.join(outputPath, `rendering_test_02_composite_expected.png`), outputCanvas.toBuffer());
-		fs.writeFileSync(path.join(outputPath, `rendering_test_02_composite_actual.png`), outputSurface._drawable.toBuffer());
+		fs.writeFileSync(path.join(outputPath, "rendering_test_02_composite_expected.png"), outputCanvas.toBuffer());
+		fs.writeFileSync(path.join(outputPath, "rendering_test_02_composite_actual.png"), outputSurface._drawable.toBuffer());
 	});
 });

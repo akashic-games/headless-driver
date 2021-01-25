@@ -1,6 +1,6 @@
-import { Canvas } from "canvas";
 import * as fs from "fs";
 import * as path from "path";
+import { Canvas } from "canvas";
 import { NodeCanvasGlyphFactory } from "../platform/graphics/canvas/NodeCanvasGlyphFactory";
 import { NodeCanvasSurface } from "../platform/graphics/canvas/NodeCanvasSurface";
 
@@ -44,17 +44,17 @@ describe("NodeCanvasGlyphFactory", () => {
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_jis_level_1.txt"), { encoding: "utf8" }),
 			"sans-serif",
-			path.join(outputPath, `glyph_factory_test_01_jis_level_1_sans-serif.png`)
+			path.join(outputPath, "glyph_factory_test_01_jis_level_1_sans-serif.png")
 		);
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_jis_level_1.txt"), { encoding: "utf8" }),
 			"serif",
-			path.join(outputPath, `glyph_factory_test_01_jis_level_1_serif.png`)
+			path.join(outputPath, "glyph_factory_test_01_jis_level_1_serif.png")
 		);
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_jis_level_1.txt"), { encoding: "utf8" }),
 			"monospace",
-			path.join(outputPath, `glyph_factory_test_01_jis_level_1_monospace.png`)
+			path.join(outputPath, "glyph_factory_test_01_jis_level_1_monospace.png")
 		);
 	});
 
@@ -62,17 +62,17 @@ describe("NodeCanvasGlyphFactory", () => {
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_katakana_hiragana.txt"), { encoding: "utf8" }),
 			"sans-serif",
-			path.join(outputPath, `glyph_factory_test_01_chars_katakana_hiragana_sans-serif.png`)
+			path.join(outputPath, "glyph_factory_test_01_chars_katakana_hiragana_sans-serif.png")
 		);
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_katakana_hiragana.txt"), { encoding: "utf8" }),
 			"serif",
-			path.join(outputPath, `glyph_factory_test_01_chars_katakana_hiragana_serif.png`)
+			path.join(outputPath, "glyph_factory_test_01_chars_katakana_hiragana_serif.png")
 		);
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_katakana_hiragana.txt"), { encoding: "utf8" }),
 			"monospace",
-			path.join(outputPath, `glyph_factory_test_01_chars_katakana_hiragana_monospace.png`)
+			path.join(outputPath, "glyph_factory_test_01_chars_katakana_hiragana_monospace.png")
 		);
 	});
 
@@ -80,17 +80,17 @@ describe("NodeCanvasGlyphFactory", () => {
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_ascii.txt"), { encoding: "utf8" }),
 			"sans-serif",
-			path.join(outputPath, `glyph_factory_test_01_chars_ascii_sans-serif.png`)
+			path.join(outputPath, "glyph_factory_test_01_chars_ascii_sans-serif.png")
 		);
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_ascii.txt"), { encoding: "utf8" }),
 			"serif",
-			path.join(outputPath, `glyph_factory_test_01_chars_ascii_serif.png`)
+			path.join(outputPath, "glyph_factory_test_01_chars_ascii_serif.png")
 		);
 		drawChars(
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_ascii.txt"), { encoding: "utf8" }),
 			"monospace",
-			path.join(outputPath, `glyph_factory_test_01_chars_ascii_monospace.png`)
+			path.join(outputPath, "glyph_factory_test_01_chars_ascii_monospace.png")
 		);
 	});
 });
