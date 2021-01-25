@@ -1,4 +1,4 @@
-import { GetStartPointOptions, StartPoint, GetTickListOptions } from "@akashic/amflow";
+import { GetStartPointOptions, GetTickListOptions, StartPoint } from "@akashic/amflow";
 import { Event, TickList } from "@akashic/playlog";
 import { setSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
@@ -320,13 +320,13 @@ describe("AMFlow の動作テスト", () => {
 				]);
 				activeAMFlow.sendTick([6, [[0, 0b00000, "dummy-4-1"]]]);
 
-				const getTickListLegacy = (begin: number, end: number) =>
+				const getTickListLegacy = (begin: number, end: number): Promise<TickList> =>
 					new Promise<TickList>((res, rej) => {
 						// NOTE: 非推奨の引数による動作確認
 						passiveAMFlow.getTickList(begin, end, (err, ticks) => (err ? rej(err) : res(ticks!)));
 					});
 
-				const getTickList = (opts: GetTickListOptions) =>
+				const getTickList = (opts: GetTickListOptions): Promise<TickList> =>
 					new Promise<TickList>((res, rej) => {
 						passiveAMFlow.getTickList(opts, (err, ticks) => (err ? rej(err) : res(ticks!)));
 					});
@@ -415,9 +415,9 @@ describe("AMFlow の動作テスト", () => {
 				]);
 			})
 			.then(() => {
-				return new Promise<void>((resolve, reject) => {
+				return new Promise<void>((resolve, _reject) => {
 					// Event の受信ハンドラを登録できる
-					const eventHandler = (event: number[]) => {
+					const eventHandler = (event: number[]): void => {
 						// Max Priority の確認
 						expect(event).toEqual([0, 2, "dummy-player-id"]);
 						activeAMFlow.offEvent(eventHandler);
@@ -430,9 +430,9 @@ describe("AMFlow の動作テスト", () => {
 				});
 			})
 			.then(() => {
-				return new Promise<void>((resolve, reject) => {
+				return new Promise<void>((resolve, _reject) => {
 					// Event の受信ハンドラを登録できる
-					const eventHandler = (event: number[]) => {
+					const eventHandler = (event: number[]): void => {
 						// Transient および Max Priority の確認
 						expect(event).toEqual([0, 0b1000 | 0b0010, "dummy-player-id"]);
 						activeAMFlow.offEvent(eventHandler);
@@ -451,7 +451,7 @@ describe("AMFlow の動作テスト", () => {
 				return new Promise<void>((resolve, reject) => {
 					// suspend 時に write, send 権限を含む permission は認証できない
 					const playToken = playManager.createPlayToken(playId, activePermission);
-					failureAMFlow.authenticate(playToken, (err, permission) => {
+					failureAMFlow.authenticate(playToken, (err, _permission) => {
 						if (err) {
 							expect(err instanceof PermissionError).toBe(true);
 							resolve();
@@ -582,7 +582,7 @@ describe("AMFlow の動作テスト", () => {
 				return new Promise<void>((resolve, reject) => {
 					// resume 後に write, send 権限を含む permission が認証できる
 					const playToken = playManager.createPlayToken(playId, activePermission);
-					failureAMFlow.authenticate(playToken, (err, permission) => {
+					failureAMFlow.authenticate(playToken, (err, _permission) => {
 						if (err) {
 							reject(err);
 							return;

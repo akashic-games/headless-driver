@@ -1,7 +1,7 @@
+import * as path from "path";
 import { RunnerV1 } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2 } from "@akashic/headless-driver-runner-v2";
 import { RunnerV3 } from "@akashic/headless-driver-runner-v3";
-import * as path from "path";
 import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
@@ -29,7 +29,7 @@ function sleep(duration: number): Promise<void> {
 	});
 }
 
-async function readyRunner(gameJsonPath: string) {
+async function readyRunner(gameJsonPath: string): Promise<(RunnerV1 | RunnerV2 | RunnerV3) | null> {
 	const playManager = new PlayManager();
 	const playId = await playManager.createPlay({
 		gameJsonPath

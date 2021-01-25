@@ -1,8 +1,8 @@
-import * as getPort from "get-port";
 import * as http from "http";
 import * as path from "path";
 import * as url from "url";
-const handler = require("serve-handler"); // tslint:disable-line:no-var-requires
+import * as getPort from "get-port";
+const handler = require("serve-handler"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 declare global {
 	namespace NodeJS {
@@ -34,7 +34,7 @@ declare global {
 	}
 }
 
-export const initialize = async () => {
+export const initialize = async (): Promise<void> => {
 	const port = await getPort();
 	const host = "localhost";
 	const baseUrl = `http://${host}:${port}`;
