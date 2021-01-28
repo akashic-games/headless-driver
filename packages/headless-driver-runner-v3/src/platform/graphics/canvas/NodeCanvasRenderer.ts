@@ -91,7 +91,7 @@ export class NodeCanvasRenderer implements g.Renderer {
 		return false;
 	}
 
-	_getImageData(sx: number, sy: number, sw: number, sh: number): g.ImageData {
+	_getImageData(sx: number, sy: number, sw: number, sh: number): g.ImageData | null {
 		return this.context.getImageData(sx, sy, sw, sh);
 	}
 
