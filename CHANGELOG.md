@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v1.5.4 (2021-01-29)
+
+#### Bug Fix
+* `headless-driver-runner-v3`
+  * [#227](https://github.com/akashic-games/headless-driver/pull/227) Fix build ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#178](https://github.com/akashic-games/headless-driver/pull/178) Update dependency typescript to v4 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.5.3 (2021-01-07)
 
 #### Enhancement
