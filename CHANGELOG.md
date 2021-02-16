@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v1.5.8 (2021-02-16)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#234](https://github.com/akashic-games/headless-driver/pull/234) 【v1.5.8】内部コンポーネントの更新(engineFiles@3.0.8, engineFiles@2.1.52, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Other Change
+* [#230](https://github.com/akashic-games/headless-driver/pull/230) add publish script as npm-scripts ([@dera-](https://github.com/dera-))
+
+#### Committers: 2
+- [@dera-](https://github.com/dera-)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.5.7 (2021-02-05)
 
 #### Enhancement
