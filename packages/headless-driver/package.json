@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "A library to execute contents using Akashic Engine headlessly",
   "main": "lib/index.js",
   "author": "DWANGO Co., Ltd.",
@@ -25,7 +25,7 @@
     "@akashic/amflow": "~3.0.0",
     "@akashic/headless-driver-runner": "1.5.6",
     "@akashic/headless-driver-runner-v1": "1.5.6",
-    "@akashic/headless-driver-runner-v2": "1.5.6",
+    "@akashic/headless-driver-runner-v2": "1.5.8",
     "@akashic/headless-driver-runner-v3": "1.5.7",
     "@akashic/playlog": "~3.1.0",
     "@akashic/trigger": "~1.0.0",
