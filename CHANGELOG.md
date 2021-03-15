@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## v1.5.10 (2021-03-15)
+
+#### Update Dependencies
+* Other
+  * [#237](https://github.com/akashic-games/headless-driver/pull/237) Update dependency lerna to v4 ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#236](https://github.com/akashic-games/headless-driver/pull/236) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#228](https://github.com/akashic-games/headless-driver/pull/228) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#224](https://github.com/akashic-games/headless-driver/pull/224) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v3`
+  * [#233](https://github.com/akashic-games/headless-driver/pull/233) Update dependency @types/pngjs to v6 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
 ## v1.5.9 (2021-02-16)
 
 #### Enhancement
