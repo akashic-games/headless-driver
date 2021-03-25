@@ -9,7 +9,7 @@
     "formatter": "prettier --write \"src/**/*.ts\" --config ../prettier.config.js",
     "test": "npm run run:jest && npm run lint",
     "run:jest": "rimraf ./src/__tests__/out/**/*.png && jest",
-    "lint": "eslint -c .eslintrc src/**/*.ts --fix"
+    "lint": "eslint src/**/*.ts --fix"
   },
   "publishConfig": {
     "access": "public",
