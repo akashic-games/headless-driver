@@ -12,7 +12,7 @@
     "formatter": "prettier --write \"src/**/*.ts\" --config ../prettier.config.js",
     "test": "npm run run:jest && npm run lint",
     "run:jest": "jest",
-    "lint": "eslint src/**/*.ts --fix"
+    "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "publishConfig": {
     "access": "public",

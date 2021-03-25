@@ -8,7 +8,7 @@
     "build": "rimraf ./lib && tsc -p ./tsconfig.json && npm run formatter",
     "formatter": "prettier --write \"src/**/*.ts\" --config ../prettier.config.js",
     "test": "npm run lint",
-    "lint": "eslint src/**/*.ts --fix"
+    "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "publishConfig": {
     "access": "public",
