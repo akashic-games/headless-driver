@@ -1,5 +1,94 @@
 # CHANGELOG
 
+## v1.5.11 (2021-03-16)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#239](https://github.com/akashic-games/headless-driver/pull/239) 【v1.5.11】内部コンポーネントの更新(engineFiles@3.0.10, engineFiles@2.1.53, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+* `headless-driver-runner-v2`
+  * [#238](https://github.com/akashic-games/headless-driver/pull/238) 【v1.5.11】内部コンポーネントの更新(engineFiles@3.0.9, engineFiles@2.1.53, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
+## v1.5.10 (2021-03-15)
+
+#### Update Dependencies
+* Other
+  * [#237](https://github.com/akashic-games/headless-driver/pull/237) Update dependency lerna to v4 ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#236](https://github.com/akashic-games/headless-driver/pull/236) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#228](https://github.com/akashic-games/headless-driver/pull/228) Update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#224](https://github.com/akashic-games/headless-driver/pull/224) Update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v3`
+  * [#233](https://github.com/akashic-games/headless-driver/pull/233) Update dependency @types/pngjs to v6 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 0
+
+
+## v1.5.9 (2021-02-16)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#235](https://github.com/akashic-games/headless-driver/pull/235) 【v1.5.9】内部コンポーネントの更新(engineFiles@3.0.9, engineFiles@2.1.52, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
+## v1.5.8 (2021-02-16)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#234](https://github.com/akashic-games/headless-driver/pull/234) 【v1.5.8】内部コンポーネントの更新(engineFiles@3.0.8, engineFiles@2.1.52, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Other Change
+* [#230](https://github.com/akashic-games/headless-driver/pull/230) add publish script as npm-scripts ([@dera-](https://github.com/dera-))
+
+#### Committers: 2
+- [@dera-](https://github.com/dera-)
+- xnv ([@xnv](https://github.com/xnv))
+
+## v1.5.7 (2021-02-05)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#232](https://github.com/akashic-games/headless-driver/pull/232) 【v1.5.7】内部コンポーネントの更新(engineFiles@3.0.8, engineFiles@2.1.51, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
+## v1.5.6 (2021-02-05)
+
+#### Enhancement
+* `headless-driver-runner-v2`
+  * [#231](https://github.com/akashic-games/headless-driver/pull/231) 【v1.5.6】内部コンポーネントの更新(engineFiles@3.0.7, engineFiles@2.1.51, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Committers: 2
+- kamakiri_ys ([@kamakiri01](https://github.com/kamakiri01))
+- xnv ([@xnv](https://github.com/xnv))
+
+## v1.5.5 (2021-01-29)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#226](https://github.com/akashic-games/headless-driver/pull/226) 【v1.5.4】内部コンポーネントの更新(engineFiles@3.0.4, engineFiles@2.1.50, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
+## v1.5.4 (2021-01-29)
+
+#### Bug Fix
+* `headless-driver-runner-v3`
+  * [#227](https://github.com/akashic-games/headless-driver/pull/227) Fix build ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#178](https://github.com/akashic-games/headless-driver/pull/178) Update dependency typescript to v4 ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.5.3 (2021-01-07)
 
 #### Enhancement

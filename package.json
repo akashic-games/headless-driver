@@ -15,6 +15,7 @@
     "publish:force-patch-all": "node build/prepareRepublish.js && cross-env PUBLISH_MODE=force node build/publishAndUpdateChangelog.js patch",
     "publish:force-minor-all": "node build/prepareRepublish.js && cross-env PUBLISH_MODE=force node build/publishAndUpdateChangelog.js minor",
     "publish:prerelease": "lerna publish prerelease --dist-tag ${PUBLISH_DIST_TAG:-next} --yes",
+    "publish:from-package": "lerna publish from-package --dist-tag ${PUBLISH_DIST_TAG:-latest} --yes",
     "build": "lerna run build",
     "test": "lerna run test && npm run lint:md",
     "lint:md": "remark . --frail --no-stdout --quiet --rc-path ./.remarkrc"
@@ -35,7 +36,7 @@
   },
   "devDependencies": {
     "cross-env": "7.0.3",
-    "lerna": "3.22.1",
+    "lerna": "4.0.0",
     "lerna-changelog": "1.0.1",
     "remark-cli": "9.0.0",
     "remark-lint": "8.0.0",
