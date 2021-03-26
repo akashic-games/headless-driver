@@ -25,7 +25,7 @@ export abstract class Platform {
 		this.errorHandler = param.errorHandler;
 	}
 
-	sendToExternal(playId: string, data: any): void {
+	sendToExternal(_playId: string, data: any): void {
 		this.sendToExternalHandler(data);
 	}
 
