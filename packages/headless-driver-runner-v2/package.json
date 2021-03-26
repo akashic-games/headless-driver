@@ -28,6 +28,7 @@
     "@akashic/eslint-config": "0.1.2",
     "@typescript-eslint/eslint-plugin": "4.19.0",
     "eslint": "7.22.0",
+    "eslint-config-prettier": "8.1.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jest": "24.3.2",
     "prettier": "2.2.1",
