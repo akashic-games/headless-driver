@@ -1,16 +1,16 @@
 import { SystemLogger } from "../../Logger";
 
 export class SilentLogger implements SystemLogger {
-	info(...messages: any[]): void {
+	info(..._messages: any[]): void {
 		// console.info(...messages); // tslint:disable-line:no-console
 	}
-	debug(...messages: any[]): void {
+	debug(..._messages: any[]): void {
 		// console.debug(...messages); // tslint:disable-line:no-console
 	}
-	warn(...messages: any[]): void {
+	warn(..._messages: any[]): void {
 		// console.warn(...messages); // tslint:disable-line:no-console
 	}
-	error(...messages: any[]): void {
+	error(..._messages: any[]): void {
 		// console.error(...messages); // tslint:disable-line:no-console
 	}
 }

@@ -268,7 +268,8 @@ export class AMFlowClient implements AMFlow {
 			}
 		});
 	}
-
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+	// 未実装の状態のため未使用の lint エラーを無効とする
 	putStorageData(key: StorageKey, value: StorageValue, options: any, callback: (err: Error) => void): void {
 		setImmediate(() => {
 			callback(createError("not_implemented", "Not implemented"));
@@ -280,6 +281,7 @@ export class AMFlowClient implements AMFlow {
 			callback(createError("not_implemented", "Not implemented"), undefined);
 		});
 	}
+	/* eslint-enable */
 
 	getState(): AMFlowState {
 		return this.state;
