@@ -78,22 +78,22 @@ export class NullRenderer implements g.Renderer {
 		return false;
 	}
 
-	setShaderProgram(shaderProgram: g.ShaderProgram | null): void {
+	setShaderProgram(_shaderProgram: g.ShaderProgram | null): void {
 		// do nothing
 	}
 
-	_getImageData(sx: number, sy: number, sw: number, sh: number): g.ImageData {
+	_getImageData(_sx: number, _sy: number, _sw: number, _sh: number): g.ImageData {
 		return null!; // TODO: pdi-types 側の型を修正
 	}
 
 	_putImageData(
-		imageData: g.ImageData,
-		dx: number,
-		dy: number,
-		dirtyX?: number,
-		dirtyY?: number,
-		dirtyWidth?: number,
-		dirtyHeight?: number
+		_imageData: g.ImageData,
+		_dx: number,
+		_dy: number,
+		_dirtyX?: number,
+		_dirtyY?: number,
+		_dirtyWidth?: number,
+		_dirtyHeight?: number
 	): void {
 		// do nothing
 	}
