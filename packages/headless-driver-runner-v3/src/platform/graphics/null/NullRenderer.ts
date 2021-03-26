@@ -82,8 +82,8 @@ export class NullRenderer implements g.Renderer {
 		// do nothing
 	}
 
-	_getImageData(_sx: number, _sy: number, _sw: number, _sh: number): g.ImageData {
-		return null!; // TODO: pdi-types 側の型を修正
+	_getImageData(_sx: number, _sy: number, _sw: number, _sh: number): g.ImageData | null {
+		return null;
 	}
 
 	_putImageData(
