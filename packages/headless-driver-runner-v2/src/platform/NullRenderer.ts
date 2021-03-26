@@ -1,4 +1,5 @@
 import { akashicEngine as g } from "@akashic/engine-files";
+
 export class NullRenderer extends g.Renderer {
 	clear(): void {
 		//
