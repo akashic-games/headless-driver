@@ -1,7 +1,7 @@
+import * as path from "path";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
-import * as path from "path";
 import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
@@ -65,8 +65,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		expect(game.external.hoge()).toBe("hoge1");
 		expect(game.external.foo()).toBe("foo1");
 
-		const handleData = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleData = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
 					resolve(l);
@@ -84,7 +84,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 10, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
@@ -97,7 +97,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 15, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
@@ -110,15 +110,15 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 20, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
 			})
 		).toBe("fired point up event");
 
-		const handleError = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
 					resolve(l);
@@ -167,8 +167,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		expect(game.external.hoge()).toBe("hoge2");
 		expect(game.external.foo()).toBe("foo2");
 
-		const handleData = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleData = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
@@ -185,7 +185,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 10, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
@@ -198,7 +198,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 15, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
@@ -211,15 +211,15 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 20, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
 			})
 		).toBe("fired point up event");
 
-		const handleEvent = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
@@ -266,7 +266,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		expect(game.external.hoge()).toBe("hoge3");
 		expect(game.external.foo()).toBe("foo3");
 
-		const handleData = () =>
+		const handleData = (): Promise<any> =>
 			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.addOnce((l) => {
@@ -284,7 +284,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 10, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
@@ -297,7 +297,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 15, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
@@ -310,14 +310,14 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 			offset: { x: 20, y: 10 }
 		});
 		expect(
-			await new Promise<string>((resolve, reject) => {
+			await new Promise<string>((resolve, _reject) => {
 				runner.sendToExternalTrigger.addOnce((l: string) => {
 					resolve(l);
 				});
 			})
 		).toBe("fired point up event");
 
-		const handleEvent = () =>
+		const handleEvent = (): Promise<any> =>
 			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.addOnce((l) => {
@@ -374,8 +374,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 
 		// (2) (1) 送信後に Active 側のメッセージ受信ハンドラを登録
 		// NOTE: "data_from_content" 以外のメッセージイベントの捕捉を防ぐため、このタイミングで出力をハンドルする
-		const handleData = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleData = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// NOTE: 読み込んだコンテンツ側で受信したメッセージイベントを出力しているので、ここで内容を取得する
 				activeRunner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
@@ -409,8 +409,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 
-		const handleData = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleData = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
@@ -442,8 +442,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runner.start();
 
-		const handleEvent = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
 					if (l === "loaded_external_asset") {
@@ -478,8 +478,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runner.start();
 
-		const handleEvent = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add((l) => {
 					if (l === "loaded_external_asset") {
@@ -514,7 +514,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		await runner.start();
 
-		const handleEvent = () =>
+		const handleEvent = (): Promise<any> =>
 			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add((l) => {
@@ -553,8 +553,8 @@ describe("ローカルコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.external).toEqual({});
 
-		const handleData = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleData = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
 					resolve(l);
@@ -591,8 +591,8 @@ describe("ローカルコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		expect(runner.external).toEqual({ ext: "0" });
 
-		const handleData = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleData = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
@@ -626,7 +626,7 @@ describe("ローカルコンテンツの動作テスト", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		expect(runner.external).toEqual({ ext: "0" });
 
-		const handleData = () =>
+		const handleData = (): Promise<any> =>
 			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.addOnce((l) => {
@@ -695,8 +695,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		await runnerManager.startRunner(runnerId);
 
-		const handleError = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				runner.errorTrigger.handle((e: any) => {
 					resolve(e);
 					return true;
@@ -734,8 +734,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
 
-		const handleError = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				runner.errorTrigger.add((e: any) => {
 					resolve(e);
 					return true;
@@ -774,7 +774,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		await runnerManager.startRunner(runner.runnerId);
 
-		const handleError = () =>
+		const handleError = (): Promise<any> =>
 			new Promise<any>((resolve) => {
 				runner.errorTrigger.add((e: any) => {
 					resolve(e);
@@ -810,8 +810,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
-		const handleError = () => {
-			return new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> => {
+			return new Promise<any>((resolve, _reject) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
@@ -847,8 +847,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
-		const handleError = () => {
-			return new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> => {
+			return new Promise<any>((resolve, _reject) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
@@ -884,7 +884,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
-		const handleError = () => {
+		const handleError = (): Promise<any> => {
 			return new Promise<any>((resolve) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
@@ -924,8 +924,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
-		const handleError = () => {
-			return new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> => {
+			return new Promise<any>((resolve, _reject) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
@@ -963,8 +963,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
-		const handleError = () => {
-			return new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> => {
+			return new Promise<any>((resolve, _reject) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
@@ -1002,8 +1002,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
-		const handleError = () => {
-			return new Promise<any>((resolve, reject) => {
+		const handleError = (): Promise<any> => {
+			return new Promise<any>((resolve, _reject) => {
 				runner.errorTrigger.add((e: any) => {
 					errorCalledFn();
 					resolve(e);
@@ -1037,8 +1037,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
 		await runnerManager.startRunner(runner.runnerId);
 
-		const handleEvent = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.handle((l: any) => {
 					if (l === "failed_load_external_asset") {
@@ -1074,8 +1074,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
 
-		const handleEvent = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add((l) => {
 					if (l === "failed_load_external_asset") {
@@ -1111,7 +1111,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		await runnerManager.startRunner(runner.runnerId);
 
-		const handleEvent = () =>
+		const handleEvent = (): Promise<any> =>
 			new Promise<any>((resolve) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add((l) => {
@@ -1148,8 +1148,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
 
-		const handleEvent = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add((l) => {
 					if (l === "failed_load_external_asset") {
@@ -1186,8 +1186,8 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
 		await runnerManager.startRunner(runner.runnerId);
 
-		const handleEvent = () =>
-			new Promise<any>((resolve, reject) => {
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
 				// コンテンツ側での g.Game#external.send() を捕捉できる
 				runner.sendToExternalTrigger.add((l) => {
 					if (l === "failed_load_external_asset") {

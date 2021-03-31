@@ -6,56 +6,56 @@ export class NullRenderer extends g.Renderer {
 	}
 
 	drawImage(
-		surface: g.Surface,
-		offsetX: number,
-		offsetY: number,
-		width: number,
-		height: number,
-		destOffsetX: number,
-		destOffsetY: number
+		_surface: g.Surface,
+		_offsetX: number,
+		_offsetY: number,
+		_width: number,
+		_height: number,
+		_destOffsetX: number,
+		_destOffsetY: number
 	): void {
 		//
 	}
 
 	drawSprites(
-		surface: g.Surface,
-		offsetX: number[],
-		offsetY: number[],
-		width: number[],
-		height: number[],
-		canvasOffsetX: number[],
-		canvasOffsetY: number[],
-		count: number
+		_surface: g.Surface,
+		_offsetX: number[],
+		_offsetY: number[],
+		_width: number[],
+		_height: number[],
+		_canvasOffsetX: number[],
+		_canvasOffsetY: number[],
+		_count: number
 	): void {
 		//
 	}
 
 	drawSystemText(
-		text: string,
-		x: number,
-		y: number,
-		maxWidth: number,
-		fontSize: number,
-		textAlign: g.TextAlign,
-		textBaseline: g.TextBaseline,
-		textColor: string,
-		fontFamily: g.FontFamily,
-		strokeWidth: number,
-		strokeColor: string,
-		strokeOnly: boolean
+		_text: string,
+		_x: number,
+		_y: number,
+		_maxWidth: number,
+		_fontSize: number,
+		_textAlign: g.TextAlign,
+		_textBaseline: g.TextBaseline,
+		_textColor: string,
+		_fontFamily: g.FontFamily,
+		_strokeWidth: number,
+		_strokeColor: string,
+		_strokeOnly: boolean
 	): void {
 		//
 	}
 
-	translate(x: number, y: number): void {
+	translate(_x: number, _y: number): void {
 		//
 	}
 
-	transform(matrix: number[]): void {
+	transform(_matrix: number[]): void {
 		//
 	}
 
-	opacity(opacity: number): void {
+	opacity(_opacity: number): void {
 		//
 	}
 
@@ -67,19 +67,19 @@ export class NullRenderer extends g.Renderer {
 		//
 	}
 
-	fillRect(x: number, y: number, width: number, height: number, cssColor: string): void {
+	fillRect(_x: number, _y: number, _width: number, _height: number, _cssColor: string): void {
 		//
 	}
 
-	setCompositeOperation(operation: g.CompositeOperation): void {
+	setCompositeOperation(_operation: g.CompositeOperation): void {
 		//
 	}
 
-	setTransform(matrix: number[]): void {
+	setTransform(_matrix: number[]): void {
 		//
 	}
 
-	setOpacity(opacity: number): void {
+	setOpacity(_opacity: number): void {
 		//
 	}
 }

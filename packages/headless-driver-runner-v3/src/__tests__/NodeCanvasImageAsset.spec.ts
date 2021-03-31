@@ -1,6 +1,6 @@
+import * as path from "path";
 import { Canvas, loadImage } from "canvas";
 import sizeOf from "image-size";
-import * as path from "path";
 import * as pixelmatch from "pixelmatch";
 import { NodeCanvasImageAsset } from "../platform/graphics/canvas/NodeCanvasImageAsset";
 

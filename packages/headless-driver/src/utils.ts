@@ -1,5 +1,5 @@
-import { LoadFileOption } from "@akashic/headless-driver-runner";
 import { readFileSync } from "fs";
+import { LoadFileOption } from "@akashic/headless-driver-runner";
 import fetch from "node-fetch";
 
 /**
