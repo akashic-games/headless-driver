@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.5.12 (2021-04-01)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#241](https://github.com/akashic-games/headless-driver/pull/241) 【v1.5.12】内部コンポーネントの更新(engineFiles@3.0.11, engineFiles@2.1.53, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Other Change
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#225](https://github.com/akashic-games/headless-driver/pull/225) Add akashic eslint config ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 2
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.5.11 (2021-03-16)
 
 #### Enhancement
