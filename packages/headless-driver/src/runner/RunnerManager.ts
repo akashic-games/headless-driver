@@ -12,7 +12,7 @@ import * as ExecVmScriptV3 from "../ExecuteVmScriptV3";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
-import { loadFile } from "../utils";
+import { existsSync, loadFile } from "../utils";
 
 export interface CreateRunnerParameters {
 	playId: string;
@@ -49,7 +49,7 @@ interface GameConfiguration {
 	};
 }
 
-type SandboxRuntimeVerson = "1" | "2" | "3";
+type SandboxRuntimeVersion = "1" | "2" | "3";
 
 /**
  * Runner を管理するマネージャ。
@@ -118,7 +118,7 @@ export class RunnerManager {
 			const amflow = params.amflow;
 
 			let configurationBaseUrl: string | undefined;
-			let version: SandboxRuntimeVerson = "1";
+			let version: SandboxRuntimeVersion = "1";
 
 			// NOTE: `sandbox-runtime` の値を解決する。
 			// TODO: akashic-runtime の値を参照するようにする。
@@ -129,7 +129,7 @@ export class RunnerManager {
 					const _def: GameConfiguration = await this.loadJSON(_url);
 					defs.push(_def);
 				}
-				version = defs.reduce((acc: SandboxRuntimeVerson, def) => {
+				version = defs.reduce((acc: SandboxRuntimeVersion, def) => {
 					return (def.environment && def.environment["sandbox-runtime"]) || acc;
 				}, version);
 				configurationBaseUrl = url.resolve(engineConfiguration.content_url, "./");
@@ -357,6 +357,16 @@ export class RunnerManager {
 							}
 						}
 						return await loadFile(targetUrl, opt);
+					},
+					engineFiles: (): any | undefined => {
+						if (process.env.ENGINE_FILES_V3_PATH) {
+							const engineFilesPath = process.env.ENGINE_FILES_V3_PATH;
+							if (!existsSync(engineFilesPath)) {
+								throw new Error(`ENGINE_FILES_V3_PATH: ${engineFilesPath} was not found.`);
+							}
+							return require(engineFilesPath);
+						}
+						return undefined;
 					}
 				}
 			},

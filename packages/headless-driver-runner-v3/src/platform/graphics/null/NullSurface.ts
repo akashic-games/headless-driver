@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "@akashic/engine-files";
+import { akashicEngine as g } from "../../../engineFiles";
 import { NullRenderer } from "./NullRenderer";
 
 export class NullSurface implements g.Surface {

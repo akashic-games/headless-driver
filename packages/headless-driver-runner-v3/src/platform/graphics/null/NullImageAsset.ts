@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "@akashic/engine-files";
+import { akashicEngine as g } from "../../../engineFiles";
 import { Asset } from "../../assets/Asset";
 import { NullSurface } from "./NullSurface";
 

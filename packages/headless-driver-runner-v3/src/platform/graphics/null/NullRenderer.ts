@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "@akashic/engine-files";
+import { akashicEngine as g } from "../../../engineFiles";
 
 export class NullRenderer implements g.Renderer {
 	begin(): void {

@@ -1,5 +1,5 @@
-import { akashicEngine as g } from "@akashic/engine-files";
 import { Canvas } from "canvas";
+import { akashicEngine as g } from "../../../engineFiles";
 import { NodeCanvasGlyph } from "./NodeCanvasGlyph";
 import { NodeCanvasSurface } from "./NodeCanvasSurface";
 
