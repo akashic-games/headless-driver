@@ -329,7 +329,7 @@ describe("Runner の動作確認 (v3)", () => {
 	});
 
 	it("環境変数を利用して engine-files を上書きできる", async () => {
-		process.env.ENGINE_FILES_V3_PATH = path.resolve(__dirname, "../../node_modules/@akashic/engine-files/");
+		process.env.ENGINE_FILES_V3_PATH = path.resolve(__dirname, "../../../../node_modules/@akashic/engine-files/");
 
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
