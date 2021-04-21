@@ -1,7 +1,8 @@
+import * as fs from "fs";
 import { LoadFileOption } from "@akashic/headless-driver-runner";
 import { NodeVM } from "vm2";
 import { RunnerManager } from "../../runner/RunnerManager";
-import { existsSync, loadFile } from "../../utils";
+import { loadFile } from "../../utils";
 
 const gameJsonUrlV1 = process.env.GAME_JSON_URL_V1;
 const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2;
@@ -58,7 +59,7 @@ export class MockRunnerManager extends RunnerManager {
 					engineFiles: (): any | undefined => {
 						if (process.env.ENGINE_FILES_V3_PATH) {
 							const engineFilesPath = process.env.ENGINE_FILES_V3_PATH;
-							if (!existsSync(engineFilesPath)) {
+							if (!fs.existsSync(engineFilesPath)) {
 								throw new Error(`ENGINE_FILES_V3_PATH: ${engineFilesPath} was not found.`);
 							}
 							return require(engineFilesPath);

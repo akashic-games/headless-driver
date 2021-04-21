@@ -12,7 +12,7 @@ import * as ExecVmScriptV3 from "../ExecuteVmScriptV3";
 import { getSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { PlayManager } from "../play/PlayManager";
-import { existsSync, loadFile } from "../utils";
+import { loadFile } from "../utils";
 
 export interface CreateRunnerParameters {
 	playId: string;
@@ -361,7 +361,7 @@ export class RunnerManager {
 					engineFiles: (): any | undefined => {
 						if (process.env.ENGINE_FILES_V3_PATH) {
 							const engineFilesPath = process.env.ENGINE_FILES_V3_PATH;
-							if (!existsSync(engineFilesPath)) {
+							if (!fs.existsSync(engineFilesPath)) {
 								throw new Error(`ENGINE_FILES_V3_PATH: ${engineFilesPath} was not found.`);
 							}
 							return require(engineFilesPath);

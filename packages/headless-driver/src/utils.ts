@@ -27,15 +27,6 @@ export async function loadFile<T>(url: string, opt: LoadFileOption = {}): Promis
 	}
 }
 
-/**
- * ファイルが存在するかを確認する。
- * @param path ファイルパス
- * @returns ファイルが存在すれば `true`、 そうでなければ `false`。
- */
-export function existsSync(path: string): boolean {
-	return fs.existsSync(path);
-}
-
 export function isHttpProtocol(url: string): boolean {
 	return /^(http|https)\:\/\//.test(url);
 }
