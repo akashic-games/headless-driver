@@ -1,5 +1,5 @@
-import { akashicEngine as g, gameDriver as gdr } from "@akashic/engine-files";
 import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
+import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
 import { PlatformV3 } from "./platform/PlatformV3";
 
 export type RunnerV3Game = g.Game;
