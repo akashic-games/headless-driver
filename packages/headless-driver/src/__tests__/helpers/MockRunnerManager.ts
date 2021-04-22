@@ -1,4 +1,3 @@
-import { LoadFileOption } from "@akashic/headless-driver-runner";
 import { NodeVM } from "vm2";
 import { RunnerManager } from "../../runner/RunnerManager";
 import { loadFile } from "../../utils";
@@ -36,33 +35,7 @@ export class MockRunnerManager extends RunnerManager {
 	}
 
 	protected createVm(allowedUrls: (string | RegExp)[] | null): NodeVM {
-		const nvm = new NodeVM({
-			sandbox: {
-				trustedFunctions: {
-					loadFile: async (targetUrl: string, opt: LoadFileOption = {}) => {
-						if (allowedUrls != null) {
-							const isAllowedUrl = allowedUrls.some((u) => {
-								if (typeof u === "string") {
-									return targetUrl.startsWith(u);
-								} else if (u instanceof RegExp) {
-									return u.test(targetUrl);
-								}
-								return false;
-							});
-							if (!isAllowedUrl) {
-								throw new Error(`Not allowed to read this URL. ${targetUrl}`);
-							}
-						}
-						return await loadFile(targetUrl, opt);
-					}
-				}
-			},
-			require: {
-				context: "sandbox",
-				external: true,
-				builtin: [] // 何も設定しない。require() が必要な場合は sandboxの外側で実行される trustedFunctions で定義する。
-			}
-		});
+		const nvm = super.createVm(allowedUrls);
 		this.nvm = nvm;
 		return nvm;
 	}

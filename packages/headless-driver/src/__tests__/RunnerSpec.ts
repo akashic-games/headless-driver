@@ -327,6 +327,29 @@ describe("Runner の動作確認 (v3)", () => {
 
 		runner.stop();
 	});
+
+	it("環境変数を利用して engine-files を上書きできる", async () => {
+		process.env.ENGINE_FILES_V3_PATH = path.resolve(__dirname, "../../../../node_modules/@akashic/engine-files/");
+
+		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
+
+		await runner.start();
+		runner.pause();
+
+		const logs: string[] = [];
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "scene_update") logs.push(l);
+		});
+
+		runner.step();
+		runner.step();
+		runner.step();
+		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
+
+		runner.stop();
+
+		delete process.env.ENGINE_FILES_V3_PATH;
+	});
 });
 
 describe("Runner の動作確認 (異常系)", () => {

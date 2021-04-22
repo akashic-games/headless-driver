@@ -1,5 +1,5 @@
-import { akashicEngine as g } from "@akashic/engine-files";
 import { loadFileInSandbox } from "@akashic/headless-driver-runner";
+import { akashicEngine as g } from "../../engineFiles";
 import { Asset } from "./Asset";
 
 export class NodeTextAsset extends Asset implements g.TextAsset {

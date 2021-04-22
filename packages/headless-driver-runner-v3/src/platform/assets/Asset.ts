@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "@akashic/engine-files";
+import { akashicEngine as g } from "../../engineFiles";
 
 export abstract class Asset implements g.Asset {
 	abstract type: string;

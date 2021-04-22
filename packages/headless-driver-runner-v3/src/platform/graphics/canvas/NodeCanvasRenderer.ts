@@ -1,5 +1,5 @@
-import { akashicEngine as g } from "@akashic/engine-files";
 import { CanvasRenderingContext2D } from "canvas";
+import { akashicEngine as g } from "../../../engineFiles";
 import { CompositeOperationConverter } from "./CompositeOperationConverter";
 
 export class NodeCanvasRenderer implements g.Renderer {

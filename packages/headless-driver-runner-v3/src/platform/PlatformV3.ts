@@ -1,5 +1,5 @@
-import { akashicEngine as g, pdi } from "@akashic/engine-files";
 import { Looper, Platform, PlatformParameters } from "@akashic/headless-driver-runner";
+import { akashicEngine as g, pdi } from "../engineFiles";
 import { NullSurface } from "./graphics/null/NullSurface";
 import { ResourceFactory } from "./ResourceFactory";
 

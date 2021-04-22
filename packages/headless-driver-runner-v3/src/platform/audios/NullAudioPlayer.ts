@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "@akashic/engine-files";
+import { akashicEngine as g } from "../../engineFiles";
 
 export class NullAudioPlayer implements g.AudioPlayer {
 	currentAudio: g.AudioAsset | undefined;

@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "@akashic/engine-files";
+import { akashicEngine as g } from "../../engineFiles";
 
 export class NullVideoPlayer implements g.VideoPlayer {
 	currentVideo: g.VideoAsset | undefined;
