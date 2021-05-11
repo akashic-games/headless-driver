@@ -11,6 +11,8 @@ export interface RunnerParameters {
 	runnerId: string;
 	amflow: AMFlow;
 	executionMode: RunnerExecutionMode;
+	trusted?: boolean;
+	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 	external?: { [key: string]: string };
 	gameArgs?: any;
 	player?: RunnerPlayer;
@@ -74,6 +76,14 @@ export abstract class Runner {
 
 	get executionMode(): RunnerExecutionMode {
 		return this.params.executionMode;
+	}
+
+	get trusted(): boolean {
+		return !!this.params.trusted;
+	}
+
+	get loadFileHandler(): (url: string, callback: (err: Error | null, data?: string) => void) => void {
+		return this.params.loadFileHandler;
 	}
 
 	get gameArgs(): any {

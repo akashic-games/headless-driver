@@ -12,7 +12,10 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 
 	constructor(param: PlatformParameters) {
 		super(param);
-		this.resFac = new ResourceFactory((e: Error) => this.errorHandler(e));
+		this.resFac = new ResourceFactory({
+			errorHandler: (e: Error) => this.errorHandler(e),
+			loadFileHandler: param.loadFileHandler
+		});
 	}
 
 	getResourceFactory(): g.ResourceFactory {

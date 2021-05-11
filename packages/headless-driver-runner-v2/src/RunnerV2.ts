@@ -155,13 +155,14 @@ export class RunnerV2 extends Runner {
 				assetBaseUrl: this.assetBaseUrl,
 				amflow: this.amflow,
 				sendToExternalHandler: (data: any) => this.onSendedToExternal(data),
-				errorHandler: (e: any) => this.onError(e)
+				errorHandler: (e) => this.onError(e),
+				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)
 			});
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
 				player,
-				errorHandler: (e: any) => this.onError(e)
+				errorHandler: (e) => this.onError(e)
 			});
 
 			this.driver = driver;

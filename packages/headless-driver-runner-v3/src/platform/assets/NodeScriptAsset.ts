@@ -1,6 +1,12 @@
-import { loadFileInSandbox } from "@akashic/headless-driver-runner";
 import { akashicEngine as g } from "../../engineFiles";
 import { Asset } from "./Asset";
+
+export interface NodeScriptAssetParameters {
+	id: string;
+	path: string;
+	errorHandler: (err: any) => void;
+	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+}
 
 export class NodeScriptAsset extends Asset implements g.ScriptAsset {
 	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
@@ -9,21 +15,33 @@ export class NodeScriptAsset extends Asset implements g.ScriptAsset {
 	type: "script" = "script";
 	script: string = "";
 	private errorHandler: (err: any) => void;
+	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 
-	constructor(id: string, path: string, errorHandler: (err: any) => void) {
-		super(id, path);
-		this.errorHandler = errorHandler;
+	constructor(param: NodeScriptAssetParameters) {
+		super(param.id, param.path);
+		this.errorHandler = param.errorHandler;
+		this.loadFileHandler = param.loadFileHandler;
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
-		loadFileInSandbox<string>(this.path, { json: false })
-			.then((text) => {
+		this.loadFileHandler(this.path, (err, text) => {
+			if (err) {
+				loader._onAssetError(this, {
+					name: "AssetLoadError",
+					message: err.message,
+					retriable: false
+				});
+			} else if (!text) {
+				loader._onAssetError(this, {
+					name: "AssetLoadError",
+					message: "NoteScriptAsset#_load(): no text data loaded",
+					retriable: false
+				});
+			} else {
 				this.script = text;
-				return loader._onAssetLoad(this);
-			})
-			.catch((e) => {
-				loader._onAssetError(this, e);
-			});
+				loader._onAssetLoad(this);
+			}
+		});
 	}
 
 	execute(execEnv: g.ScriptAssetRuntimeValue): any {
