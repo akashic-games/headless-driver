@@ -28,7 +28,7 @@ export class NodeTextAsset extends Asset implements g.TextAsset {
 			} else if (!text) {
 				loader._onAssetError(this, {
 					name: "AssetLoadError",
-					message: "NoteScriptAsset#_load(): no text data loaded",
+					message: "NoteScriptAsset#_load(): No data received",
 					retriable: false
 				});
 			} else {
