@@ -29,7 +29,7 @@ export interface CreateRunnerParameters {
 	/**
 	 * 外部アセットとして許可する URL。
 	 * この URL と先頭一致しない外部アセットへのアクセスはエラーとなる。
-	 * null が指定された場合は全ての外部アクセスへのアクセスを許可する。
+	 * null が指定された場合は全ての外部アセットへのアクセスを許可する。
 	 */
 	allowedUrls: (string | RegExp)[] | null;
 	/**
