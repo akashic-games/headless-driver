@@ -21,7 +21,7 @@ export class NodeScriptAsset extends g.ScriptAsset {
 
 	_load(loader: g.AssetLoadHandler): void {
 		this.loadFileHandler(this.path, (err, text) => {
-			// NOTE: v2 のため型については精査しない
+			// NOTE: 過去バージョンのため型については精査しない
 			if (err) {
 				loader._onAssetError(this, err as any);
 			} else {
