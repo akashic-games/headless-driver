@@ -1421,10 +1421,6 @@ describe("trusted コンテンツの動作テスト: 異常系", () => {
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 		await runnerManager.startRunner(runner.runnerId);
 
-		runner.errorTrigger.add((e) => {
-			throw e;
-		});
-
 		const fn = jest.fn();
 		const handleError = (): Promise<Error> => {
 			return new Promise<Error>((resolve, _reject) => {

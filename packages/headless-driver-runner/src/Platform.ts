@@ -1,4 +1,5 @@
 import { AMFlow } from "@akashic/amflow";
+import { RunnerRenderingMode } from "./types";
 
 export interface PlatformParameters {
 	assetBaseUrl: string;
@@ -6,6 +7,7 @@ export interface PlatformParameters {
 	amflow: AMFlow;
 	sendToExternalHandler: (data: any) => void;
 	trusted?: boolean;
+	renderingMode?: RunnerRenderingMode;
 	errorHandler: (err: any) => void;
 	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 }
@@ -15,6 +17,7 @@ export abstract class Platform {
 	assetBaseUrl: string;
 	configurationBaseUrl: string | undefined;
 	trusted: boolean;
+	renderingMode: RunnerRenderingMode;
 
 	protected sendToExternalHandler: (data: any) => void;
 	protected errorHandler: (err: any) => void;
@@ -25,6 +28,7 @@ export abstract class Platform {
 		this.configurationBaseUrl = param.configurationBaseUrl;
 		this.amflow = param.amflow;
 		this.trusted = !!param.trusted;
+		this.renderingMode = param.renderingMode ?? "none";
 		this.sendToExternalHandler = param.sendToExternalHandler;
 		this.errorHandler = param.errorHandler;
 		this.loadFileHandler = param.loadFileHandler;

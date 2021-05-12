@@ -1,5 +1,6 @@
 import { AMFlow } from "@akashic/amflow";
 import { Trigger } from "@akashic/trigger";
+import { RunnerExecutionMode, RunnerPlayer, RunnerPointEvent, RunnerRenderingMode } from "./types";
 
 export interface RunnerParameters {
 	contentUrl: string;
@@ -12,27 +13,12 @@ export interface RunnerParameters {
 	amflow: AMFlow;
 	executionMode: RunnerExecutionMode;
 	trusted?: boolean;
+	renderingMode?: RunnerRenderingMode;
 	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 	external?: { [key: string]: string };
 	gameArgs?: any;
 	player?: RunnerPlayer;
 	externalValue?: { [key: string]: any };
-}
-
-export type RunnerExecutionMode = "active" | "passive";
-
-export interface RunnerPointEvent {
-	type: "down" | "move" | "up";
-	identifier: number;
-	offset: {
-		x: number;
-		y: number;
-	};
-}
-
-export interface RunnerPlayer {
-	id: string;
-	name: string;
 }
 
 export abstract class Runner {
@@ -80,6 +66,10 @@ export abstract class Runner {
 
 	get trusted(): boolean {
 		return !!this.params.trusted;
+	}
+
+	get renderingMode(): RunnerRenderingMode {
+		return this.params.renderingMode ?? "none";
 	}
 
 	get loadFileHandler(): (url: string, callback: (err: Error | null, data?: string) => void) => void {
@@ -136,6 +126,10 @@ export abstract class Runner {
 	 * @param event 発火させるポイントイベント
 	 */
 	abstract firePointEvent(event: RunnerPointEvent): void;
+	/**
+	 * 実行中コンテンツのプライマリサーフェスを取得する。
+	 */
+	abstract getPrimarySurface(): any;
 
 	protected onError(error: Error): void {
 		this.stop();
