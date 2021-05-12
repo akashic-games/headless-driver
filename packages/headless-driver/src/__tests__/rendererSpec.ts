@@ -59,7 +59,7 @@ describe("コンテンツのレンダリングテスト", () => {
 		const width = game.width;
 		const height = game.height;
 		const canvas = runner.getPrimarySurfaceCanvas();
-		const runnerContext = runner.getPrimarySurfaceCanvas().getContext("2d");
+		const runnerContext = canvas.getContext("2d");
 
 		// unlink exists files
 		[
