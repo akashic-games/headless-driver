@@ -33,7 +33,7 @@ export class PlatformV1 extends Platform implements pdi.Platform {
 
 	getPrimarySurface(): g.Surface {
 		if (this.primarySurface == null) {
-			throw new Error("Cannot call Platform#getPrimarySurface() before setRendererRequirement");
+			throw new Error("PlatformV1#getPrimarySurface(): Primary surface has not been initialized yet");
 		}
 		return this.primarySurface;
 	}
