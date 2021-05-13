@@ -78,12 +78,13 @@ describe("コンテンツのレンダリングテスト", () => {
 			const missingPixels = pixelmatch(expected.data, actual.data, diff.data, width, height, {
 				threshold
 			});
+			expect(missingPixels).toBe(0);
+
 			const diffPNG = PNG.sync.write(diff);
 			fs.writeFileSync(path.join(diffPath, filenameTransformer(i)), diffPNG);
 			fs.writeFileSync(path.join(actualPath, filenameTransformer(i)), canvas.toBuffer());
 
 			runner.step();
-			expect(missingPixels).toBe(0);
 		});
 
 		runner.stop();
