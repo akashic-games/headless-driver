@@ -55,6 +55,7 @@ describe("コンテンツのレンダリングテスト", () => {
 
 		const game = (await runner.start()) as RunnerV3Game;
 		runner.pause();
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const width = game.width;
 		const height = game.height;

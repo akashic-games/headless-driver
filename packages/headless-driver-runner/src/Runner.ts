@@ -1,6 +1,6 @@
 import { AMFlow } from "@akashic/amflow";
 import { Trigger } from "@akashic/trigger";
-import { RunnerExecutionMode, RunnerPlayer, RunnerPointEvent, RunnerRenderingMode } from "./types";
+import { RunnerAdvanceConditionFunc, RunnerExecutionMode, RunnerPlayer, RunnerPointEvent, RunnerRenderingMode } from "./types";
 
 export interface RunnerParameters {
 	contentUrl: string;
@@ -130,6 +130,30 @@ export abstract class Runner {
 	 * 実行中コンテンツのプライマリサーフェスを取得する。
 	 */
 	abstract getPrimarySurface(): any;
+
+	/**
+	 * 引数に指定した関数が真を返すまでゲームの状態を進める。
+	 * @param condition 進めるまでの条件となる関数。
+	 * @param timeout タイムアウトまでのミリ秒数。省略時は `5000` 。ゲーム内時間ではなく実時間である点に注意。
+	 */
+	async advanceUntil(condition: RunnerAdvanceConditionFunc, timeout: number = 5000): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const limit = Date.now() + timeout;
+			const handler = (): void => {
+				if (limit < Date.now()) {
+					return void reject(new Error("Runner#advanceUntil(): processing timeout"));
+				}
+				try {
+					if (condition()) return void resolve();
+					this.step();
+				} catch (e) {
+					return void reject(e);
+				}
+				setImmediate(handler);
+			};
+			handler();
+		});
+	}
 
 	protected onError(error: Error): void {
 		this.stop();
