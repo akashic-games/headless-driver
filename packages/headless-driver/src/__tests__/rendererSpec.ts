@@ -67,9 +67,7 @@ describe("コンテンツのレンダリングテスト", () => {
 			...fs.readdirSync(diffPath).map((filename) => path.join(diffPath, filename))
 		]
 			.filter((filepath) => fs.statSync(filepath).isFile() && path.extname(filepath) === ".png")
-			.forEach((filepath) => {
-				fs.unlinkSync(filepath);
-			});
+			.forEach(fs.unlinkSync);
 
 		// compare and write the result
 		fs.readdirSync(expectedPath).forEach((filename, i) => {
