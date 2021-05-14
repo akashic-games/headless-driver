@@ -8,11 +8,18 @@ import { NullAudioPlayer } from "./NullAudioPlayer";
 import { NullGlyphFactory } from "./NullGlyphFactory";
 import { NullSurface } from "./NullSurface";
 
+export interface ResourceFactoryParameters {
+	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	errorHandler: (err: any) => void;
+}
+
 export class ResourceFactory extends g.ResourceFactory {
+	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 	private errorHandler: (err: any) => void;
 
-	constructor(errorHandler: (err: any) => void) {
+	constructor({ loadFileHandler, errorHandler }: ResourceFactoryParameters) {
 		super();
+		this.loadFileHandler = loadFileHandler;
 		this.errorHandler = errorHandler;
 	}
 
@@ -48,11 +55,20 @@ export class ResourceFactory extends g.ResourceFactory {
 	}
 
 	createTextAsset(id: string, assetPath: string): g.TextAsset {
-		return new NodeTextAsset(id, assetPath);
+		return new NodeTextAsset({
+			id,
+			path: assetPath,
+			loadFileHandler: this.loadFileHandler
+		});
 	}
 
 	createScriptAsset(id: string, assetPath: string): g.ScriptAsset {
-		return new NodeScriptAsset(id, assetPath, this.errorHandler);
+		return new NodeScriptAsset({
+			id,
+			path: assetPath,
+			errorHandler: this.errorHandler,
+			loadFileHandler: this.loadFileHandler
+		});
 	}
 
 	createSurface(width: number, height: number): g.Surface {
