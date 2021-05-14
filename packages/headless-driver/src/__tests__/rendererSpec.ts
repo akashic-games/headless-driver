@@ -40,7 +40,7 @@ describe("コンテンツのレンダリングテスト", () => {
 			executionMode: "active",
 			allowedUrls: null,
 			trusted: true,
-			renderingMode: "node-canvas"
+			renderingMode: "canvas"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 

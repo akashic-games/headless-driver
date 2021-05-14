@@ -16,7 +16,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 		// (このモジュールの利用元である headless-driver が NodeVM 上で起動する仕様上の制限のための苦肉の策)
 		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
 		const ResourceFactory =
-			this.renderingMode === "node-canvas" && this.trusted
+			this.renderingMode === "canvas" && this.trusted
 				? require("./NodeCanvasResourceFactory").NodeCanvasResourceFactory
 				: require("./NullResourceFactory").NullResourceFactory;
 		/* eslint-enable */
@@ -34,7 +34,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 	setRendererRequirement(requirement: pdi.RendererRequirement): void {
 		this.rendererReq = requirement;
 
-		if (this.renderingMode === "node-canvas" && this.trusted) {
+		if (this.renderingMode === "canvas" && this.trusted) {
 			/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
 			const Canvas = require("canvas").Canvas;
 			const NodeCanvasSurface = require("./graphics/canvas/NodeCanvasSurface").NodeCanvasSurface;

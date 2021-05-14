@@ -28,8 +28,8 @@ export interface CreateRunnerParameters {
 	trusted?: boolean;
 	/**
 	 * レンダリングモード。
-	 * `"node-canvas"` を指定するとプライマリサーフェスの描画内容を `Runner#getPrimarySurface()` を経由して取得できる。
-	 * `"node-canvas"` を指定した場合 `trusted` を `true` にしなければならない。また、利用側で node-canvas をインストールしなければならない。
+	 * `"canvas"` を指定するとプライマリサーフェスの描画内容を `Runner#getPrimarySurface()` を経由して取得できる。
+	 * `"canvas"` を指定した場合 `trusted` を `true` にしなければならない。また、利用側で node-canvas をインストールしなければならない。
 	 * 初期値は `"none"` 。
 	 */
 	renderingMode?: RunnerRenderingMode;

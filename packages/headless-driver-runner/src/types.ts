@@ -1,6 +1,6 @@
 export type RunnerExecutionMode = "active" | "passive";
 
-export type RunnerRenderingMode = "none" | "node-canvas";
+export type RunnerRenderingMode = "none" | "canvas";
 
 export type RunnerAdvanceConditionFunc = () => boolean;
 

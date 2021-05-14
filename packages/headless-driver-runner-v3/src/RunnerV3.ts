@@ -154,7 +154,7 @@ export class RunnerV3 extends Runner {
 		if (!this.platform) {
 			throw new Error("RunnerV3#getPrimarySurface(): Platform has not been initialized");
 		}
-		if (this.renderingMode === "node-canvas") {
+		if (this.renderingMode === "canvas") {
 			return this.platform.getPrimarySurface() as NodeCanvasSurface;
 		}
 
@@ -166,8 +166,8 @@ export class RunnerV3 extends Runner {
 	 * @returns node-canvas の Canvas
 	 */
 	getPrimarySurfaceCanvas(): Canvas {
-		if (this.renderingMode !== "node-canvas") {
-			throw Error("RunnerV3#getPrimarySurface(): Not supported except in the case of renderingMode === 'node-canvas");
+		if (this.renderingMode !== "canvas") {
+			throw Error("RunnerV3#getPrimarySurface(): Not supported except in the case of renderingMode === 'canvas");
 		}
 		return this.getPrimarySurface()._drawable;
 	}
