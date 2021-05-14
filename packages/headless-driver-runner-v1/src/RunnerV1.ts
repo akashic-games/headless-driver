@@ -8,7 +8,8 @@ export type RunnerV1_g = typeof g;
 export type RunnerV1Game = g.Game;
 
 export class RunnerV1 extends Runner {
-	engineVersion: string = "1";
+	readonly engineVersion: string = "1";
+	readonly g: RunnerV1_g = g;
 
 	private driver: gdr.GameDriver | null = null;
 	private platform: PlatformV1 | null = null;
@@ -140,10 +141,6 @@ export class RunnerV1 extends Runner {
 
 	getPrimarySurface(): never {
 		throw new Error("RunnerV1#getPrimarySurface(): Not supported");
-	}
-
-	g(): RunnerV1_g {
-		return g;
 	}
 
 	private initGameDriver(): Promise<RunnerV1Game> {

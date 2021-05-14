@@ -8,7 +8,8 @@ export type RunnerV2_g = typeof g;
 export type RunnerV2Game = g.Game;
 
 export class RunnerV2 extends Runner {
-	engineVersion: string = "2";
+	readonly engineVersion: string = "2";
+	readonly g: RunnerV2_g = g;
 
 	private driver: gdr.GameDriver | null = null;
 	private platform: PlatformV2 | null = null;
@@ -67,10 +68,6 @@ export class RunnerV2 extends Runner {
 		}
 
 		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
-	}
-
-	g(): RunnerV2_g {
-		return g;
 	}
 
 	async advance(ms: number): Promise<void> {

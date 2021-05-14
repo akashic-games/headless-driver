@@ -11,7 +11,8 @@ export type RunnerV3_g = typeof g;
 export type RunnerV3Game = g.Game;
 
 export class RunnerV3 extends Runner {
-	engineVersion: string = "3";
+	readonly engineVersion: string = "3";
+	readonly g: RunnerV3_g = g;
 
 	private driver: gdr.GameDriver | null = null;
 	private platform: PlatformV3 | null = null;
@@ -172,10 +173,6 @@ export class RunnerV3 extends Runner {
 			throw Error("RunnerV3#getPrimarySurface(): Not supported except in the case of renderingMode === 'node-canvas");
 		}
 		return this.getPrimarySurface()._drawable;
-	}
-
-	g(): RunnerV3_g {
-		return g;
 	}
 
 	private initGameDriver(): Promise<RunnerV3Game> {

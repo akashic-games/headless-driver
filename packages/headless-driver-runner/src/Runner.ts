@@ -22,7 +22,13 @@ export interface RunnerParameters {
 }
 
 export abstract class Runner {
-	abstract engineVersion: string;
+	abstract readonly engineVersion: string;
+
+	/**
+	 * g の名前空間のオブジェクト。`g.game` は `undefined` であることに注意。
+	 */
+	abstract readonly g: any;
+
 	errorTrigger: Trigger<any> = new Trigger();
 	sendToExternalTrigger: Trigger<any> = new Trigger();
 
@@ -132,11 +138,6 @@ export abstract class Runner {
 	 * @returns プライマリサーフェスのインスタンス。
 	 */
 	abstract getPrimarySurface(): any;
-	/**
-	 * g の名前空間を取得する。`g.game` は `undefined` であることに注意。
-	 * @returns `g` の名前空間のオブジェクト。
-	 */
-	 abstract g(): any;
 
 	/**
 	 * 引数に指定した関数が真を返すまでゲームの状態を進める。

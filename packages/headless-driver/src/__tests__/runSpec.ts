@@ -76,8 +76,8 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(data).toBe("reached right");
 
 		// インスタンスの生成元が同一であることを確認
-		expect(game instanceof runner.g().Game).toBe(true);
-		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
@@ -181,8 +181,8 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(data).toBe("reached right");
 
 		// インスタンスの生成元が同一であることを確認
-		expect(game instanceof runner.g().Game).toBe(true);
-		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
@@ -284,8 +284,8 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(data).toBe("reached right");
 
 		// インスタンスの生成元が同一であることを確認
-		expect(game instanceof runner.g().Game).toBe(true);
-		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
@@ -578,8 +578,8 @@ describe("untrusted コンテンツの動作テスト (ローカルパス)", () 
 		expect(game.external.hoge()).toBe("hoge1");
 		expect(game.external.foo()).toBe("foo1");
 
-		expect(game instanceof runner.g().Game).toBe(true);
-		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		runner.stop();
 	});
@@ -617,8 +617,8 @@ describe("untrusted コンテンツの動作テスト (ローカルパス)", () 
 		expect(game.external.hoge()).toBe("hoge2");
 		expect(game.external.foo()).toBe("foo2");
 
-		expect(game instanceof runner.g().Game).toBe(true);
-		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		runner.stop();
 	});
@@ -656,8 +656,8 @@ describe("untrusted コンテンツの動作テスト (ローカルパス)", () 
 		expect(game.external.hoge()).toBe("hoge3");
 		expect(game.external.foo()).toBe("foo3");
 
-		expect(game instanceof runner.g().Game).toBe(true);
-		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		runner.stop();
 	});
