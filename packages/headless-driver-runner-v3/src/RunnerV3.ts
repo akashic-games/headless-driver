@@ -5,6 +5,9 @@ import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSur
 import type { NullSurface } from "./platform/graphics/null/NullSurface";
 import { PlatformV3 } from "./platform/PlatformV3";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type RunnerV3_g = typeof g;
+
 export type RunnerV3Game = g.Game;
 
 export class RunnerV3 extends Runner {
@@ -15,7 +18,6 @@ export class RunnerV3 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	// NOTE: 暫定的にデバッグ用として g.Game を返している
 	async start(): Promise<RunnerV3Game | null> {
 		let game: RunnerV3Game | null = null;
 
@@ -170,6 +172,10 @@ export class RunnerV3 extends Runner {
 			throw Error("RunnerV3#getPrimarySurface(): Not supported except in the case of renderingMode === 'node-canvas");
 		}
 		return this.getPrimarySurface()._drawable;
+	}
+
+	g(): RunnerV3_g {
+		return g;
 	}
 
 	private initGameDriver(): Promise<RunnerV3Game> {

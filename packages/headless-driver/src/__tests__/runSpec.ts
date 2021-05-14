@@ -1,7 +1,5 @@
 import * as path from "path";
-import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
-import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
-import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
+import { RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "..";
 import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
@@ -76,6 +74,10 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 
 		const data = await handleData();
 		expect(data).toBe("reached right");
+
+		// インスタンスの生成元が同一であることを確認
+		expect(game instanceof runner.g().Game).toBe(true);
+		expect(game.scene() instanceof runner.g().Scene).toBe(true);
 
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
@@ -178,6 +180,10 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		const data = await handleData();
 		expect(data).toBe("reached right");
 
+		// インスタンスの生成元が同一であることを確認
+		expect(game instanceof runner.g().Game).toBe(true);
+		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
 			type: "down",
@@ -276,6 +282,10 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 
 		const data = await handleData();
 		expect(data).toBe("reached right");
+
+		// インスタンスの生成元が同一であることを確認
+		expect(game instanceof runner.g().Game).toBe(true);
+		expect(game.scene() instanceof runner.g().Scene).toBe(true);
 
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
@@ -562,16 +572,18 @@ describe("untrusted コンテンツの動作テスト (ローカルパス)", () 
 				});
 			});
 
-		try {
-			const game = (await runner.start())!;
-			const data = await handleData();
-			expect(data).toBe("reached right");
-			expect(game.external.hoge()).toBe("hoge1");
-			expect(game.external.foo()).toBe("foo1");
-		} finally {
-			runner.stop();
-		}
+		const game = (await runner.start())!;
+		const data = await handleData();
+		expect(data).toBe("reached right");
+		expect(game.external.hoge()).toBe("hoge1");
+		expect(game.external.foo()).toBe("foo1");
+
+		expect(game instanceof runner.g().Game).toBe(true);
+		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+
+		runner.stop();
 	});
+
 	it("ローカルの game.json から Akashic V2 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
@@ -604,6 +616,10 @@ describe("untrusted コンテンツの動作テスト (ローカルパス)", () 
 		expect(data).toBe("reached right");
 		expect(game.external.hoge()).toBe("hoge2");
 		expect(game.external.foo()).toBe("foo2");
+
+		expect(game instanceof runner.g().Game).toBe(true);
+		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+
 		runner.stop();
 	});
 
@@ -639,6 +655,10 @@ describe("untrusted コンテンツの動作テスト (ローカルパス)", () 
 		expect(data).toBe("reached right");
 		expect(game.external.hoge()).toBe("hoge3");
 		expect(game.external.foo()).toBe("foo3");
+
+		expect(game instanceof runner.g().Game).toBe(true);
+		expect(game.scene() instanceof runner.g().Scene).toBe(true);
+
 		runner.stop();
 	});
 });

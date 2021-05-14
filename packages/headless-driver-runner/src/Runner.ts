@@ -98,6 +98,7 @@ export abstract class Runner {
 
 	/**
 	 * Runner を開始する。
+	 * @returns `g.game` のインスタンス。起動に失敗した場合は `null` 。
 	 */
 	abstract start(): any;
 	/**
@@ -128,8 +129,14 @@ export abstract class Runner {
 	abstract firePointEvent(event: RunnerPointEvent): void;
 	/**
 	 * 実行中コンテンツのプライマリサーフェスを取得する。
+	 * @returns プライマリサーフェスのインスタンス。
 	 */
 	abstract getPrimarySurface(): any;
+	/**
+	 * g の名前空間を取得する。`g.game` は `undefined` であることに注意。
+	 * @returns `g` の名前空間のオブジェクト。
+	 */
+	 abstract g(): any;
 
 	/**
 	 * 引数に指定した関数が真を返すまでゲームの状態を進める。

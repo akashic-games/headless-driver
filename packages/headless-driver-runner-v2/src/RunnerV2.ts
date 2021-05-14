@@ -2,6 +2,9 @@ import { akashicEngine as g, gameDriver as gdr, pdi } from "@akashic/engine-file
 import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
 import { PlatformV2 } from "./platform/PlatformV2";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type RunnerV2_g = typeof g;
+
 export type RunnerV2Game = g.Game;
 
 export class RunnerV2 extends Runner {
@@ -12,7 +15,6 @@ export class RunnerV2 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	// NOTE: 暫定的にデバッグ用として g.Game を返している
 	async start(): Promise<RunnerV2Game | null> {
 		let game: RunnerV2Game | null = null;
 
@@ -65,6 +67,10 @@ export class RunnerV2 extends Runner {
 		}
 
 		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
+	}
+
+	g(): RunnerV2_g {
+		return g;
 	}
 
 	async advance(ms: number): Promise<void> {
