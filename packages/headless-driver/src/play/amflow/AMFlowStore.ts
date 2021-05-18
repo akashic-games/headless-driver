@@ -4,11 +4,7 @@ import { Trigger } from "@akashic/trigger";
 import { sha256 } from "js-sha256";
 import cloneDeep = require("lodash.clonedeep");
 import { createError } from "./ErrorFactory";
-
-export interface DumpedPlaylog {
-	tickList: TickList | null;
-	startPoints: StartPoint[];
-}
+import { DumpedPlaylog } from "./types";
 
 /**
  * AMFlow のストア。

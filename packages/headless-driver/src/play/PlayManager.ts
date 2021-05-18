@@ -1,6 +1,6 @@
 import { Permission } from "@akashic/amflow";
 import { AMFlowClient } from "./amflow/AMFlowClient";
-import { DumpedPlaylog } from "./amflow/AMFlowStore";
+import { DumpedPlaylog } from "./amflow/types";
 import { AMFlowClientManager } from "./AMFlowClientManager";
 import { ContentLocation } from "./Content";
 import { Play, PlayStatus } from "./Play";
