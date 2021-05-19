@@ -1,5 +1,6 @@
 import { AMFlow } from "@akashic/amflow";
 import { Trigger } from "@akashic/trigger";
+import { Platform } from "./Platform";
 import { RunnerAdvanceConditionFunc, RunnerExecutionMode, RunnerPlayer, RunnerPointEvent, RunnerRenderingMode } from "./types";
 
 export interface RunnerParameters {
@@ -29,7 +30,10 @@ export abstract class Runner {
 	 */
 	abstract readonly g: any;
 
-	errorTrigger: Trigger<any> = new Trigger();
+	abstract platform: Platform | null;
+
+	errorTrigger: Trigger<Error> = new Trigger();
+
 	sendToExternalTrigger: Trigger<any> = new Trigger();
 
 	private params: RunnerParameters;

@@ -10,9 +10,9 @@ export type RunnerV1Game = g.Game;
 export class RunnerV1 extends Runner {
 	readonly engineVersion: string = "1";
 	readonly g: RunnerV1_g = g;
+	platform: PlatformV1 | null = null;
 
 	private driver: gdr.GameDriver | null = null;
-	private platform: PlatformV1 | null = null;
 	private fps: number | null = null;
 	private running: boolean = false;
 
