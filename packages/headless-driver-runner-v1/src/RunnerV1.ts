@@ -136,6 +136,10 @@ export class RunnerV1 extends Runner {
 		});
 	}
 
+	getPrimarySurface(): never {
+		throw new Error("RunnerV1#getPrimarySurface(): Not supported");
+	}
+
 	private initGameDriver(): Promise<RunnerV1Game> {
 		return new Promise<RunnerV1Game>((resolve, reject) => {
 			if (this.driver) {
@@ -154,6 +158,8 @@ export class RunnerV1 extends Runner {
 				configurationBaseUrl: this.configurationBaseUrl,
 				assetBaseUrl: this.assetBaseUrl,
 				amflow: this.amflow,
+				trusted: this.trusted,
+				renderingMode: this.renderingMode,
 				sendToExternalHandler: (data: any) => this.onSendedToExternal(data),
 				errorHandler: (e) => this.onError(e),
 				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)

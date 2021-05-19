@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
-import { RunnerExecutionMode, RunnerParameters, RunnerPlayer } from "@akashic/headless-driver-runner";
+import { RunnerExecutionMode, RunnerParameters, RunnerPlayer, RunnerRenderingMode } from "@akashic/headless-driver-runner";
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
@@ -29,6 +29,13 @@ export interface CreateRunnerParameters {
 	 * 初期値は `false` 。
 	 */
 	trusted?: boolean;
+	/**
+	 * レンダリングモード。
+	 * `"canvas"` を指定するとプライマリサーフェスの描画内容を `Runner#getPrimarySurface()` を経由して取得できる。
+	 * `"canvas"` を指定した場合 `trusted` を `true` にしなければならない。また、利用側で node-canvas をインストールしなければならない。
+	 * 初期値は `"none"` 。
+	 */
+	renderingMode?: RunnerRenderingMode;
 	/**
 	 * 外部アセットとして許可する URL。
 	 * この URL と先頭一致しない外部アセットへのアクセスはエラーとなる。
@@ -159,6 +166,7 @@ export class RunnerManager {
 				amflow,
 				executionMode: params.executionMode,
 				trusted: params.trusted,
+				renderingMode: params.renderingMode,
 				loadFileHandler: this.createLoadFileHandler(params.allowedUrls),
 				external,
 				gameArgs: params.gameArgs,

@@ -8,16 +8,19 @@ import { NullImageAsset } from "./graphics/null/NullImageAsset";
 import { NullSurface } from "./graphics/null/NullSurface";
 import { NullVideoAsset } from "./videos/NullVideoAsset";
 
-export interface ResourceFactoryParameters {
+export interface NullResourceFactoryParameters {
 	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
-	errorHandler: (err: any) => void;
+	errorHandler: (err: Error) => void;
 }
 
-export class ResourceFactory implements g.ResourceFactory {
+/**
+ * 描画出力や音声再生機能を持たない最小限の ResourceFactory の実装。
+ */
+export class NullResourceFactory implements g.ResourceFactory {
 	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
-	private errorHandler: (err: any) => void;
+	private errorHandler: (err: Error) => void;
 
-	constructor({ loadFileHandler, errorHandler }: ResourceFactoryParameters) {
+	constructor({ loadFileHandler, errorHandler }: NullResourceFactoryParameters) {
 		this.loadFileHandler = loadFileHandler;
 		this.errorHandler = errorHandler;
 	}

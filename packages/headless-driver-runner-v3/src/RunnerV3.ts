@@ -1,5 +1,8 @@
 import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
+import type { Canvas } from "canvas";
 import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
+import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSurface";
+import type { NullSurface } from "./platform/graphics/null/NullSurface";
 import { PlatformV3 } from "./platform/PlatformV3";
 
 export type RunnerV3Game = g.Game;
@@ -143,6 +146,32 @@ export class RunnerV3 extends Runner {
 		});
 	}
 
+	/**
+	 * プライマリサーフェスを取得する。
+	 * @returns NullSurface または NodeCanvasSurface
+	 */
+	getPrimarySurface(): NullSurface | NodeCanvasSurface {
+		if (!this.platform) {
+			throw new Error("RunnerV3#getPrimarySurface(): Platform has not been initialized");
+		}
+		if (this.renderingMode === "canvas") {
+			return this.platform.getPrimarySurface() as NodeCanvasSurface;
+		}
+
+		return this.platform.getPrimarySurface() as NullSurface;
+	}
+
+	/**
+	 * プライマリサーフェスの Canvas インスタンスを取得する。
+	 * @returns node-canvas の Canvas
+	 */
+	getPrimarySurfaceCanvas(): Canvas {
+		if (this.renderingMode !== "canvas") {
+			throw Error("RunnerV3#getPrimarySurface(): Not supported except in the case of renderingMode === 'canvas");
+		}
+		return this.getPrimarySurface()._drawable;
+	}
+
 	private initGameDriver(): Promise<RunnerV3Game> {
 		return new Promise<RunnerV3Game>((resolve, reject) => {
 			if (this.driver) {
@@ -161,6 +190,8 @@ export class RunnerV3 extends Runner {
 				configurationBaseUrl: this.configurationBaseUrl,
 				assetBaseUrl: this.assetBaseUrl,
 				amflow: this.amflow,
+				trusted: this.trusted,
+				renderingMode: this.renderingMode,
 				sendToExternalHandler: (data: any) => this.onSendedToExternal(data),
 				errorHandler: (e) => this.onError(e),
 				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)
