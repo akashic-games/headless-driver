@@ -12,7 +12,10 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 
 	constructor(param: PlatformParameters) {
 		super(param);
-		this.resFac = new ResourceFactory((e: Error) => this.errorHandler(e));
+		this.resFac = new ResourceFactory({
+			errorHandler: (e: Error) => this.errorHandler(e),
+			loadFileHandler: param.loadFileHandler
+		});
 	}
 
 	getResourceFactory(): g.ResourceFactory {
@@ -34,7 +37,7 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 
 	getPrimarySurface(): g.Surface {
 		if (this.primarySurface == null) {
-			throw new Error("Cannot call Platform#getPrimarySurface() before setRenderer");
+			throw new Error("PlatformV2#getPrimarySurface(): Primary surface has not been initialized yet");
 		}
 		return this.primarySurface;
 	}

@@ -1,30 +1,34 @@
-import { akashicEngine as g } from "@akashic/engine-files";
+import { Canvas } from "canvas";
+import { akashicEngine as g } from "../engineFiles";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
-import { NullAudioAsset } from "./assets/NullAudioAsset";
-import { NullImageAsset } from "./assets/NullImageAsset";
-import { NullVideoAsset } from "./assets/NullVideoAsset";
-import { NullAudioPlayer } from "./NullAudioPlayer";
-import { NullGlyphFactory } from "./NullGlyphFactory";
-import { NullSurface } from "./NullSurface";
+import { NullAudioAsset } from "./audios/NullAudioAsset";
+import { NullAudioPlayer } from "./audios/NullAudioPlayer";
+import { NodeCanvasGlyphFactory } from "./graphics/canvas/NodeCanvasGlyphFactory";
+import { NodeCanvasImageAsset } from "./graphics/canvas/NodeCanvasImageAsset";
+import { NodeCanvasSurface } from "./graphics/canvas/NodeCanvasSurface";
+import { NullVideoAsset } from "./videos/NullVideoAsset";
 
-export interface ResourceFactoryParameters {
+export interface NodeCanvasResourceFactoryParameters {
 	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
-	errorHandler: (err: any) => void;
+	errorHandler: (err: Error) => void;
 }
 
-export class ResourceFactory extends g.ResourceFactory {
+/**
+ * node-canvas への描画出力機能を持つ ResourceFactory の実装。
+ * 音声再生には未対応。
+ */
+export class NodeCanvasResourceFactory implements g.ResourceFactory {
 	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
-	private errorHandler: (err: any) => void;
+	private errorHandler: (err: Error) => void;
 
-	constructor({ loadFileHandler, errorHandler }: ResourceFactoryParameters) {
-		super();
+	constructor({ loadFileHandler, errorHandler }: NodeCanvasResourceFactoryParameters) {
 		this.loadFileHandler = loadFileHandler;
 		this.errorHandler = errorHandler;
 	}
 
 	createImageAsset(id: string, assetPath: string, width: number, height: number): g.ImageAsset {
-		return new NullImageAsset(id, assetPath, width, height);
+		return new NodeCanvasImageAsset(id, assetPath, width, height);
 	}
 
 	createVideoAsset(
@@ -72,19 +76,29 @@ export class ResourceFactory extends g.ResourceFactory {
 	}
 
 	createSurface(width: number, height: number): g.Surface {
-		return new NullSurface(width, height);
+		const canvas = new Canvas(width, height);
+		return new NodeCanvasSurface(canvas);
 	}
 
 	createGlyphFactory(
-		fontFamily: g.FontFamily | string | (g.FontFamily | string)[],
+		fontFamily: string | string[],
 		fontSize: number,
 		baselineHeight?: number,
 		fontColor?: string,
 		strokeWidth?: number,
 		strokeColor?: string,
 		strokeOnly?: boolean,
-		fontWeight?: g.FontWeight
+		fontWeight?: g.FontWeightString
 	): g.GlyphFactory {
-		return new NullGlyphFactory(fontFamily, fontSize, baselineHeight, fontColor, strokeWidth, strokeColor, strokeOnly, fontWeight);
+		return new NodeCanvasGlyphFactory(
+			fontFamily,
+			fontSize,
+			baselineHeight,
+			fontColor,
+			strokeWidth,
+			strokeColor,
+			strokeOnly,
+			fontWeight
+		);
 	}
 }

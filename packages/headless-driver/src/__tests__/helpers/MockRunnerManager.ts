@@ -11,10 +11,11 @@ const assetBaseUrlV3 = process.env.ASSET_BASE_URL_V3;
 const cascadeGameJsonUrlV2 = process.env.CASCADE_GAME_JSON_URL_V2;
 
 export class MockRunnerManager extends RunnerManager {
+	// NOTE: 外部から参照できるようにメンバ変数に格納しておく (`createRunner()` 呼び出しタイミングで格納される)
 	nvm: NodeVM | null = null;
 
 	protected async resolveContent(contentUrl: string): Promise<any> {
-		const config = await loadFile<any>(contentUrl, { json: true });
+		const config = JSON.parse(await loadFile(contentUrl));
 		if (config.content_url === "v1_content_url") {
 			config.content_url = gameJsonUrlV1;
 		} else if (config.content_url === "v2_content_url") {
@@ -34,8 +35,8 @@ export class MockRunnerManager extends RunnerManager {
 		return config;
 	}
 
-	protected createVm(allowedUrls: (string | RegExp)[] | null): NodeVM {
-		const nvm = super.createVm(allowedUrls);
+	protected createVm(trusted?: boolean): NodeVM {
+		const nvm = super.createVm(trusted);
 		this.nvm = nvm;
 		return nvm;
 	}

@@ -2,17 +2,20 @@ import { akashicEngine as g, gameDriver as gdr, pdi } from "@akashic/engine-file
 import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
 import { PlatformV2 } from "./platform/PlatformV2";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type RunnerV2_g = typeof g;
+
 export type RunnerV2Game = g.Game;
 
 export class RunnerV2 extends Runner {
-	engineVersion: string = "2";
+	readonly engineVersion: string = "2";
+	readonly g: RunnerV2_g = g;
+	platform: PlatformV2 | null = null;
 
 	private driver: gdr.GameDriver | null = null;
-	private platform: PlatformV2 | null = null;
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	// NOTE: 暫定的にデバッグ用として g.Game を返している
 	async start(): Promise<RunnerV2Game | null> {
 		let game: RunnerV2Game | null = null;
 
@@ -136,6 +139,10 @@ export class RunnerV2 extends Runner {
 		});
 	}
 
+	getPrimarySurface(): never {
+		throw new Error("RunnerV2#getPrimarySurface(): Not supported");
+	}
+
 	private initGameDriver(): Promise<RunnerV2Game> {
 		return new Promise<RunnerV2Game>((resolve, reject) => {
 			if (this.driver) {
@@ -154,14 +161,17 @@ export class RunnerV2 extends Runner {
 				configurationBaseUrl: this.configurationBaseUrl,
 				assetBaseUrl: this.assetBaseUrl,
 				amflow: this.amflow,
+				trusted: this.trusted,
+				renderingMode: this.renderingMode,
 				sendToExternalHandler: (data: any) => this.onSendedToExternal(data),
-				errorHandler: (e: any) => this.onError(e)
+				errorHandler: (e) => this.onError(e),
+				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)
 			});
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
 				player,
-				errorHandler: (e: any) => this.onError(e)
+				errorHandler: (e) => this.onError(e)
 			});
 
 			this.driver = driver;

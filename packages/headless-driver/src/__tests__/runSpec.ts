@@ -1,7 +1,5 @@
 import * as path from "path";
-import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
-import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
-import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
+import { RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "..";
 import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
@@ -34,7 +32,7 @@ beforeAll(() => {
 	jest.spyOn(ExecuteVmScriptV3, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV3.js"));
 });
 
-describe("ホスティングされたコンテンツの動作テスト", () => {
+describe("untrusted コンテンツの動作テスト (URL)", () => {
 	it("Akashic V1 のコンテンツが動作できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
@@ -76,6 +74,10 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 
 		const data = await handleData();
 		expect(data).toBe("reached right");
+
+		// インスタンスの生成元が同一であることを確認
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
@@ -178,6 +180,10 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		const data = await handleData();
 		expect(data).toBe("reached right");
 
+		// インスタンスの生成元が同一であることを確認
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
+
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
 			type: "down",
@@ -276,6 +282,10 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 
 		const data = await handleData();
 		expect(data).toBe("reached right");
+
+		// インスタンスの生成元が同一であることを確認
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
 
 		// コンテンツ側へのポイントイベントの発火が正しく機能している
 		runner.firePointEvent({
@@ -424,7 +434,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		runner.stop();
 	});
 
-	it("Akashic V1 許可対象のURLのassetはloadできる", async () => {
+	it("Akashic V1 で allowedUrls に指定した外部アセットを読み込める", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV1
@@ -460,7 +470,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		runner.stop();
 	});
 
-	it("Akashic V2 許可対象のパスのassetはloadできる", async () => {
+	it("Akashic V2 で allowedUrls に指定した外部アセットを読み込める", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -496,7 +506,7 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 		runner.stop();
 	});
 
-	it("Akashic V3 許可対象のパスのassetはloadできる", async () => {
+	it("Akashic V3 で allowedUrls に指定した外部アセットを読み込める", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV3
@@ -533,8 +543,8 @@ describe("ホスティングされたコンテンツの動作テスト", () => {
 	});
 });
 
-describe("ローカルコンテンツの動作テスト", () => {
-	it("ローカルの game.json から V1 コンテンツを起動できる", async () => {
+describe("untrusted コンテンツの動作テスト (ローカルパス)", () => {
+	it("ローカルの game.json から Akashic V1 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v1", "game.json")
@@ -562,17 +572,19 @@ describe("ローカルコンテンツの動作テスト", () => {
 				});
 			});
 
-		try {
-			const game = (await runner.start())!;
-			const data = await handleData();
-			expect(data).toBe("reached right");
-			expect(game.external.hoge()).toBe("hoge1");
-			expect(game.external.foo()).toBe("foo1");
-		} finally {
-			runner.stop();
-		}
+		const game = (await runner.start())!;
+		const data = await handleData();
+		expect(data).toBe("reached right");
+		expect(game.external.hoge()).toBe("hoge1");
+		expect(game.external.foo()).toBe("foo1");
+
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
+
+		runner.stop();
 	});
-	it("ローカルの game.json から V2 コンテンツを起動できる", async () => {
+
+	it("ローカルの game.json から Akashic V2 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v2", "game.json")
@@ -604,10 +616,14 @@ describe("ローカルコンテンツの動作テスト", () => {
 		expect(data).toBe("reached right");
 		expect(game.external.hoge()).toBe("hoge2");
 		expect(game.external.foo()).toBe("foo2");
+
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
+
 		runner.stop();
 	});
 
-	it("ローカルの game.json から V3 コンテンツを起動できる", async () => {
+	it("ローカルの game.json から Akashic V3 コンテンツを起動できる", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			gameJsonPath: path.resolve(__dirname, "fixtures", "content-v3", "game.json")
@@ -639,11 +655,15 @@ describe("ローカルコンテンツの動作テスト", () => {
 		expect(data).toBe("reached right");
 		expect(game.external.hoge()).toBe("hoge3");
 		expect(game.external.foo()).toBe("foo3");
+
+		expect(game instanceof runner.g.Game).toBe(true);
+		expect(game.scene() instanceof runner.g.Scene).toBe(true);
+
 		runner.stop();
 	});
 });
 
-describe("コンテンツ動作テスト: 異常系", () => {
+describe("untrusted コンテンツの動作テスト: 異常系", () => {
 	it("存在しない Content URL を指定すると Runner 起動に失敗する", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
@@ -791,7 +811,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V1 のコンテンツでは process を触ることはできない。", async () => {
+	it("Akashic V1 のコンテンツで process が参照できないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV1
@@ -828,7 +848,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V2 のコンテンツでは process を触ることはできない。", async () => {
+	it("Akashic V2 のコンテンツで process が参照できないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -865,7 +885,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V3 のコンテンツでは process を触ることはできない。", async () => {
+	it("Akashic V3 のコンテンツで process が参照できないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV3
@@ -902,7 +922,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V1 のコンテンツでは node の require() を触ることはできない。", async () => {
+	it("Akashic V1 のコンテンツで require() を呼び出せないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV1
@@ -918,9 +938,9 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			allowedUrls: null
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
-		// 本来なら nodeコアモジュールの require() は g._require() で握り潰されエラーとなるが、
-		// 何らかの方法で触る事ができても防げる事を確認するため、require() を触れるようにしている。
-		(runnerManager as any).nvm.run("global._require = require");
+		// NOTE: 本来なら Node.js の require() はコンテンツ側で g._require() に上書きされるが、
+		// 何らかの方法で require() が参照されてもエラーとなることを確認するため明示的にバックドアを与える。
+		runnerManager.nvm?.run("global._require = require");
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
@@ -941,7 +961,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V2 のコンテンツでは node の require() を触ることはできない。", async () => {
+	it("Akashic V2 のコンテンツで require() を呼び出せないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -957,9 +977,9 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			allowedUrls: null
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
-		// 本来なら nodeコアモジュールの require() は g._require() で握り潰されエラーとなるが、
-		// 何らかの方法で触る事ができても防げる事を確認するため、require() を触れるようにしている。
-		(runnerManager as any).nvm.run("global._require = require");
+		// NOTE: 本来なら Node.js の require() はコンテンツ側で g._require() に上書きされるが、
+		// 何らかの方法で require() が参照されてもエラーとなることを確認するため明示的にバックドアを与える。
+		runnerManager.nvm?.run("global._require = require");
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
@@ -980,7 +1000,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V3 のコンテンツでは node の require() を触ることはできない。", async () => {
+	it("Akashic V3 のコンテンツで require() を呼び出せないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV3
@@ -996,9 +1016,9 @@ describe("コンテンツ動作テスト: 異常系", () => {
 			allowedUrls: null
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
-		// 本来なら nodeコアモジュールの require() は g._require() で握り潰されエラーとなるが、
-		// 何らかの方法で触る事ができても防げる事を確認するため、require() を触れるようにしている。
-		(runnerManager as any).nvm.run("global._require = require");
+		// NOTE: 本来なら Node.js の require() はコンテンツ側で g._require() に上書きされるが、
+		// 何らかの方法で require() が参照されてもエラーとなることを確認するため明示的にバックドアを与える。
+		runnerManager.nvm?.run("global._require = require");
 		await runnerManager.startRunner(runner.runnerId);
 
 		const errorCalledFn = jest.fn();
@@ -1019,7 +1039,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V1 許可されていないパスのassetはloadできない", async () => {
+	it("Akashic V1 コンテンツで allowedUrls に指定していない外部アセットは読み込めないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV1
@@ -1056,7 +1076,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V2 許可されていないパスのassetはloadできない", async () => {
+	it("Akashic V2 コンテンツで allowedUrls に指定していない外部アセットは読み込めないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -1093,7 +1113,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("Akashic V3 許可されていないパスのassetはloadできない", async () => {
+	it("Akashic V3 コンテンツで allowedUrls に指定していない外部アセットは読み込めないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV3
@@ -1130,7 +1150,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("許可対象の文字列の値が先頭一致しない場合はassetはloadできない", async () => {
+	it("allowedUrls が先頭一致しない場合は該当の外部アセットを読み込めないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -1168,7 +1188,7 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		runner.stop();
 	});
 
-	it("許可対象の正規表現の値が先頭一致しない場合はassetはloadできない", async () => {
+	it("allowedUrl の正規表現が一致しない場合は該当の外部アセットを読み込めないことを確認", async () => {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay({
 			contentUrl: contentUrlV2
@@ -1218,5 +1238,338 @@ describe("コンテンツ動作テスト: 異常系", () => {
 		} catch (err) {
 			expect(err.message).toMatch("Regexp must start with '^'");
 		}
+	});
+});
+
+describe("trusted コンテンツの動作テスト", () => {
+	it("Akashic V1 のコンテンツが実行できることを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV1
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: null,
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
+
+		const fn = jest.fn();
+		const handleData = (): Promise<void> =>
+			new Promise<void>((resolve, _reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.addOnce((l) => {
+					fn();
+					resolve(l);
+				});
+			});
+
+		await runner.start();
+		await handleData();
+		expect(fn).toBeCalled();
+		runner.stop();
+	});
+
+	it("Akashic V2 のコンテンツが実行できることを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV2
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: null,
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+
+		const fn = jest.fn();
+		const handleData = (): Promise<void> =>
+			new Promise<void>((resolve, _reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.addOnce((l) => {
+					fn();
+					resolve(l);
+				});
+			});
+
+		await runner.start();
+		await handleData();
+		expect(fn).toBeCalled();
+		runner.stop();
+	});
+
+	it("Akashic V3 のコンテンツが実行できることを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV3
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: null,
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
+
+		const fn = jest.fn();
+		const handleData = (): Promise<void> =>
+			new Promise<void>((resolve, _reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.addOnce((l) => {
+					fn();
+					resolve(l);
+				});
+			});
+
+		await runner.start();
+		await handleData();
+		expect(fn).toBeCalled();
+		runner.stop();
+	});
+});
+
+describe("trusted コンテンツの動作テスト: 異常系", () => {
+	// テストが上手く行かない (`NodeVM` 上で `process.exit()` が実行できてしまう) ため一旦無効に。
+	// TODO: テストが動作するように修正
+	xit("Akashic V1 のコンテンツで process が参照できないことを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV1
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: null,
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const fn = jest.fn();
+		const handleError = (): Promise<Error> => {
+			return new Promise<Error>((resolve, _reject) => {
+				runner.errorTrigger.add((e) => {
+					fn();
+					resolve(e);
+				});
+			});
+		};
+		// AMFlow 経由でコンテンツに例外を投げさせる
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
+
+		const error = await handleError();
+		expect(fn).toHaveBeenCalled();
+		expect(error instanceof Error).toBeTruthy();
+		runner.stop();
+	});
+
+	xit("Akashic V2 のコンテンツで process が参照できないことを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV2
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: null,
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const fn = jest.fn();
+		const handleError = (): Promise<Error> => {
+			return new Promise<Error>((resolve, _reject) => {
+				runner.errorTrigger.add((e) => {
+					fn();
+					resolve(e);
+				});
+			});
+		};
+		// AMFlow 経由でコンテンツに例外を投げさせる
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
+
+		const error = await handleError();
+		expect(fn).toHaveBeenCalled();
+		expect(error instanceof Error).toBeTruthy();
+		runner.stop();
+	});
+
+	xit("Akashic V3 のコンテンツで process が参照できないことを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV3
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: null,
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const fn = jest.fn();
+		const handleError = (): Promise<Error> => {
+			return new Promise<Error>((resolve, _reject) => {
+				runner.errorTrigger.add((e) => {
+					fn();
+					resolve(e);
+				});
+			});
+		};
+		// AMFlow 経由でコンテンツに例外を投げさせる
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
+
+		const error = await handleError();
+		expect(fn).toHaveBeenCalled();
+		expect(error instanceof Error).toBeTruthy();
+		runner.stop();
+	});
+
+	it("Akashic V1 コンテンツで allowedUrls に指定していない外部アセットは読み込めないことを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV1
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: [assetBaseUrlV1],
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.add((l) => {
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
+				});
+			});
+
+		// 許可されていない場所にある外部アセットの読み込みをコンテンツ側に要求
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
+
+		const event = await handleEvent();
+		expect(event).toBe("failed_load_external_asset");
+		runner.stop();
+	});
+
+	it("Akashic V2 コンテンツで allowedUrls に指定していない外部アセットは読み込めないことを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV2
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: [assetBaseUrlV2],
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.add((l) => {
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
+				});
+			});
+
+		// 許可されていない場所にある外部アセットの読み込みをコンテンツ側に要求
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
+
+		const event = await handleEvent();
+		expect(event).toBe("failed_load_external_asset");
+		runner.stop();
+	});
+
+	it("Akashic V3 コンテンツで allowedUrls に指定していない外部アセットは読み込めないことを確認", async () => {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl: contentUrlV3
+		});
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, activePermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken,
+			executionMode: "active",
+			allowedUrls: [assetBaseUrlV3],
+			trusted: true
+		});
+		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
+		await runnerManager.startRunner(runner.runnerId);
+
+		const handleEvent = (): Promise<any> =>
+			new Promise<any>((resolve, _reject) => {
+				// コンテンツ側での g.Game#external.send() を捕捉できる
+				runner.sendToExternalTrigger.add((l) => {
+					if (l === "failed_load_external_asset") {
+						resolve(l);
+						return true;
+					}
+				});
+			});
+
+		// 許可されていない場所にある外部アセットの読み込みをコンテンツ側に要求
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_external_asset", url: extContentUrlV1 }]);
+
+		const event = await handleEvent();
+		expect(event).toBe("failed_load_external_asset");
+		runner.stop();
 	});
 });

@@ -2,7 +2,8 @@ const game = g.game;
 
 function main(param) {
 	const scene = new g.Scene({
-		game
+		game,
+		name: "content-v2-entry-scene"
 	});
 
 	game.skippingChanged.add(function(skipped) {
