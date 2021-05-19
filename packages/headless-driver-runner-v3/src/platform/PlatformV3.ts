@@ -34,14 +34,18 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 	setRendererRequirement(requirement: pdi.RendererRequirement): void {
 		this.rendererReq = requirement;
 
-		if (this.renderingMode === "canvas" && this.trusted) {
-			/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
-			const Canvas = require("canvas").Canvas;
-			const NodeCanvasSurface = require("./graphics/canvas/NodeCanvasSurface").NodeCanvasSurface;
-			/* eslint-enable */
+		if (this.renderingMode === "canvas") {
+			if (this.trusted) {
+				/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
+				const Canvas = require("canvas").Canvas;
+				const NodeCanvasSurface = require("./graphics/canvas/NodeCanvasSurface").NodeCanvasSurface;
+				/* eslint-enable */
 
-			const canvas = new Canvas(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight);
-			this.primarySurface = new NodeCanvasSurface(canvas);
+				const canvas = new Canvas(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight);
+				this.primarySurface = new NodeCanvasSurface(canvas);
+			} else {
+				throw Error("PlatformV3#setRendererRequirement(): Must given trusted === `true` if set renderingMode === 'canvas'");
+			}
 		} else {
 			this.primarySurface = new NullSurface(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight);
 		}
