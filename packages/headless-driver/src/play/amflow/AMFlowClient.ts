@@ -1,8 +1,9 @@
 import { AMFlow, GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, EventFlagsMask, EventIndex, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
 import { getSystemLogger } from "../../Logger";
-import { AMFlowStore, DumpedPlaylog } from "./AMFlowStore";
+import { AMFlowStore } from "./AMFlowStore";
 import { createError } from "./ErrorFactory";
+import { DumpedPlaylog } from "./types";
 
 export type AMFlowState = "connecting" | "open" | "closing" | "closed";
 
