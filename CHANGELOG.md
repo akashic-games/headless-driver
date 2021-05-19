@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## v1.7.0 (2021-05-19)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#252](https://github.com/akashic-games/headless-driver/pull/252) `g` の名前空間を export するように ([@yu-ogi](https://github.com/yu-ogi))
+  * [#250](https://github.com/akashic-games/headless-driver/pull/250) node-canvas へプライマリサーフェスの描画内容を出力する機能の追加 ([@yu-ogi](https://github.com/yu-ogi))
+  * [#249](https://github.com/akashic-games/headless-driver/pull/249) trusted フラグの追加 ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Other Change
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#254](https://github.com/akashic-games/headless-driver/pull/254) `Runner#platform`, `DumpedPlaylog` を公開プロパティに変更 ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.5.15 (2021-04-09)
 
 #### Enhancement
