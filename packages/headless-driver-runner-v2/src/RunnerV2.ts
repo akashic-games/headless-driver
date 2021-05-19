@@ -2,17 +2,20 @@ import { akashicEngine as g, gameDriver as gdr, pdi } from "@akashic/engine-file
 import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
 import { PlatformV2 } from "./platform/PlatformV2";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type RunnerV2_g = typeof g;
+
 export type RunnerV2Game = g.Game;
 
 export class RunnerV2 extends Runner {
-	engineVersion: string = "2";
+	readonly engineVersion: string = "2";
+	readonly g: RunnerV2_g = g;
 
 	private driver: gdr.GameDriver | null = null;
 	private platform: PlatformV2 | null = null;
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	// NOTE: 暫定的にデバッグ用として g.Game を返している
 	async start(): Promise<RunnerV2Game | null> {
 		let game: RunnerV2Game | null = null;
 

@@ -22,7 +22,13 @@ export interface RunnerParameters {
 }
 
 export abstract class Runner {
-	abstract engineVersion: string;
+	abstract readonly engineVersion: string;
+
+	/**
+	 * g の名前空間のオブジェクト。`g.game` は `undefined` であることに注意。
+	 */
+	abstract readonly g: any;
+
 	errorTrigger: Trigger<any> = new Trigger();
 	sendToExternalTrigger: Trigger<any> = new Trigger();
 
@@ -98,6 +104,7 @@ export abstract class Runner {
 
 	/**
 	 * Runner を開始する。
+	 * @returns `g.game` のインスタンス。起動に失敗した場合は `null` 。
 	 */
 	abstract start(): any;
 	/**
@@ -128,6 +135,7 @@ export abstract class Runner {
 	abstract firePointEvent(event: RunnerPointEvent): void;
 	/**
 	 * 実行中コンテンツのプライマリサーフェスを取得する。
+	 * @returns プライマリサーフェスのインスタンス。
 	 */
 	abstract getPrimarySurface(): any;
 
