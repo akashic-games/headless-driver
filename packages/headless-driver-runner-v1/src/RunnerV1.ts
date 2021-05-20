@@ -70,6 +70,19 @@ export class RunnerV1 extends Runner {
 		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
 	}
 
+	protected _stepHalf(): void {
+		if (this.fps == null || this.platform == null) {
+			this.errorTrigger.fire(new Error("RunnerV1#_stepHalf(): Cannot call Runner#step() before initialized"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("RunnerV1#_stepHalf(): Cannot call Runner#step() in running"));
+			return;
+		}
+
+		this.platform.advanceLoopers(1000 / this.fps / 2);
+	}
+
 	async advance(ms: number): Promise<void> {
 		if (this.fps == null || this.platform == null || this.driver == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
