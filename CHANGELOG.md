@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.7.1 (2021-05-20)
+
+#### Bug Fix
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`
+  * [#255](https://github.com/akashic-games/headless-driver/pull/255) `Runner#advanceUntil()` の挙動を修正 ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.7.0 (2021-05-19)
 
 #### Enhancement
