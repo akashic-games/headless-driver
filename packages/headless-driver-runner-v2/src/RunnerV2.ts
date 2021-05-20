@@ -143,6 +143,19 @@ export class RunnerV2 extends Runner {
 		throw new Error("RunnerV2#getPrimarySurface(): Not supported");
 	}
 
+	protected _stepHalf(): void {
+		if (this.fps == null || this.platform == null) {
+			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() before initialized"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() in running"));
+			return;
+		}
+
+		this.platform.advanceLoopers(1000 / this.fps / 2);
+	}
+
 	private initGameDriver(): Promise<RunnerV2Game> {
 		return new Promise<RunnerV2Game>((resolve, reject) => {
 			if (this.driver) {
