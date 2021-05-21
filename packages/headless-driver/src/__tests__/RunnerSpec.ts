@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as path from "path";
 import { RunnerV1 } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2 } from "@akashic/headless-driver-runner-v2";
@@ -327,9 +328,27 @@ describe("Runner の動作確認 (v3)", () => {
 
 		runner.stop();
 	});
+});
 
-	it("環境変数を利用して engine-files を上書きできる", async () => {
-		process.env.ENGINE_FILES_V3_PATH = path.resolve(__dirname, "../../../../node_modules/@akashic/engine-files/");
+describe("Runner の engine-files 上書き動作確認", () => {
+	beforeEach(() => {
+		jest.resetModules();
+	});
+
+	afterEach(() => {
+		delete process.env.ENGINE_FILES_V3_PATH;
+	});
+
+	it("環境変数を利用して debug 用の engineFiles を上書きできる", async () => {
+		const engineFilesFromPath = path.join(__dirname, "fixtures", "engineFilesV3", "engineFilesV3_0_15.debug.js");
+		const engineFilesToPath = path.join(__dirname, "tmp", "engineFilesV3_0_15.debug.js");
+		const engineFilesStr = fs.readFileSync(engineFilesFromPath);
+
+		// 読み込まれていることを確認するためテストコードを仕込んでおく
+		const randStr = Date.now() + "";
+		fs.writeFileSync(engineFilesToPath, `globalThis.__test_${randStr}__ = true; \n\n` + engineFilesStr);
+
+		process.env.ENGINE_FILES_V3_PATH = engineFilesToPath;
 
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
@@ -345,10 +364,39 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.step();
 		runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
+		expect((globalThis as any)[`__test_${randStr}__`]).toBe(true);
 
 		runner.stop();
+	});
 
-		delete process.env.ENGINE_FILES_V3_PATH;
+	it("環境変数を利用して release 用の engineFiles を上書きできる", async () => {
+		const engineFilesFromPath = path.join(__dirname, "fixtures", "engineFilesV3", "engineFilesV3_0_15.release.js");
+		const engineFilesToPath = path.join(__dirname, "tmp", "engineFilesV3_0_15.release.js");
+		const engineFilesStr = fs.readFileSync(engineFilesFromPath);
+
+		// 読み込まれていることを確認するためテストコードを仕込んでおく
+		const randStr = Date.now() + "";
+		fs.writeFileSync(engineFilesToPath, `globalThis.__test_${randStr}__ = true; \n\n` + engineFilesStr);
+
+		process.env.ENGINE_FILES_V3_PATH = engineFilesToPath;
+
+		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
+
+		await runner.start();
+		runner.pause();
+
+		const logs: string[] = [];
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "scene_update") logs.push(l);
+		});
+
+		runner.step();
+		runner.step();
+		runner.step();
+		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
+		expect((globalThis as any)[`__test_${randStr}__`]).toBe(true);
+
+		runner.stop();
 	});
 });
 
