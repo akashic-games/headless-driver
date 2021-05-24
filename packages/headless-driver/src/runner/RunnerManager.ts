@@ -5,6 +5,7 @@ import { RunnerExecutionMode, RunnerParameters, RunnerPlayer, RunnerRenderingMod
 import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
 import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
 import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
+import { requireEngineFiles } from "@akashic/headless-driver-runner-v3/lib/requireEngineFiles";
 import { NodeVM, VMScript } from "vm2";
 import * as ExecVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
@@ -350,16 +351,7 @@ export class RunnerManager {
 			sandbox: {
 				trustedFunctions: {
 					engineFiles: (): any | undefined => {
-						if (process.env.ENGINE_FILES_V3_PATH) {
-							const engineFilesPath = path.isAbsolute(process.env.ENGINE_FILES_V3_PATH)
-								? process.env.ENGINE_FILES_V3_PATH
-								: path.resolve(process.cwd(), process.env.ENGINE_FILES_V3_PATH);
-							if (!fs.existsSync(engineFilesPath)) {
-								throw new Error(`ENGINE_FILES_V3_PATH: ${engineFilesPath} was not found.`);
-							}
-							return require(engineFilesPath);
-						}
-						return undefined;
+						return requireEngineFiles();
 					}
 				}
 			},
