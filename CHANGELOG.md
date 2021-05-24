@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.7.2 (2021-05-24)
+
+#### Bug Fix
+* `headless-driver-runner-v3`, `headless-driver`
+  * [#256](https://github.com/akashic-games/headless-driver/pull/256) #248 にて`trustedFunctions` が存在しない場合に常に `require("@akashic/engine-files")` へとフォールバックされていた挙動を修正 ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.7.1 (2021-05-20)
 
 #### Bug Fix
