@@ -1,189 +1,101 @@
-import { GetStartPointOptions, GetTickListOptions, StartPoint } from "@akashic/amflow";
+import * as path from "path";
+import { GetTickListOptions } from "@akashic/amflow";
 import { Event, TickList } from "@akashic/playlog";
+import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { BadRequestError, PermissionError } from "../play/amflow/ErrorFactory";
-import { AMFlowClientManager } from "../play/AMFlowClientManager";
 import { PlayManager } from "../play/PlayManager";
 import { activePermission, passivePermission } from "./constants";
+import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
 
 setSystemLogger(new SilentLogger());
 
-describe("AMFlow の動作テスト", () => {
-	it("getStartPoint で正しく startPoint が取得できる", (done) => {
-		const amflowClientManager = new AMFlowClientManager();
-		const amflowClient = amflowClientManager.createAMFlow("0");
-		amflowClient.open("0", () => {
-			const token = amflowClientManager.createPlayToken("0", activePermission);
-			amflowClient.authenticate(token, async () => {
-				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint> = (opts) =>
-					new Promise<StartPoint>((resolve, reject) => {
-						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data!)));
-					});
-				const putStartPoint: (sp: StartPoint) => Promise<void> = (sp) =>
-					new Promise<void>((resolve, reject) => {
-						amflowClient.putStartPoint(sp, (e) => (e ? reject(e) : resolve()));
-					});
+const contentUrl = process.env.CONTENT_URL_V3!;
 
-				await putStartPoint({
-					frame: 0,
-					timestamp: 100,
-					data: "frame0"
-				});
-				await putStartPoint({
-					frame: 100,
-					timestamp: 10000,
-					data: "frame100"
-				});
-				await putStartPoint({
-					frame: 500,
-					timestamp: 50000,
-					data: "frame500"
-				});
-				await putStartPoint({
-					frame: 200,
-					timestamp: 20000,
-					data: "frame200"
-				});
+beforeAll(() => {
+	jest.spyOn(ExecuteVmScriptV3, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV3.js"));
+});
 
-				// default: frame === 0
-				const frame = await getStartPoint({});
-				expect(frame.data).toBe("frame0");
-
-				// only frame
-				const frame0 = await getStartPoint({ frame: 0 });
-				const frame100 = await getStartPoint({ frame: 100 });
-				const frame700 = await getStartPoint({ frame: 700 });
-
-				expect(frame0.data).toBe("frame0");
-				expect(frame100.data).toBe("frame100");
-				expect(frame700.data).toBe("frame500");
-
-				// only timestamp
-				const timestamp10000 = await getStartPoint({ timestamp: 10000 });
-				const timestamp30000 = await getStartPoint({ timestamp: 30000 });
-				const timestamp60000 = await getStartPoint({ timestamp: 60000 });
-
-				expect(timestamp10000.data).toBe("frame100");
-				expect(timestamp30000.data).toBe("frame200");
-				expect(timestamp60000.data).toBe("frame500");
-
-				// frame and timestamp
-				const sp1 = await getStartPoint({ frame: 0, timestamp: 100 });
-				const sp2 = await getStartPoint({ frame: 50, timestamp: 500 });
-				const sp3 = await getStartPoint({ frame: 100, timestamp: 1000 });
-				const sp4 = await getStartPoint({ frame: 1000, timestamp: 10000 });
-
-				// 内容は関知しないが、エラーが発生しないことを確認
-				expect(sp1).not.toBe(null);
-				expect(sp2).not.toBe(null);
-				expect(sp3).not.toBe(null);
-				expect(sp4).not.toBe(null);
-
-				// no startPoint
-				try {
-					await getStartPoint({ timestamp: 0 });
-					fail("Must throw error");
-				} catch (e) {
-					// no startPoint found
-					expect(e.message).toBe("No start point");
-				}
-
-				done();
-			});
-		});
-	});
-
-	it("AMFlow#onEvent が登録されるより以前の Event を正しく取得できる", (done) => {
+describe("プレイ周りの結合動作テスト", () => {
+	it("各インスタンスを生成できる", async () => {
 		const playManager = new PlayManager();
-		let activeAMFlow: AMFlowClient;
-		let passiveAMFlow: AMFlowClient;
-		let playId: string;
-		const events: Event[] = [];
-		playManager
-			.createPlay({
-				contentUrl: "dummy"
-			})
-			.then((p) => {
-				return new Promise<void>((resolve, reject) => {
-					playId = p;
-					activeAMFlow = playManager.createAMFlow(playId);
-					activeAMFlow.open(playId, (err) => {
-						if (err) {
-							reject(err);
-							return;
-						}
-						resolve();
-					});
-				});
-			})
-			.then(() => {
-				return new Promise<void>((resolve, reject) => {
-					passiveAMFlow = playManager.createAMFlow(playId);
-					passiveAMFlow.open(playId, (err) => {
-						if (err) {
-							reject(err);
-							return;
-						}
-						resolve();
-					});
-				});
-			})
-			.then(() => {
-				return new Promise<void>((resolve, reject) => {
-					// 認証できる
-					const playToken = playManager.createPlayToken(playId, passivePermission);
-					passiveAMFlow.authenticate(playToken, (err) => {
-						if (err) {
-							reject(err);
-							return;
-						}
-						resolve();
-					});
-				});
-			})
-			.then(() => {
-				// active の AMFlow#authenticate(), AMFlow#onEvent() 呼び出し前にイベントを送信
-				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 1, hoge: "fuga" }]);
-				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 2, foo: "bar" }]);
-			})
-			.then(() => {
-				return new Promise<void>((resolve, reject) => {
-					// Active の認証
-					const playToken = playManager.createPlayToken(playId, activePermission);
-					activeAMFlow.authenticate(playToken, (err) => {
-						if (err) {
-							reject(err);
-							return;
-						}
-						resolve();
-					});
-				});
-			})
-			.then(() => {
-				activeAMFlow.onEvent((event) => {
-					events.push(event);
-				});
-			})
-			.then(() => {
-				// active の AMFlow#onEvent() 呼び出し後にイベントを送信
-				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 3 }]);
-				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 4 }]);
-			})
-			.then(() => {
-				expect(events).toEqual([
-					[0x20, 0, null, { ordinal: 1, hoge: "fuga" }],
-					[0x20, 0, null, { ordinal: 2, foo: "bar" }],
-					[0x20, 0, null, { ordinal: 3 }],
-					[0x20, 0, null, { ordinal: 4 }]
-				]);
-			})
-			.then(done)
-			.catch((e) => done(e));
+		const playId0 = await playManager.createPlay({
+			contentUrl
+		});
+		expect(playId0).toBe("0");
+
+		const amflow0 = playManager.createAMFlow(playId0);
+		expect(amflow0.playId).toBe("0");
+
+		const playToken0 = playManager.createPlayToken("0", activePermission);
+
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId0 = await runnerManager.createRunner({
+			playId: playId0,
+			amflow: amflow0,
+			playToken: playToken0,
+			executionMode: "active",
+			allowedUrls: null
+		});
+		const runner0 = runnerManager.getRunner(runnerId0)!;
+
+		expect(runner0.runnerId).toBe("0");
+		expect(runner0.engineVersion).toBe("3");
+
+		const playId1 = await playManager.createPlay({
+			contentUrl
+		});
+		expect(playId1).toBe("1");
+
+		const amflow1 = playManager.createAMFlow(playId1);
+		expect(amflow1.playId).toBe("1");
+
+		const playToken1 = playManager.createPlayToken("1", activePermission);
+
+		const runnerId1 = await runnerManager.createRunner({
+			playId: playId1,
+			amflow: amflow1,
+			playToken: playToken1,
+			executionMode: "active",
+			allowedUrls: null
+		});
+		const runner1 = runnerManager.getRunner(runnerId1)!;
+
+		expect(runner1.runnerId).toBe("1");
+		expect(runner0.engineVersion).toBe("3");
+
+		await runnerManager.startRunner("0");
+		await runnerManager.stopRunner("0");
+		expect(runnerManager.getRunner("0")).toBe(null);
+
+		playManager.deletePlay("0");
+		expect(playManager.getPlay("0")).toBe(null);
+
+		const playId2 = await playManager.createPlay({
+			contentUrl
+		});
+		expect(playId2).toBe("2");
+
+		const amflow2 = playManager.createAMFlow(playId2);
+		expect(amflow2.playId).toBe("2");
+
+		const playToken2 = playManager.createPlayToken("2", activePermission);
+
+		const runnerId2 = await runnerManager.createRunner({
+			playId: playId2,
+			amflow: amflow2,
+			playToken: playToken2,
+			executionMode: "active",
+			allowedUrls: null
+		});
+		const runner2 = runnerManager.getRunner(runnerId2)!;
+		expect(runner2.runnerId).toBe("2");
+		expect(runner2.engineVersion).toBe("3");
 	});
 
-	it("AMFlow通信ができる", (done) => {
+	it("AMFlow 通信ができる", (done) => {
 		const playManager = new PlayManager();
 		let playId: string;
 		let activeAMFlow: AMFlowClient;
@@ -597,6 +509,94 @@ describe("AMFlow の動作テスト", () => {
 					// すでに delete したプレーの AMFlowClient に対して close() を呼び出しても問題ない
 					passiveAMFlow.close((err) => (err ? reject(err) : resolve()));
 				});
+			})
+			.then(done)
+			.catch((e) => done(e));
+	});
+
+	it("AMFlow#onEvent が登録されるより以前の Event を正しく取得できる", (done) => {
+		const playManager = new PlayManager();
+		let activeAMFlow: AMFlowClient;
+		let passiveAMFlow: AMFlowClient;
+		let playId: string;
+		const events: Event[] = [];
+		playManager
+			.createPlay({
+				contentUrl: "dummy"
+			})
+			.then((p) => {
+				return new Promise<void>((resolve, reject) => {
+					playId = p;
+					activeAMFlow = playManager.createAMFlow(playId);
+					activeAMFlow.open(playId, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					passiveAMFlow = playManager.createAMFlow(playId);
+					passiveAMFlow.open(playId, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					// 認証できる
+					const playToken = playManager.createPlayToken(playId, passivePermission);
+					passiveAMFlow.authenticate(playToken, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				// active の AMFlow#authenticate(), AMFlow#onEvent() 呼び出し前にイベントを送信
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 1, hoge: "fuga" }]);
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 2, foo: "bar" }]);
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					// Active の認証
+					const playToken = playManager.createPlayToken(playId, activePermission);
+					activeAMFlow.authenticate(playToken, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				activeAMFlow.onEvent((event) => {
+					events.push(event);
+				});
+			})
+			.then(() => {
+				// active の AMFlow#onEvent() 呼び出し後にイベントを送信
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 3 }]);
+				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 4 }]);
+			})
+			.then(() => {
+				expect(events).toEqual([
+					[0x20, 0, null, { ordinal: 1, hoge: "fuga" }],
+					[0x20, 0, null, { ordinal: 2, foo: "bar" }],
+					[0x20, 0, null, { ordinal: 3 }],
+					[0x20, 0, null, { ordinal: 4 }]
+				]);
 			})
 			.then(done)
 			.catch((e) => done(e));
