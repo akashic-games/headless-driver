@@ -195,8 +195,8 @@ export class RunnerManager {
 				runner = (nvm.run(script) as typeof ExecVmScriptV1).createRunnerV1(runnerParameter);
 			}
 
-			runner.errorTrigger.add((err: any) => {
-				getSystemLogger().error(err);
+			runner.errorTrigger.add((err) => {
+				getSystemLogger().error(err.message);
 				this.stopRunner(runnerId);
 				return true;
 			});
