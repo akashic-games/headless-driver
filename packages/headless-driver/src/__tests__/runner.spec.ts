@@ -155,8 +155,6 @@ describe("Runner の動作確認 (v2)", () => {
 		await sleep(500);
 		expect(updateLogs.length).toBe(logCount);
 
-		// runner.resume();
-
 		await runner.advance(500);
 		runner.pause();
 		logCount = updateLogs.length;
@@ -250,8 +248,6 @@ describe("Runner の動作確認 (v3)", () => {
 
 		await sleep(500);
 		expect(updateLogs.length).toBe(logCount);
-
-		// runner.resume();
 
 		await runner.advance(500);
 		runner.pause();

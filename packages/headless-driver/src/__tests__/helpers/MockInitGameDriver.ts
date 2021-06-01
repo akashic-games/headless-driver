@@ -4,7 +4,7 @@ import { PlatformV3 } from "@akashic/headless-driver-runner-v3/lib/platform/Plat
 export type RunnerV3Game = g.Game;
 
 // TODO: jenkins のみで renderer.spec.ts がタイミングにより失敗するため、`driver.startGame()` を実行しない mock 関数として使用する。
-// renderer.spec 側で `runner.advanceUntil()` で処理を進められるよう `gameLoop#start()` のみ行っている。
+// spec 側で `runner.advanceUntil()` で処理を進められるよう `GameLoop#start()` のみ行っている。
 // jenkins から Actions へ移行後は不要となるため削除する。
 export function MockInitGameDriver(runnner: any): Promise<RunnerV3Game> {
 	return new Promise<RunnerV3Game>((resolve, reject) => {
@@ -14,7 +14,7 @@ export function MockInitGameDriver(runnner: any): Promise<RunnerV3Game> {
 		}
 
 		const player = {
-			id: runnner.player ? runnner.player.id : undefined!, // TODO: g.Player#id を string | undefined に修正するまでの暫定措置
+			id: runnner.player ? runnner.player.id : undefined!,
 			name: runnner.player ? runnner.player.name : undefined
 		};
 
