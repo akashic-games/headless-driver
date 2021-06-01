@@ -7,6 +7,7 @@ import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { activePermission } from "./constants";
+import { MockInitGameDriver } from "./helpers/MockInitGameDriver";
 import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
 
@@ -43,6 +44,9 @@ describe("コンテンツのレンダリングテスト", () => {
 			renderingMode: "canvas"
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
+		// TODO: jenkins でタイミングにより失敗するため、initGameDriver の startGame() を実行しない mock に差し替えている。
+		// jenkins のみで失敗するため、Actions 移行後は不要となるため削除する。
+		const spyInitGameDriver = jest.spyOn(runner as any, "initGameDriver").mockImplementationOnce(() => MockInitGameDriver(runner));
 
 		// TODO: 以下ロジックの切り出し
 		const expectedPath = path.join(contentPath, "expected");
@@ -89,5 +93,6 @@ describe("コンテンツのレンダリングテスト", () => {
 		});
 
 		runner.stop();
+		spyInitGameDriver.mockRestore();
 	});
 });

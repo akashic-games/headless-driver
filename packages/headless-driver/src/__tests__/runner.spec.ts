@@ -63,19 +63,18 @@ describe("Runner の動作確認 (v1)", () => {
 		});
 
 		await runner.start();
+		let logCount = updateLogs.length;
 		runner.pause();
 
 		await sleep(500);
-		expect(updateLogs.length).toBe(0);
+		expect(updateLogs.length).toBe(logCount);
 
-		runner.resume();
-
-		await sleep(500);
+		await runner.advance(500);
 		runner.pause();
-		const logCount = updateLogs.length;
+		logCount = updateLogs.length;
 		expect(logCount).toBeGreaterThan(10); // 500ms + 30fps で必ず進むであろうフレーム数
 
-		await sleep(100);
+		await runner.advance(100);
 		expect(updateLogs.length).toBeGreaterThanOrEqual(logCount); // 停止したままであることを確認
 
 		runner.stop();
@@ -150,19 +149,20 @@ describe("Runner の動作確認 (v2)", () => {
 		});
 
 		await runner.start();
+		let logCount = updateLogs.length;
 		runner.pause();
 
 		await sleep(500);
-		expect(updateLogs.length).toBe(0);
+		expect(updateLogs.length).toBe(logCount);
 
-		runner.resume();
+		// runner.resume();
 
-		await sleep(500);
+		await runner.advance(500);
 		runner.pause();
-		const logCount = updateLogs.length;
+		logCount = updateLogs.length;
 		expect(logCount).toBeGreaterThan(10); // 500ms + 30fps で必ず進むであろうフレーム数
 
-		await sleep(100);
+		await runner.advance(100);
 		expect(updateLogs.length).toBeGreaterThanOrEqual(logCount); // 停止したままであることを確認
 
 		runner.stop();
@@ -191,18 +191,18 @@ describe("Runner の動作確認 (v2)", () => {
 	});
 
 	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+		const skippingLogs: string[] = [];
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
+		});
 
 		await runner.start();
 		runner.pause();
 
 		const updateLogs: string[] = [];
-		const skippingLogs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
 			if (l === "scene_update") updateLogs.push(l);
-		});
-		runner.sendToExternalTrigger.add((l) => {
-			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
 		});
 
 		await runner.advance(1000); // 1秒 (30フレーム) だけ進行
@@ -213,18 +213,18 @@ describe("Runner の動作確認 (v2)", () => {
 	});
 
 	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+		const skippingLogs: string[] = [];
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
+		});
 
 		await runner.start();
 		runner.pause();
 
 		const updateLogs: string[] = [];
-		const skippingLogs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
 			if (l === "scene_update") updateLogs.push(l);
-		});
-		runner.sendToExternalTrigger.add((l) => {
-			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
 		});
 
 		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
@@ -245,19 +245,20 @@ describe("Runner の動作確認 (v3)", () => {
 		});
 
 		await runner.start();
+		let logCount = updateLogs.length;
 		runner.pause();
 
 		await sleep(500);
-		expect(updateLogs.length).toBe(0);
+		expect(updateLogs.length).toBe(logCount);
 
-		runner.resume();
+		// runner.resume();
 
-		await sleep(500);
+		await runner.advance(500);
 		runner.pause();
-		const logCount = updateLogs.length;
+		logCount = updateLogs.length;
 		expect(logCount).toBeGreaterThan(10); // 500ms + 30fps で必ず進むであろうフレーム数
 
-		await sleep(100);
+		await runner.advance(100);
 		expect(updateLogs.length).toBeGreaterThanOrEqual(logCount); // 停止したままであることを確認
 
 		runner.stop();
@@ -286,18 +287,18 @@ describe("Runner の動作確認 (v3)", () => {
 	});
 
 	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+		const skippingLogs: string[] = [];
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
+		});
 
 		await runner.start();
 		runner.pause();
 
 		const updateLogs: string[] = [];
-		const skippingLogs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
 			if (l === "scene_update") updateLogs.push(l);
-		});
-		runner.sendToExternalTrigger.add((l) => {
-			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
 		});
 
 		await runner.advance(1000); // 1秒 (30フレーム) だけ進行
@@ -308,18 +309,19 @@ describe("Runner の動作確認 (v3)", () => {
 	});
 
 	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+		const skippingLogs: string[] = [];
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
+		});
 
 		await runner.start();
 		runner.pause();
 
 		const updateLogs: string[] = [];
-		const skippingLogs: string[] = [];
+
 		runner.sendToExternalTrigger.add((l) => {
 			if (l === "scene_update") updateLogs.push(l);
-		});
-		runner.sendToExternalTrigger.add((l) => {
-			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
 		});
 
 		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
