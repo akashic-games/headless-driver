@@ -14,7 +14,7 @@ export interface AMFlowStore {
 	playId: string;
 	sendEventTrigger: Trigger<Event>;
 	sendTickTrigger: Trigger<Tick>;
-	onPutStartPointTrigger: Trigger<void>;
+	onPutStartPointTrigger: Trigger<number>;
 	authenticate(token: string, revoke?: boolean): Permission;
 	sendTick(tick: Tick): void;
 	sendEvent(event: Event): void;
@@ -40,7 +40,7 @@ export class MemoryAMFlowStore implements AMFlowStore {
 	playId: string;
 	sendEventTrigger: Trigger<Event> = new Trigger();
 	sendTickTrigger: Trigger<Tick> = new Trigger();
-	onPutStartPointTrigger: Trigger<void> = new Trigger();
+	onPutStartPointTrigger: Trigger<number> = new Trigger();
 
 	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] = [];
@@ -104,7 +104,7 @@ export class MemoryAMFlowStore implements AMFlowStore {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		this.onPutStartPointTrigger.fire();
+		this.onPutStartPointTrigger.fire(startPoint.frame);
 
 		// NOTE: frame: 0 のみ第0要素に保持する
 		if (startPoint.frame === 0) {
