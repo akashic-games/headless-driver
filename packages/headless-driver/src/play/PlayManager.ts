@@ -1,5 +1,6 @@
 import { Permission } from "@akashic/amflow";
 import { AMFlowClient } from "./amflow/AMFlowClient";
+import { AMFlowStore } from "./amflow/AMFlowStore";
 import { DumpedPlaylog } from "./amflow/types";
 import { AMFlowClientManager } from "./AMFlowClientManager";
 import { ContentLocation } from "./Content";
@@ -15,9 +16,13 @@ export interface PlayFilter {
  * Play を管理するマネージャ。
  */
 export class PlayManager {
-	private amflowClientManager: AMFlowClientManager = new AMFlowClientManager();
+	private amflowClientManager: AMFlowClientManager;
 	private nextPlayId: number = 0;
 	private plays: Play[] = [];
+
+	constructor(factory: (playId: string) => AMFlowStore) {
+		this.amflowClientManager = new AMFlowClientManager(factory);
+	}
 
 	/**
 	 * Play を作成する。

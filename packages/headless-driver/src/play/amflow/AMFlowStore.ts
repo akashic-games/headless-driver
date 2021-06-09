@@ -10,10 +10,37 @@ import { DumpedPlaylog } from "./types";
  * AMFlow のストア。
  * 一つのプレーに対して一つ存在する。
  */
-export class AMFlowStore {
+export interface AMFlowStore {
+	playId: string;
+	sendEventTrigger: Trigger<Event>;
+	sendTickTrigger: Trigger<Tick>;
+	onPutStartPointTrigger: Trigger<void>;
+	authenticate(token: string, revoke?: boolean): Permission;
+	sendTick(tick: Tick): void;
+	sendEvent(event: Event): void;
+	getTickList(opts: GetTickListOptions): TickList | null;
+	putStartPoint(startPoint: StartPoint): void;
+	getStartPoint(opts: GetStartPointOptions): StartPoint | null;
+	isSuspended(): boolean;
+	suspend(): void;
+	resume(): void;
+	setTickList(tickList: TickList): void;
+	destroy(): void;
+	isDestroyed(): boolean;
+	createPlayToken(permission: Permission): string;
+	deletePlayToken(token: string): void;
+	deleteAllPlayTokens(): void;
+	dump(): DumpedPlaylog;
+}
+
+/**
+ * AMFlowStore のオンメモリ実装。
+ */
+export class MemoryAMFlowStore implements AMFlowStore {
 	playId: string;
 	sendEventTrigger: Trigger<Event> = new Trigger();
 	sendTickTrigger: Trigger<Tick> = new Trigger();
+	onPutStartPointTrigger: Trigger<void> = new Trigger();
 
 	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] = [];
@@ -77,6 +104,8 @@ export class AMFlowStore {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
+		this.onPutStartPointTrigger.fire();
+
 		// NOTE: frame: 0 のみ第0要素に保持する
 		if (startPoint.frame === 0) {
 			this.startPoints = [startPoint];
