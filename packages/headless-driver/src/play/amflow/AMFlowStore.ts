@@ -17,8 +17,8 @@ export interface StartPointHeader {
  */
 export interface AMFlowStore {
 	playId: string;
-	sendEventTrigger: Trigger<Event>;
-	sendTickTrigger: Trigger<Tick>;
+	onSendEvent: Trigger<Event>;
+	onSendTick: Trigger<Tick>;
 	onPutStartPoint: Trigger<StartPointHeader>;
 	authenticate(token: string, revoke?: boolean): Permission;
 	sendTick(tick: Tick): void;
@@ -43,8 +43,8 @@ export interface AMFlowStore {
  */
 export class MemoryAMFlowStore implements AMFlowStore {
 	playId: string;
-	sendEventTrigger: Trigger<Event> = new Trigger();
-	sendTickTrigger: Trigger<Tick> = new Trigger();
+	onSendEvent: Trigger<Event> = new Trigger();
+	onSendTick: Trigger<Tick> = new Trigger();
 	onPutStartPoint: Trigger<StartPointHeader> = new Trigger();
 
 	private permissionMap: Map<string, Permission> = new Map();
@@ -75,14 +75,14 @@ export class MemoryAMFlowStore implements AMFlowStore {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		this.pushTick(tick);
-		this.sendTickTrigger.fire(tick);
+		this.onSendTick.fire(tick);
 	}
 
 	sendEvent(event: Event): void {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
+		this.onSendEvent.fire(this.cloneDeep<Event>(event));
 	}
 
 	getTickList(opts: GetTickListOptions): TickList | null {
@@ -180,10 +180,10 @@ export class MemoryAMFlowStore implements AMFlowStore {
 		if (this.isDestroyed()) {
 			return;
 		}
-		this.sendEventTrigger.destroy();
-		this.sendTickTrigger.destroy();
-		this.sendEventTrigger = null!;
-		this.sendTickTrigger = null!;
+		this.onSendEvent.destroy();
+		this.onSendTick.destroy();
+		this.onSendEvent = null!;
+		this.onSendTick = null!;
 		this.permissionMap = null!;
 		this.startPoints = null!;
 	}

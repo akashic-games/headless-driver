@@ -29,8 +29,8 @@ export class AMFlowClient implements AMFlow {
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store.sendEventTrigger.add(this.onEventSended, this);
-		this.store.sendTickTrigger.add(this.onTickSended, this);
+		this.store.onSendEvent.add(this.onEventSended, this);
+		this.store.onSendTick.add(this.onTickSended, this);
 		this.state = "open";
 
 		if (callback) {
@@ -293,8 +293,8 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			this.store.sendEventTrigger.remove(this.onEventSended, this);
-			this.store.sendTickTrigger.remove(this.onTickSended, this);
+			this.store.onSendEvent.remove(this.onEventSended, this);
+			this.store.onSendTick.remove(this.onTickSended, this);
 		}
 
 		this.store = null!;
