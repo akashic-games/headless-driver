@@ -27,9 +27,7 @@ export class AMFlowClient implements AMFlow {
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
 		this.store = store;
-		this.store.putStartPointTrigger.add((startPoint) => {
-			this.onPutStartPoint.fire(startPoint);
-		});
+		this.store.putStartPointTrigger.add(this._onPutStartPoint, this);
 	}
 
 	open(playId: string, callback?: (error: Error | null) => void): void {
@@ -301,6 +299,7 @@ export class AMFlowClient implements AMFlow {
 		if (!this.store.isDestroyed()) {
 			this.store.sendEventTrigger.remove(this.onEventSended, this);
 			this.store.sendTickTrigger.remove(this.onTickSended, this);
+			this.store.putStartPointTrigger.remove(this._onPutStartPoint, this);
 		}
 
 		this.store = null!;
@@ -328,5 +327,9 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		this.eventHandlers.forEach((h) => h(event));
+	}
+
+	private _onPutStartPoint(startPoint: StartPoint): void {
+		this.onPutStartPoint.fire(startPoint);
 	}
 }
