@@ -3,12 +3,6 @@ import { AMFlowClient } from "./amflow/AMFlowClient";
 import { AMFlowStore } from "./amflow/AMFlowStore";
 
 export class AMFlowClientManager {
-	factory: (playId: string) => AMFlowStore;
-
-	constructor(factory: (playId: string) => AMFlowStore) {
-		this.factory = factory;
-	}
-
 	/**
 	 * PlayId と AMFlowStore を紐付けるマップ情報。
 	 */
@@ -120,7 +114,7 @@ export class AMFlowClientManager {
 	private createAMFlowStore(playId: string): AMFlowStore {
 		let store = this.storeMap.get(playId);
 		if (!store) {
-			store = this.factory(playId);
+			store = new AMFlowStore(playId);
 			this.storeMap.set(playId, store);
 		}
 		return store;

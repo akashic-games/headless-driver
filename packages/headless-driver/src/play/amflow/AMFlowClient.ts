@@ -1,5 +1,6 @@
 import { AMFlow, GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, EventFlagsMask, EventIndex, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
+import { Trigger } from "@akashic/trigger";
 import { getSystemLogger } from "../../Logger";
 import { AMFlowStore } from "./AMFlowStore";
 import { createError } from "./ErrorFactory";
@@ -13,6 +14,8 @@ export type AMFlowState = "connecting" | "open" | "closing" | "closed";
 export class AMFlowClient implements AMFlow {
 	playId: string;
 
+	onPutStartPoint: Trigger<StartPoint> = new Trigger();
+
 	protected state: AMFlowState = "connecting";
 	private store: AMFlowStore;
 
@@ -24,13 +27,16 @@ export class AMFlowClient implements AMFlow {
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
 		this.store = store;
+		this.store.putStartPointTrigger.add((startPoint) => {
+			this.onPutStartPoint.fire(startPoint);
+		});
 	}
 
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store.onSendEvent.add(this.onEventSended, this);
-		this.store.onSendTick.add(this.onTickSended, this);
+		this.store.sendEventTrigger.add(this.onEventSended, this);
+		this.store.sendTickTrigger.add(this.onTickSended, this);
 		this.state = "open";
 
 		if (callback) {
@@ -293,8 +299,8 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			this.store.onSendEvent.remove(this.onEventSended, this);
-			this.store.onSendTick.remove(this.onTickSended, this);
+			this.store.sendEventTrigger.remove(this.onEventSended, this);
+			this.store.sendTickTrigger.remove(this.onTickSended, this);
 		}
 
 		this.store = null!;

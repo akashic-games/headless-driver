@@ -6,46 +6,15 @@ import cloneDeep = require("lodash.clonedeep");
 import { createError } from "./ErrorFactory";
 import { DumpedPlaylog } from "./types";
 
-export interface StartPointHeader {
-	frame: number;
-	timestamp: number;
-}
-
 /**
  * AMFlow のストア。
  * 一つのプレーに対して一つ存在する。
  */
-export interface AMFlowStore {
+export class AMFlowStore {
 	playId: string;
-	onSendEvent: Trigger<Event>;
-	onSendTick: Trigger<Tick>;
-	onPutStartPoint: Trigger<StartPointHeader>;
-	authenticate(token: string, revoke?: boolean): Permission;
-	sendTick(tick: Tick): void;
-	sendEvent(event: Event): void;
-	getTickList(opts: GetTickListOptions): TickList | null;
-	putStartPoint(startPoint: StartPoint): void;
-	getStartPoint(opts: GetStartPointOptions): StartPoint | null;
-	isSuspended(): boolean;
-	suspend(): void;
-	resume(): void;
-	setTickList(tickList: TickList): void;
-	destroy(): void;
-	isDestroyed(): boolean;
-	createPlayToken(permission: Permission): string;
-	deletePlayToken(token: string): void;
-	deleteAllPlayTokens(): void;
-	dump(): DumpedPlaylog;
-}
-
-/**
- * AMFlowStore のオンメモリ実装。
- */
-export class MemoryAMFlowStore implements AMFlowStore {
-	playId: string;
-	onSendEvent: Trigger<Event> = new Trigger();
-	onSendTick: Trigger<Tick> = new Trigger();
-	onPutStartPoint: Trigger<StartPointHeader> = new Trigger();
+	sendEventTrigger: Trigger<Event> = new Trigger();
+	sendTickTrigger: Trigger<Tick> = new Trigger();
+	putStartPointTrigger: Trigger<StartPoint> = new Trigger();
 
 	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] = [];
@@ -75,14 +44,14 @@ export class MemoryAMFlowStore implements AMFlowStore {
 			throw createError("bad_request", "Play may be suspended");
 		}
 		this.pushTick(tick);
-		this.onSendTick.fire(tick);
+		this.sendTickTrigger.fire(tick);
 	}
 
 	sendEvent(event: Event): void {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		this.onSendEvent.fire(this.cloneDeep<Event>(event));
+		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
 	}
 
 	getTickList(opts: GetTickListOptions): TickList | null {
@@ -109,7 +78,7 @@ export class MemoryAMFlowStore implements AMFlowStore {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		this.onPutStartPoint.fire({ frame: startPoint.frame, timestamp: startPoint.timestamp });
+		this.putStartPointTrigger.fire(startPoint);
 
 		// NOTE: frame: 0 のみ第0要素に保持する
 		if (startPoint.frame === 0) {
@@ -180,10 +149,10 @@ export class MemoryAMFlowStore implements AMFlowStore {
 		if (this.isDestroyed()) {
 			return;
 		}
-		this.onSendEvent.destroy();
-		this.onSendTick.destroy();
-		this.onSendEvent = null!;
-		this.onSendTick = null!;
+		this.sendEventTrigger.destroy();
+		this.sendTickTrigger.destroy();
+		this.sendEventTrigger = null!;
+		this.sendTickTrigger = null!;
 		this.permissionMap = null!;
 		this.startPoints = null!;
 	}
