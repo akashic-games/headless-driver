@@ -15,13 +15,9 @@ export interface PlayFilter {
  * Play を管理するマネージャ。
  */
 export class PlayManager {
-	private amflowClientManager: AMFlowClientManager;
+	private amflowClientManager: AMFlowClientManager = new AMFlowClientManager();;
 	private nextPlayId: number = 0;
 	private plays: Play[] = [];
-
-	constructor() {
-		this.amflowClientManager = new AMFlowClientManager();
-	}
 
 	/**
 	 * Play を作成する。
