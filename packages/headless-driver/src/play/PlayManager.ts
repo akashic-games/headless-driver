@@ -15,7 +15,7 @@ export interface PlayFilter {
  * Play を管理するマネージャ。
  */
 export class PlayManager {
-	private amflowClientManager: AMFlowClientManager = new AMFlowClientManager();;
+	private amflowClientManager: AMFlowClientManager = new AMFlowClientManager();
 	private nextPlayId: number = 0;
 	private plays: Play[] = [];
 
