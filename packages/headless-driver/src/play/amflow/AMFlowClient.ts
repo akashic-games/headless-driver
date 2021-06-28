@@ -300,7 +300,6 @@ export class AMFlowClient implements AMFlow {
 			this.store.sendEventTrigger.remove(this.handleSendEvent, this);
 			this.store.sendTickTrigger.remove(this.handleSendTick, this);
 			this.store.putStartPointTrigger.remove(this.handlePutStartPoint, this);
-			this.onPutStartPoint = null!;
 		}
 
 		this.store = null!;
@@ -308,6 +307,7 @@ export class AMFlowClient implements AMFlow {
 		this.tickHandlers = null!;
 		this.eventHandlers = null!;
 		this.unconsumedEvents = null!;
+		this.onPutStartPoint = null!;
 	}
 
 	isDestroyed(): boolean {
