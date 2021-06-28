@@ -27,14 +27,14 @@ export class AMFlowClient implements AMFlow {
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
 		this.store = store;
-		this.store.putStartPointTrigger.add(this.putStartPointHandler, this);
+		this.store.putStartPointTrigger.add(this.handlePutStartPoint, this);
 	}
 
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store.sendEventTrigger.add(this.sendEventHandler, this);
-		this.store.sendTickTrigger.add(this.sendTickHandler, this);
+		this.store.sendEventTrigger.add(this.handleSendEvent, this);
+		this.store.sendTickTrigger.add(this.handleSendTick, this);
 		this.state = "open";
 
 		if (callback) {
@@ -297,9 +297,10 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			this.store.sendEventTrigger.remove(this.sendEventHandler, this);
-			this.store.sendTickTrigger.remove(this.sendTickHandler, this);
-			this.store.putStartPointTrigger.remove(this.putStartPointHandler, this);
+			this.store.sendEventTrigger.remove(this.handleSendEvent, this);
+			this.store.sendTickTrigger.remove(this.handleSendTick, this);
+			this.store.putStartPointTrigger.remove(this.handlePutStartPoint, this);
+			this.onPutStartPoint = null!;
 		}
 
 		this.store = null!;
@@ -317,11 +318,11 @@ export class AMFlowClient implements AMFlow {
 		return this.store.dump();
 	}
 
-	private sendTickHandler(tick: Tick): void {
+	private handleSendTick(tick: Tick): void {
 		this.tickHandlers.forEach((h) => h(tick));
 	}
 
-	private sendEventHandler(event: Event): void {
+	private handleSendEvent(event: Event): void {
 		if (this.eventHandlers.length <= 0) {
 			this.unconsumedEvents.push(event);
 			return;
@@ -329,7 +330,7 @@ export class AMFlowClient implements AMFlow {
 		this.eventHandlers.forEach((h) => h(event));
 	}
 
-	private putStartPointHandler(startPoint: StartPoint): void {
+	private handlePutStartPoint(startPoint: StartPoint): void {
 		this.onPutStartPoint.fire(startPoint);
 	}
 }

@@ -441,7 +441,6 @@ describe("プレイ周りの結合動作テスト", () => {
 			.then(() => {
 				return new Promise<void>((resolve, reject) => {
 					let startPoint: StartPoint;
-					// putStartPoint した後に onPutStartPoint が発火する
 					activeAMFlow.onPutStartPoint.add((s) => {
 						startPoint = s;
 					});

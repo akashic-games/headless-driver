@@ -155,6 +155,7 @@ export class AMFlowStore {
 		this.sendTickTrigger = null!;
 		this.permissionMap = null!;
 		this.startPoints = null!;
+		this.putStartPointTrigger = null!;
 	}
 
 	isDestroyed(): boolean {
