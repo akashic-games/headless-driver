@@ -43,7 +43,7 @@
     "@types/node": "13.13.46",
     "@types/node-fetch": "2.5.8",
     "@types/pixelmatch": "5.2.2",
-    "@types/pngjs": "^6.0.0",
+    "@types/pngjs": "6.0.0",
     "@typescript-eslint/eslint-plugin": "4.19.0",
     "eslint": "7.22.0",
     "eslint-config-prettier": "8.1.0",
