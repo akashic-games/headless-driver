@@ -27,7 +27,6 @@ export class AMFlowClient implements AMFlow {
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
 		this.store = store;
-		this.store.putStartPointTrigger.add(this.handlePutStartPoint, this);
 	}
 
 	open(playId: string, callback?: (error: Error | null) => void): void {
@@ -35,6 +34,7 @@ export class AMFlowClient implements AMFlow {
 
 		this.store.sendEventTrigger.add(this.handleSendEvent, this);
 		this.store.sendTickTrigger.add(this.handleSendTick, this);
+		this.store.putStartPointTrigger.add(this.handlePutStartPoint, this);
 		this.state = "open";
 
 		if (callback) {
