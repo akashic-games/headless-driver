@@ -27,14 +27,14 @@ export class AMFlowClient implements AMFlow {
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
 		this.store = store;
-		this.store.putStartPointTrigger.add(this._onPutStartPoint, this);
+		this.store.putStartPointTrigger.add(this.putStartPointHandler, this);
 	}
 
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store.sendEventTrigger.add(this.onEventSended, this);
-		this.store.sendTickTrigger.add(this.onTickSended, this);
+		this.store.sendEventTrigger.add(this.sendEventHandler, this);
+		this.store.sendTickTrigger.add(this.sendTickHandler, this);
 		this.state = "open";
 
 		if (callback) {
@@ -297,9 +297,9 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			this.store.sendEventTrigger.remove(this.onEventSended, this);
-			this.store.sendTickTrigger.remove(this.onTickSended, this);
-			this.store.putStartPointTrigger.remove(this._onPutStartPoint, this);
+			this.store.sendEventTrigger.remove(this.sendEventHandler, this);
+			this.store.sendTickTrigger.remove(this.sendTickHandler, this);
+			this.store.putStartPointTrigger.remove(this.putStartPointHandler, this);
 		}
 
 		this.store = null!;
@@ -317,11 +317,11 @@ export class AMFlowClient implements AMFlow {
 		return this.store.dump();
 	}
 
-	private onTickSended(tick: Tick): void {
+	private sendTickHandler(tick: Tick): void {
 		this.tickHandlers.forEach((h) => h(tick));
 	}
 
-	private onEventSended(event: Event): void {
+	private sendEventHandler(event: Event): void {
 		if (this.eventHandlers.length <= 0) {
 			this.unconsumedEvents.push(event);
 			return;
@@ -329,7 +329,7 @@ export class AMFlowClient implements AMFlow {
 		this.eventHandlers.forEach((h) => h(event));
 	}
 
-	private _onPutStartPoint(startPoint: StartPoint): void {
+	private putStartPointHandler(startPoint: StartPoint): void {
 		this.onPutStartPoint.fire(startPoint);
 	}
 }
