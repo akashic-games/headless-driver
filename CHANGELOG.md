@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.8.0 (2021-07-01)
+
+#### Enhancement
+* `headless-driver`
+  * [#263](https://github.com/akashic-games/headless-driver/pull/263) add AMFlowStore/AMFlowClient putStartPoint Trigger ([@kamakiri01](https://github.com/kamakiri01))
+
+#### Other Change
+* `headless-driver-runner`, `headless-driver`
+  * [#258](https://github.com/akashic-games/headless-driver/pull/258) テストのリネームなど ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Committers: 2
+- [@yu-ogi](https://github.com/yu-ogi)
+- kamakiri_ys ([@kamakiri01](https://github.com/kamakiri01))
+
 ## v1.7.3 (2021-05-25)
 
 #### Enhancement
