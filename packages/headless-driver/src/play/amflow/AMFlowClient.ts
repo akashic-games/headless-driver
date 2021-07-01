@@ -1,5 +1,6 @@
 import { AMFlow, GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
 import { Event, EventFlagsMask, EventIndex, StorageData, StorageKey, StorageReadKey, StorageValue, Tick, TickList } from "@akashic/playlog";
+import { Trigger } from "@akashic/trigger";
 import { getSystemLogger } from "../../Logger";
 import { AMFlowStore } from "./AMFlowStore";
 import { createError } from "./ErrorFactory";
@@ -12,6 +13,8 @@ export type AMFlowState = "connecting" | "open" | "closing" | "closed";
  */
 export class AMFlowClient implements AMFlow {
 	playId: string;
+
+	onPutStartPoint: Trigger<StartPoint> = new Trigger();
 
 	protected state: AMFlowState = "connecting";
 	private store: AMFlowStore;
@@ -29,8 +32,9 @@ export class AMFlowClient implements AMFlow {
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store.sendEventTrigger.add(this.onEventSended, this);
-		this.store.sendTickTrigger.add(this.onTickSended, this);
+		this.store.sendEventTrigger.add(this.handleSendEvent, this);
+		this.store.sendTickTrigger.add(this.handleSendTick, this);
+		this.store.putStartPointTrigger.add(this.handlePutStartPoint, this);
 		this.state = "open";
 
 		if (callback) {
@@ -293,8 +297,9 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			this.store.sendEventTrigger.remove(this.onEventSended, this);
-			this.store.sendTickTrigger.remove(this.onTickSended, this);
+			this.store.sendEventTrigger.remove(this.handleSendEvent, this);
+			this.store.sendTickTrigger.remove(this.handleSendTick, this);
+			this.store.putStartPointTrigger.remove(this.handlePutStartPoint, this);
 		}
 
 		this.store = null!;
@@ -302,6 +307,7 @@ export class AMFlowClient implements AMFlow {
 		this.tickHandlers = null!;
 		this.eventHandlers = null!;
 		this.unconsumedEvents = null!;
+		this.onPutStartPoint = null!;
 	}
 
 	isDestroyed(): boolean {
@@ -312,15 +318,19 @@ export class AMFlowClient implements AMFlow {
 		return this.store.dump();
 	}
 
-	private onTickSended(tick: Tick): void {
+	private handleSendTick(tick: Tick): void {
 		this.tickHandlers.forEach((h) => h(tick));
 	}
 
-	private onEventSended(event: Event): void {
+	private handleSendEvent(event: Event): void {
 		if (this.eventHandlers.length <= 0) {
 			this.unconsumedEvents.push(event);
 			return;
 		}
 		this.eventHandlers.forEach((h) => h(event));
+	}
+
+	private handlePutStartPoint(startPoint: StartPoint): void {
+		this.onPutStartPoint.fire(startPoint);
 	}
 }

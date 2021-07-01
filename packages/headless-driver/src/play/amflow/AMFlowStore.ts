@@ -14,6 +14,7 @@ export class AMFlowStore {
 	playId: string;
 	sendEventTrigger: Trigger<Event> = new Trigger();
 	sendTickTrigger: Trigger<Tick> = new Trigger();
+	putStartPointTrigger: Trigger<StartPoint> = new Trigger();
 
 	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] = [];
@@ -77,6 +78,8 @@ export class AMFlowStore {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
+		this.putStartPointTrigger.fire(startPoint);
+
 		// NOTE: frame: 0 のみ第0要素に保持する
 		if (startPoint.frame === 0) {
 			this.startPoints = [startPoint];
@@ -152,6 +155,7 @@ export class AMFlowStore {
 		this.sendTickTrigger = null!;
 		this.permissionMap = null!;
 		this.startPoints = null!;
+		this.putStartPointTrigger = null!;
 	}
 
 	isDestroyed(): boolean {

@@ -1,5 +1,5 @@
 import * as path from "path";
-import { GetTickListOptions } from "@akashic/amflow";
+import { GetTickListOptions, StartPoint } from "@akashic/amflow";
 import { Event, TickList } from "@akashic/playlog";
 import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
@@ -440,6 +440,11 @@ describe("プレイ周りの結合動作テスト", () => {
 			})
 			.then(() => {
 				return new Promise<void>((resolve, reject) => {
+					let startPoint: StartPoint;
+					activeAMFlow.onPutStartPoint.add((s) => {
+						startPoint = s;
+					});
+
 					// Play を resume した後に sendTick できる
 					activeAMFlow.sendTick([1]);
 					// Play を resume した後に sendEvent できる
@@ -456,6 +461,11 @@ describe("プレイ周りの結合動作テスト", () => {
 								reject(e);
 								return;
 							}
+							expect(startPoint).toEqual({
+								frame: 10,
+								timestamp: 1000,
+								data: "hoge"
+							});
 							resolve();
 						}
 					);
