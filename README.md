@@ -21,6 +21,8 @@ npm run build
 
 | 環境変数 | 説明 | 注釈 |
 |--------|-----|-----|
+| `ENGINE_FILES_V1_PATH` | engine-files v1 のビルド成果物のパス。<br> この値が指定された場合、 対象の engine-files を akashic-engine v1 コンテンツ実行時に利用します。 | エンジン開発用のオプションです。通常、ゲーム開発時に利用する必要はありません。 |
+| `ENGINE_FILES_V2_PATH` | engine-files v2 のビルド成果物のパス。<br> この値が指定された場合、 対象の engine-files を akashic-engine v2 コンテンツ実行時に利用します。 | エンジン開発用のオプションです。通常、ゲーム開発時に利用する必要はありません。 |
 | `ENGINE_FILES_V3_PATH` | engine-files v3 のビルド成果物のパス。<br> この値が指定された場合、 対象の engine-files を akashic-engine v3 コンテンツ実行時に利用します。 | エンジン開発用のオプションです。通常、ゲーム開発時に利用する必要はありません。 |
 
 ## ライセンス
