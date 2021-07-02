@@ -15,6 +15,7 @@
     "test:lint": "eslint \"src/**/*.ts\" --fix",
     "test:lint-md": "remark . --frail --no-stdout --quiet --rc-path"
   },
+  "main": "lib/index.js",
   "author": "DWANGO Co., Ltd.",
   "license": "MIT",
   "publishConfig": {
