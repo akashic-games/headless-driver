@@ -26,11 +26,6 @@
   ],
   "dependencies": {
     "@akashic/amflow": "~3.0.0",
-    "@akashic/headless-driver-runner": "1.7.1",
-    "@akashic/headless-driver-runner-v1": "1.7.1",
-    "@akashic/headless-driver-runner-v2": "1.7.3",
-    "@akashic/headless-driver-runner-v3": "1.7.3",
-    "@akashic/pdi-common-impl": "0.0.4",
     "@akashic/playlog": "~3.1.0",
     "@akashic/trigger": "~1.0.0",
     "aev1": "npm:@akashic/engine-files@1.1.16",
