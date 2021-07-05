@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.8.1 (2021-07-05)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#264](https://github.com/akashic-games/headless-driver/pull/264) 【v1.7.4】内部コンポーネントの更新(engineFiles@3.0.17, engineFiles@2.1.54, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.8.0 (2021-07-01)
 
 #### Enhancement
