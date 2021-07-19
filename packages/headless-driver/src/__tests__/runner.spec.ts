@@ -558,7 +558,6 @@ describe("Runner の動作確認 (異常系)", () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 		let err: any;
 		runner.errorTrigger.add((e) => {
-			console.log("***", e);
 			err = e;
 		});
 		await runner.start();
