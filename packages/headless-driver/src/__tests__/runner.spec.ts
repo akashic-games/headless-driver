@@ -85,11 +85,11 @@ describe("Runner の動作確認 (v1)", () => {
 		});
 
 		// step() を呼び出すたびに g.Scene#onUpdate が発火することを確認
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update"]);
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update"]);
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
 
 		runner.stop();
@@ -188,11 +188,11 @@ describe("Runner の動作確認 (v2)", () => {
 		});
 
 		// step() を呼び出すたびに g.Scene#onUpdate が発火することを確認
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update"]);
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update"]);
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
 
 		runner.stop();
@@ -299,11 +299,11 @@ describe("Runner の動作確認 (v3)", () => {
 		});
 
 		// step() を呼び出すたびに g.Scene#onUpdate が発火することを確認
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update"]);
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update"]);
-		await runner.step();
+		runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
 
 		runner.stop();
