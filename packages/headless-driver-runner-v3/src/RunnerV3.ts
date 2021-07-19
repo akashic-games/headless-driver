@@ -19,16 +19,47 @@ export class RunnerV3 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	async start(): Promise<RunnerV3Game | null> {
+	private _isGameStarted: boolean = false;
+	private _isInitializeCalled: boolean = false;
+	private _isStartCalled: boolean = false;
+	private _startWaitPromise: any;
+
+	async initialize(): Promise<RunnerV3Game | null> {
+		this._startWaitPromise = this.createWaitPromise();
 		let game: RunnerV3Game | null = null;
 
 		try {
 			game = await this.initGameDriver();
-			this.running = true;
+			this._isInitializeCalled = true;
 		} catch (e) {
 			this.onError(e);
 		}
+		return game;
+	}
 
+	async start(): Promise<RunnerV3Game | null> {
+		if (this._isStartCalled) {
+			this.onError(new Error("Start() has already been called."));
+		}
+		this._isStartCalled = true;
+
+		let game: RunnerV3Game | null = null;
+		if (!this._isInitializeCalled) {
+			game = await this.initialize();
+		} else {
+			game = this.driver?._game!;
+		}
+
+		if (!game) {
+			return game;
+		}
+
+		this.running = true;
+		this.platform?.resumeLoopers();
+		if (this._isGameStarted) {
+			return game;
+		}
+		await this._startWaitPromise.promise;
 		return game;
 	}
 
@@ -242,7 +273,9 @@ export class RunnerV3 extends Runner {
 						reject(e);
 						return;
 					}
+					this.platform?.pauseLoopers();
 					driver.startGame();
+					resolve(driver._game!);
 				}
 			);
 
@@ -253,7 +286,10 @@ export class RunnerV3 extends Runner {
 					});
 				}
 				this.fps = game.fps;
-				game._onStart.addOnce(() => resolve(game));
+				game._onStart.addOnce(() => {
+					this._isGameStarted = true;
+					this._startWaitPromise.resolve();
+				});
 			});
 		});
 	}

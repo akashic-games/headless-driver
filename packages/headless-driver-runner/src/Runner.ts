@@ -107,6 +107,11 @@ export abstract class Runner {
 	}
 
 	/**
+	 * Runner を初期化する。
+	 * @returns `g.game` のインスタンス。初期化に失敗した場合は `null` 。
+	 */
+	abstract initialize(): any;
+	/**
 	 * Runner を開始する。
 	 * @returns `g.game` のインスタンス。起動に失敗した場合は `null` 。
 	 */
@@ -174,5 +179,13 @@ export abstract class Runner {
 	protected onError(error: Error): void {
 		this.stop();
 		this.errorTrigger.fire(error);
+	}
+
+	protected createWaitPromise(): { promise: Promise<void>; resolve: any } {
+		let resolve: ((value: void) => void) | null = null;
+		const promise = new Promise<void>((_ressolve, _reject) => {
+			resolve = _ressolve;
+		});
+		return { promise, resolve };
 	}
 }

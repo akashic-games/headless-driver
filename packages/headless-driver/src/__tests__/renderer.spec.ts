@@ -53,8 +53,7 @@ describe("コンテンツのレンダリングテスト", () => {
 			return `frame_${("000" + index).slice(-3)}.png`;
 		};
 
-		const game = (await runner.start()) as RunnerV3Game;
-		runner.pause();
+		const game = (await runner.initialize()) as RunnerV3Game;
 		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const width = game.width;
