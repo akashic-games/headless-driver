@@ -54,7 +54,7 @@ async function readyRunner(gameJsonPath: string): Promise<(RunnerV1 | RunnerV2 |
 }
 
 describe("Runner の動作確認 (v1)", () => {
-	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
+	xit("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
 		const updateLogs: string[] = [];
@@ -103,7 +103,7 @@ describe("Runner の動作確認 (v1)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+	xit("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
 		await runner.start();
@@ -121,7 +121,7 @@ describe("Runner の動作確認 (v1)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+	xit("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
 		await runner.start();
@@ -141,7 +141,7 @@ describe("Runner の動作確認 (v1)", () => {
 });
 
 describe("Runner の動作確認 (v2)", () => {
-	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
+	xit("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
 		const updateLogs: string[] = [];
@@ -190,7 +190,7 @@ describe("Runner の動作確認 (v2)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+	xit("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
 		await runner.start();
@@ -212,7 +212,7 @@ describe("Runner の動作確認 (v2)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+	xit("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
 		await runner.start();
@@ -236,7 +236,7 @@ describe("Runner の動作確認 (v2)", () => {
 });
 
 describe("Runner の動作確認 (v3)", () => {
-	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
+	xit("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
 		const updateLogs: string[] = [];
@@ -285,7 +285,7 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+	xit("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
 		await runner.start();
@@ -307,7 +307,7 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.stop();
 	});
 
-	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+	xit("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
 		await runner.start();
