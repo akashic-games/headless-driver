@@ -23,7 +23,7 @@ describe("コンテンツのレンダリングテスト", () => {
 	 * このテストによる実際の描画結果は <game.jsonのディレクトリ>/actual 以下に保存される。
 	 * 正解データとテスト結果の描画差異は <game.jsonのディレクトリ>/diff 以下に保存される。
 	 */
-	it("content-v3 のレンダリング結果が正解データと正しいことを確認", async () => {
+	xit("content-v3 のレンダリング結果が正解データと正しいことを確認", async () => {
 		// TODO: ポイントダウンイベントなどを利用しているようなもう少し本格的なコンテンツで動作を確認するように変更
 		const contentPath = path.resolve(__dirname, "fixtures", "content-v3");
 		const playManager = new PlayManager();
