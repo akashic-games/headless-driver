@@ -70,7 +70,7 @@ export class RunnerV3 extends Runner {
 			return;
 		}
 
-		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
+		this.platform.stepLoopers();
 	}
 
 	async advance(ms: number): Promise<void> {
@@ -175,20 +175,17 @@ export class RunnerV3 extends Runner {
 		return this.getPrimarySurface()._drawable;
 	}
 
-	protected _stepLoopers(): void {
+	protected _stepHalf(): void {
 		if (this.fps == null || this.platform == null) {
-			this.errorTrigger.fire(new Error("RunnerV3#stepLoopers(): Cannot call Runner#step() before initialized"));
+			this.errorTrigger.fire(new Error("RunnerV3#_stepHalf(): Cannot call Runner#step() before initialized"));
 			return;
 		}
 		if (this.running) {
-			this.errorTrigger.fire(new Error("RunnerV3#stepLoopers(): Cannot call Runner#step() in running"));
+			this.errorTrigger.fire(new Error("RunnerV3#_stepHalf(): Cannot call Runner#step() in running"));
 			return;
 		}
-		this.platform.stepLoopers();
-	}
 
-	protected _stepHalf(): void {
-		throw Error("RunnerV3#_stepHalf(): Not supported. Use _stepLoopers().");
+		this.platform.advanceLoopers(1000 / this.fps / 2);
 	}
 
 	private initGameDriver(): Promise<RunnerV3Game> {

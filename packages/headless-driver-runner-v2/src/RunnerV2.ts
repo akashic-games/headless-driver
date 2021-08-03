@@ -156,10 +156,6 @@ export class RunnerV2 extends Runner {
 		this.platform.advanceLoopers(1000 / this.fps / 2);
 	}
 
-	protected _stepLoopers(): void {
-		throw new Error("RunnerV2#_stepLoopers(): Not supported");
-	}
-
 	private initGameDriver(): Promise<RunnerV2Game> {
 		return new Promise<RunnerV2Game>((resolve, reject) => {
 			if (this.driver) {
