@@ -143,7 +143,7 @@ export class RunnerV2 extends Runner {
 		throw new Error("RunnerV2#getPrimarySurface(): Not supported");
 	}
 
-	protected _stepHalf(): void {
+	protected _stepMinimal(): void {
 		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() before initialized"));
 			return;
@@ -152,7 +152,7 @@ export class RunnerV2 extends Runner {
 			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() in running"));
 			return;
 		}
-
+		// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。
 		this.platform.advanceLoopers(1000 / this.fps / 2);
 	}
 
