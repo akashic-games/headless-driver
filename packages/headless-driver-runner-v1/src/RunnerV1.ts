@@ -83,6 +83,10 @@ export class RunnerV1 extends Runner {
 		this.platform.advanceLoopers(1000 / this.fps / 2);
 	}
 
+	protected _stepLoopers(): void {
+		throw new Error("RunnerV1#_stepLoopers(): Not supported");
+	}
+
 	async advance(ms: number): Promise<void> {
 		if (this.fps == null || this.platform == null || this.driver == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));

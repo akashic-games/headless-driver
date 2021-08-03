@@ -158,8 +158,12 @@ export abstract class Runner {
 				try {
 					if (condition()) return void resolve();
 					// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。
-					// TODO: this.step() が厳密に一フレーム進めることができればそちらに移行
-					this._stepHalf();
+					// TODO: v3 のみ this._stepLoopers() で一フレーム進めることができる。
+					if (this.engineVersion === "3") {
+						this._stepLoopers();
+					} else {
+						this._stepHalf();
+					}
 				} catch (e) {
 					return void reject(e);
 				}
@@ -170,6 +174,8 @@ export abstract class Runner {
 	}
 
 	protected abstract _stepHalf(): void;
+
+	protected abstract _stepLoopers(): void;
 
 	protected onError(error: Error): void {
 		this.stop();

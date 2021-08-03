@@ -175,17 +175,20 @@ export class RunnerV3 extends Runner {
 		return this.getPrimarySurface()._drawable;
 	}
 
-	protected _stepHalf(): void {
+	protected _stepLoopers(): void {
 		if (this.fps == null || this.platform == null) {
-			this.errorTrigger.fire(new Error("RunnerV3#_stepHalf(): Cannot call Runner#step() before initialized"));
+			this.errorTrigger.fire(new Error("RunnerV3#stepLoopers(): Cannot call Runner#step() before initialized"));
 			return;
 		}
 		if (this.running) {
-			this.errorTrigger.fire(new Error("RunnerV3#_stepHalf(): Cannot call Runner#step() in running"));
+			this.errorTrigger.fire(new Error("RunnerV3#stepLoopers(): Cannot call Runner#step() in running"));
 			return;
 		}
+		this.platform.stepLoopers();
+	}
 
-		this.platform.advanceLoopers(1000 / this.fps / 2);
+	protected _stepHalf(): void {
+		throw Error("RunnerV3#_stepHalf(): Not supported. Use _stepLoopers().");
 	}
 
 	private initGameDriver(): Promise<RunnerV3Game> {

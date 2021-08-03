@@ -86,7 +86,11 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 			this.loopers[i].debugStart();
 		}
 	}
-
+	stepLoopers(): void {
+		for (let i = 0; i < this.loopers.length; i++) {
+			this.loopers[i].debugStep(NaN);
+		}
+	}
 	firePointEvent(event: pdi.PlatformPointEvent): void {
 		this.eventHandler?.onPointEvent(event);
 	}
