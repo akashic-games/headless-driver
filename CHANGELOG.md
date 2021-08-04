@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v1.8.5 (2021-08-04)
+
+#### Bug Fix
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#271](https://github.com/akashic-games/headless-driver/pull/271) Add stepLoopers() to PlatformV3 ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Other Change
+* `headless-driver`
+  * [#270](https://github.com/akashic-games/headless-driver/pull/270) Disable some tests ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v1.8.4 (2021-07-12)
 
 #### Enhancement
