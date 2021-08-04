@@ -210,7 +210,6 @@ export class RunnerV2 extends Runner {
 						reject(e);
 						return;
 					}
-
 					if (paused) {
 						this.platform?.pauseLoopers();
 						driver.startGame();
