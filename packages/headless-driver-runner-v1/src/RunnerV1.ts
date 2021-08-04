@@ -1,5 +1,5 @@
 import { akashicEngine as g, gameDriver as gdr, pdi } from "@akashic/engine-files";
-import { Runner, RunnerPointEvent, StartParameters } from "@akashic/headless-driver-runner";
+import { Runner, RunnerPointEvent, RunnerStartParameters } from "@akashic/headless-driver-runner";
 import { PlatformV1 } from "./platform/PlatformV1";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -16,12 +16,22 @@ export class RunnerV1 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	async start(params?: StartParameters): Promise<RunnerV1Game | null> {
+	async start(params?: RunnerStartParameters): Promise<RunnerV1Game | null> {
 		let game: RunnerV1Game | null = null;
+		const paused = !!params?.paused;
 
 		try {
-			game = await this.initGameDriver(params?.paused);
-			this.running = !params?.paused;
+			await this.initGameDriver();
+
+			if (!paused) {
+				this.running = true;
+				game = await this.startGameDriver();
+			} else {
+				this.running = false;
+				this.platform?.pauseLoopers(); // コンテンツ開始前に停止する
+				this.driver!.startGame();
+				game = this.driver!._game;
+			}
 		} catch (e) {
 			this.onError(e);
 		}
@@ -156,8 +166,8 @@ export class RunnerV1 extends Runner {
 		throw new Error("RunnerV1#getPrimarySurface(): Not supported");
 	}
 
-	private initGameDriver(paused?: boolean): Promise<RunnerV1Game> {
-		return new Promise<RunnerV1Game>((resolve, reject) => {
+	private initGameDriver(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
 			if (this.driver) {
 				this.driver.destroy();
 				this.driver = null;
@@ -210,13 +220,7 @@ export class RunnerV1 extends Runner {
 						reject(e);
 						return;
 					}
-					if (paused) {
-						this.platform?.pauseLoopers();
-						driver.startGame();
-						resolve(driver._game!);
-					} else {
-						driver.startGame();
-					}
+					resolve();
 				}
 			);
 
@@ -227,12 +231,15 @@ export class RunnerV1 extends Runner {
 					});
 				}
 				this.fps = game.fps;
-				game._started.handle(() => {
-					resolve(game);
-					return true;
-				});
 				return true;
 			});
+		});
+	}
+
+	private startGameDriver(): Promise<RunnerV1Game> {
+		return new Promise<RunnerV1Game>((resolve, _reject) => {
+			this.driver!._game._started.handle(() => resolve(this.driver!._game));
+			this.driver!.startGame();
 		});
 	}
 

@@ -1,4 +1,4 @@
-import { Runner, RunnerPointEvent, StartParameters } from "@akashic/headless-driver-runner";
+import { Runner, RunnerPointEvent, RunnerStartParameters } from "@akashic/headless-driver-runner";
 import type { Canvas } from "canvas";
 import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
 import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSurface";
@@ -19,12 +19,22 @@ export class RunnerV3 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	async start(params?: StartParameters): Promise<RunnerV3Game | null> {
+	async start(params?: RunnerStartParameters): Promise<RunnerV3Game | null> {
 		let game: RunnerV3Game | null = null;
+		const paused = !!params?.paused;
 
 		try {
-			game = await this.initGameDriver(params?.paused);
-			this.running = !params?.paused;
+			await this.initGameDriver();
+
+			if (!paused) {
+				this.running = true;
+				game = await this.startGameDriver();
+			} else {
+				this.running = false;
+				this.platform?.pauseLoopers(); // コンテンツ開始前に停止する
+				this.driver!.startGame();
+				game = this.driver!._game;
+			}
 		} catch (e) {
 			this.onError(e);
 		}
@@ -179,8 +189,8 @@ export class RunnerV3 extends Runner {
 		this.step();
 	}
 
-	private initGameDriver(paused?: boolean): Promise<RunnerV3Game> {
-		return new Promise<RunnerV3Game>((resolve, reject) => {
+	private initGameDriver(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
 			if (this.driver) {
 				this.driver.destroy();
 				this.driver = null;
@@ -233,13 +243,7 @@ export class RunnerV3 extends Runner {
 						reject(e);
 						return;
 					}
-					if (paused) {
-						this.platform?.pauseLoopers();
-						driver.startGame();
-						resolve(driver._game!);
-					} else {
-						driver.startGame();
-					}
+					resolve();
 				}
 			);
 
@@ -250,8 +254,14 @@ export class RunnerV3 extends Runner {
 					});
 				}
 				this.fps = game.fps;
-				game._onStart.addOnce(() => resolve(game));
 			});
+		});
+	}
+
+	private startGameDriver(): Promise<RunnerV3Game> {
+		return new Promise<RunnerV3Game>((resolve, _reject) => {
+			this.driver!._game!._onStart.addOnce(() => resolve(this.driver!._game!));
+			this.driver!.startGame();
 		});
 	}
 
