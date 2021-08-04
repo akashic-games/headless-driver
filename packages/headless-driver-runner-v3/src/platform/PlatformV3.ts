@@ -86,7 +86,12 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 			this.loopers[i].debugStart();
 		}
 	}
-
+	stepLoopers(): void {
+		for (let i = 0; i < this.loopers.length; i++) {
+			// v3 のみ対応。game-driver 側の実装により NaN を渡すと次のフレームまで進む。
+			this.loopers[i].debugStep(NaN);
+		}
+	}
 	firePointEvent(event: pdi.PlatformPointEvent): void {
 		this.eventHandler?.onPointEvent(event);
 	}
