@@ -22,7 +22,7 @@ export interface RunnerParameters {
 	externalValue?: { [key: string]: any };
 }
 
-export interface StartParameters {
+export interface RunnerStartParameters {
 	/**
 	 * コンテンツの進行を停止するかどうか。
 	 */
@@ -118,7 +118,7 @@ export abstract class Runner {
 	 * @param params StartParameters
 	 * @returns `g.game` のインスタンス。起動に失敗した場合は `null` 。
 	 */
-	abstract start(params?: StartParameters): any;
+	abstract start(params?: RunnerStartParameters): any;
 	/**
 	 * Runner を停止する。
 	 */
