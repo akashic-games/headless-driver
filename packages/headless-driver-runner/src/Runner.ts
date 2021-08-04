@@ -22,6 +22,13 @@ export interface RunnerParameters {
 	externalValue?: { [key: string]: any };
 }
 
+export interface StartParameters {
+	/**
+	 * コンテンツの進行を停止するかどうか。
+	 */
+	paused?: boolean;
+}
+
 export abstract class Runner {
 	abstract readonly engineVersion: string;
 
@@ -108,9 +115,10 @@ export abstract class Runner {
 
 	/**
 	 * Runner を開始する。
+	 * @param params StartParameters
 	 * @returns `g.game` のインスタンス。起動に失敗した場合は `null` 。
 	 */
-	abstract start(): any;
+	abstract start(params?: StartParameters): any;
 	/**
 	 * Runner を停止する。
 	 */

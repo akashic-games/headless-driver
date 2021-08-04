@@ -1,4 +1,4 @@
-import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
+import { Runner, RunnerPointEvent, StartParameters } from "@akashic/headless-driver-runner";
 import type { Canvas } from "canvas";
 import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
 import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSurface";
@@ -19,12 +19,12 @@ export class RunnerV3 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	async start(): Promise<RunnerV3Game | null> {
+	async start(params?: StartParameters): Promise<RunnerV3Game | null> {
 		let game: RunnerV3Game | null = null;
 
 		try {
-			game = await this.initGameDriver();
-			this.running = true;
+			game = await this.initGameDriver(params?.paused);
+			this.running = !params?.paused;
 		} catch (e) {
 			this.onError(e);
 		}
@@ -179,7 +179,7 @@ export class RunnerV3 extends Runner {
 		this.step();
 	}
 
-	private initGameDriver(): Promise<RunnerV3Game> {
+	private initGameDriver(paused?: boolean): Promise<RunnerV3Game> {
 		return new Promise<RunnerV3Game>((resolve, reject) => {
 			if (this.driver) {
 				this.driver.destroy();
@@ -233,7 +233,14 @@ export class RunnerV3 extends Runner {
 						reject(e);
 						return;
 					}
-					driver.startGame();
+
+					if (paused) {
+						this.platform?.pauseLoopers();
+						driver.startGame();
+						resolve(driver._game!);
+					} else {
+						driver.startGame();
+					}
 				}
 			);
 

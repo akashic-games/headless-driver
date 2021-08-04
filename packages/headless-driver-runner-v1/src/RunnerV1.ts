@@ -1,5 +1,5 @@
 import { akashicEngine as g, gameDriver as gdr, pdi } from "@akashic/engine-files";
-import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
+import { Runner, RunnerPointEvent, StartParameters } from "@akashic/headless-driver-runner";
 import { PlatformV1 } from "./platform/PlatformV1";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -16,12 +16,12 @@ export class RunnerV1 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	async start(): Promise<RunnerV1Game | null> {
+	async start(params?: StartParameters): Promise<RunnerV1Game | null> {
 		let game: RunnerV1Game | null = null;
 
 		try {
-			game = await this.initGameDriver();
-			this.running = true;
+			game = await this.initGameDriver(params?.paused);
+			this.running = !params?.paused;
 		} catch (e) {
 			this.onError(e);
 		}
@@ -156,7 +156,7 @@ export class RunnerV1 extends Runner {
 		throw new Error("RunnerV1#getPrimarySurface(): Not supported");
 	}
 
-	private initGameDriver(): Promise<RunnerV1Game> {
+	private initGameDriver(paused?: boolean): Promise<RunnerV1Game> {
 		return new Promise<RunnerV1Game>((resolve, reject) => {
 			if (this.driver) {
 				this.driver.destroy();
@@ -210,7 +210,13 @@ export class RunnerV1 extends Runner {
 						reject(e);
 						return;
 					}
-					driver.startGame();
+					if (paused) {
+						this.platform?.pauseLoopers();
+						driver.startGame();
+						resolve(driver._game!);
+					} else {
+						driver.startGame();
+					}
 				}
 			);
 

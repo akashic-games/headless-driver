@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import { RunnerV1 } from "@akashic/headless-driver-runner-v1";
-import { RunnerV2 } from "@akashic/headless-driver-runner-v2";
-import { RunnerV3 } from "@akashic/headless-driver-runner-v3";
+import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
+import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
+import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
 import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
@@ -138,6 +138,25 @@ describe("Runner の動作確認 (v1)", () => {
 
 		runner.stop();
 	});
+
+	xit("Runner#start({paused:true}) でコンテンツは進行しない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
+		const game = (await runner.start({ paused: true })) as RunnerV1Game;
+
+		const updateLogs: string[] = [];
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "scene_update") updateLogs.push(l);
+		});
+
+		await sleep(500);
+		expect(updateLogs.length).toBe(0);
+
+		await runner.advanceUntil(() => game.scene()!.name === "content-v1-entry-scene");
+		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
+		expect(updateLogs.length).toBe(60 * 30);
+
+		runner.stop();
+	});
 });
 
 describe("Runner の動作確認 (v2)", () => {
@@ -233,6 +252,32 @@ describe("Runner の動作確認 (v2)", () => {
 
 		runner.stop();
 	});
+
+	xit("Runner#start({paused:true}) でコンテンツは進行しない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
+		const game = (await runner.start({ paused: true })) as RunnerV2Game;
+
+		const updateLogs: string[] = [];
+		const skippingLogs: string[] = [];
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "scene_update") updateLogs.push(l);
+		});
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
+		});
+
+		await sleep(500);
+		expect(updateLogs.length).toBe(0);
+		expect(skippingLogs).toEqual([]);
+
+		await runner.advanceUntil(() => game.scene()!.name === "content-v2-entry-scene");
+
+		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
+		expect(updateLogs.length).toBe(60 * 30);
+		expect(skippingLogs).toEqual(["start_skipping", "end_skipping"]); // start と end のペアが一度だけなのを確認
+
+		runner.stop();
+	});
 });
 
 describe("Runner の動作確認 (v3)", () => {
@@ -321,6 +366,32 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.sendToExternalTrigger.add((l) => {
 			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
 		});
+
+		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
+		expect(updateLogs.length).toBe(60 * 30);
+		expect(skippingLogs).toEqual(["start_skipping", "end_skipping"]); // start と end のペアが一度だけなのを確認
+
+		runner.stop();
+	});
+
+	xit("Runner#start({paused:true}) でコンテンツは進行しない", async () => {
+		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+
+		const updateLogs: string[] = [];
+		const skippingLogs: string[] = [];
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "scene_update") updateLogs.push(l);
+		});
+		runner.sendToExternalTrigger.add((l) => {
+			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
+		});
+
+		await sleep(500);
+		expect(updateLogs.length).toBe(0);
+		expect(skippingLogs).toEqual([]);
+
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
 		expect(updateLogs.length).toBe(60 * 30);
