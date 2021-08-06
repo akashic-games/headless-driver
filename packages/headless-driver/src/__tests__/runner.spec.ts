@@ -54,7 +54,7 @@ async function readyRunner(gameJsonPath: string): Promise<(RunnerV1 | RunnerV2 |
 }
 
 describe("Runner の動作確認 (v1)", () => {
-	xit("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
+	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
 		const updateLogs: string[] = [];
@@ -62,8 +62,8 @@ describe("Runner の動作確認 (v1)", () => {
 			if (l === "scene_update") updateLogs.push(l);
 		});
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV1Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v1-entry-scene");
 
 		await sleep(500);
 		expect(updateLogs.length).toBe(0);
@@ -84,8 +84,8 @@ describe("Runner の動作確認 (v1)", () => {
 	it("Runner#step() で 1 ティックごとにコンテンツが進行できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV1Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v1-entry-scene");
 
 		const logs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
@@ -103,11 +103,11 @@ describe("Runner の動作確認 (v1)", () => {
 		runner.stop();
 	});
 
-	xit("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV1Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v1-entry-scene");
 
 		const updateLogs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
@@ -121,11 +121,11 @@ describe("Runner の動作確認 (v1)", () => {
 		runner.stop();
 	});
 
-	xit("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV1Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v1-entry-scene");
 
 		const updateLogs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
@@ -138,29 +138,10 @@ describe("Runner の動作確認 (v1)", () => {
 
 		runner.stop();
 	});
-
-	xit("Runner#start({paused:true}) でコンテンツは進行しない", async () => {
-		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
-		const game = (await runner.start({ paused: true })) as RunnerV1Game;
-
-		const updateLogs: string[] = [];
-		runner.sendToExternalTrigger.add((l) => {
-			if (l === "scene_update") updateLogs.push(l);
-		});
-
-		await sleep(500);
-		expect(updateLogs.length).toBe(0);
-
-		await runner.advanceUntil(() => game.scene()!.name === "content-v1-entry-scene");
-		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
-		expect(updateLogs.length).toBe(60 * 30);
-
-		runner.stop();
-	});
 });
 
 describe("Runner の動作確認 (v2)", () => {
-	xit("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
+	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
 		const updateLogs: string[] = [];
@@ -168,8 +149,8 @@ describe("Runner の動作確認 (v2)", () => {
 			if (l === "scene_update") updateLogs.push(l);
 		});
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV2Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v2-entry-scene");
 
 		await sleep(500);
 		expect(updateLogs.length).toBe(0);
@@ -190,8 +171,8 @@ describe("Runner の動作確認 (v2)", () => {
 	it("Runner#step() で 1 ティックごとにコンテンツが進行できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV2Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v2-entry-scene");
 
 		const logs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
@@ -209,11 +190,11 @@ describe("Runner の動作確認 (v2)", () => {
 		runner.stop();
 	});
 
-	xit("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV2Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v2-entry-scene");
 
 		const updateLogs: string[] = [];
 		const skippingLogs: string[] = [];
@@ -231,31 +212,11 @@ describe("Runner の動作確認 (v2)", () => {
 		runner.stop();
 	});
 
-	xit("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
-		await runner.start();
-		runner.pause();
-
-		const updateLogs: string[] = [];
-		const skippingLogs: string[] = [];
-		runner.sendToExternalTrigger.add((l) => {
-			if (l === "scene_update") updateLogs.push(l);
-		});
-		runner.sendToExternalTrigger.add((l) => {
-			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
-		});
-
-		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
-		expect(updateLogs.length).toBe(60 * 30);
-		expect(skippingLogs).toEqual(["start_skipping", "end_skipping"]); // start と end のペアが一度だけなのを確認
-
-		runner.stop();
-	});
-
-	xit("Runner#start({paused:true}) でコンテンツは進行しない", async () => {
-		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 		const game = (await runner.start({ paused: true })) as RunnerV2Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v2-entry-scene");
 
 		const updateLogs: string[] = [];
 		const skippingLogs: string[] = [];
@@ -265,12 +226,6 @@ describe("Runner の動作確認 (v2)", () => {
 		runner.sendToExternalTrigger.add((l) => {
 			if (l === "start_skipping" || l === "end_skipping") skippingLogs.push(l);
 		});
-
-		await sleep(500);
-		expect(updateLogs.length).toBe(0);
-		expect(skippingLogs).toEqual([]);
-
-		await runner.advanceUntil(() => game.scene()!.name === "content-v2-entry-scene");
 
 		await runner.advance(1000 * 60); // 60秒 (60 * 30フレーム) だけ進行
 		expect(updateLogs.length).toBe(60 * 30);
@@ -281,7 +236,7 @@ describe("Runner の動作確認 (v2)", () => {
 });
 
 describe("Runner の動作確認 (v3)", () => {
-	xit("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
+	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
 		const updateLogs: string[] = [];
@@ -289,8 +244,8 @@ describe("Runner の動作確認 (v3)", () => {
 			if (l === "scene_update") updateLogs.push(l);
 		});
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		await sleep(500);
 		expect(updateLogs.length).toBe(0);
@@ -311,8 +266,8 @@ describe("Runner の動作確認 (v3)", () => {
 	it("Runner#step() で 1 ティックごとにコンテンツが進行できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const logs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
@@ -330,11 +285,11 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.stop();
 	});
 
-	xit("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (1000 ms)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const updateLogs: string[] = [];
 		const skippingLogs: string[] = [];
@@ -352,11 +307,11 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.stop();
 	});
 
-	xit("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
+	it("Runner#advance() でコンテンツが進行できる (60 s)", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const updateLogs: string[] = [];
 		const skippingLogs: string[] = [];
@@ -374,7 +329,7 @@ describe("Runner の動作確認 (v3)", () => {
 		runner.stop();
 	});
 
-	xit("Runner#start({paused:true}) でコンテンツは進行しない", async () => {
+	it("Runner#start({paused:true}) でコンテンツは進行しない", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 		const game = (await runner.start({ paused: true })) as RunnerV3Game;
 
@@ -423,8 +378,8 @@ describe("Runner の engine-files 上書き動作確認", () => {
 
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const logs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
@@ -453,8 +408,8 @@ describe("Runner の engine-files 上書き動作確認", () => {
 
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
-		await runner.start();
-		runner.pause();
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const logs: string[] = [];
 		runner.sendToExternalTrigger.add((l) => {
