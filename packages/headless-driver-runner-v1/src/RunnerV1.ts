@@ -22,7 +22,6 @@ export class RunnerV1 extends Runner {
 
 		try {
 			game = await this.initGameDriver();
-
 			if (!paused) {
 				this.resume();
 			}
