@@ -24,16 +24,10 @@ export class RunnerV3 extends Runner {
 		const paused = !!params?.paused;
 
 		try {
-			await this.initGameDriver();
+			game = await this.initGameDriver();
 
 			if (!paused) {
-				this.running = true;
-				game = await this.startGameDriver();
-			} else {
-				this.running = false;
-				this.platform?.pauseLoopers(); // コンテンツ開始前に停止する
-				this.driver!.startGame();
-				game = this.driver!._game;
+				this.resume();
 			}
 		} catch (e) {
 			this.onError(e);
@@ -189,8 +183,8 @@ export class RunnerV3 extends Runner {
 		this.step();
 	}
 
-	private initGameDriver(): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
+	private initGameDriver(): Promise<RunnerV3Game> {
+		return new Promise<RunnerV3Game>((resolve, reject) => {
 			if (this.driver) {
 				this.driver.destroy();
 				this.driver = null;
@@ -221,7 +215,7 @@ export class RunnerV3 extends Runner {
 			});
 
 			this.driver = driver;
-
+			let tmpGame: RunnerV3Game;
 			// TODO: パラメータを外部から変更可能にする
 			driver.initialize(
 				{
@@ -243,7 +237,9 @@ export class RunnerV3 extends Runner {
 						reject(e);
 						return;
 					}
-					resolve();
+					this.platform?.pauseLoopers();
+					driver.startGame();
+					resolve(tmpGame);
 				}
 			);
 
@@ -254,14 +250,8 @@ export class RunnerV3 extends Runner {
 					});
 				}
 				this.fps = game.fps;
+				tmpGame = game;
 			});
-		});
-	}
-
-	private startGameDriver(): Promise<RunnerV3Game> {
-		return new Promise<RunnerV3Game>((resolve, _reject) => {
-			this.driver!._game!._onStart.addOnce(() => resolve(this.driver!._game!));
-			this.driver!.startGame();
 		});
 	}
 

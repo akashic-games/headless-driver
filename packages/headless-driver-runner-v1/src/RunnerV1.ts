@@ -21,16 +21,10 @@ export class RunnerV1 extends Runner {
 		const paused = !!params?.paused;
 
 		try {
-			await this.initGameDriver();
+			game = await this.initGameDriver();
 
 			if (!paused) {
-				this.running = true;
-				game = await this.startGameDriver();
-			} else {
-				this.running = false;
-				this.platform?.pauseLoopers(); // コンテンツ開始前に停止する
-				this.driver!.startGame();
-				game = this.driver!._game;
+				this.resume();
 			}
 		} catch (e) {
 			this.onError(e);
@@ -166,8 +160,8 @@ export class RunnerV1 extends Runner {
 		throw new Error("RunnerV1#getPrimarySurface(): Not supported");
 	}
 
-	private initGameDriver(): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
+	private initGameDriver(): Promise<RunnerV1Game> {
+		return new Promise<RunnerV1Game>((resolve, reject) => {
 			if (this.driver) {
 				this.driver.destroy();
 				this.driver = null;
@@ -198,7 +192,7 @@ export class RunnerV1 extends Runner {
 			});
 
 			this.driver = driver;
-
+			let tmpGame: RunnerV1Game;
 			// TODO: パラメータを外部から変更可能にする
 			driver.initialize(
 				{
@@ -220,7 +214,9 @@ export class RunnerV1 extends Runner {
 						reject(e);
 						return;
 					}
-					resolve();
+					this.platform?.pauseLoopers();
+					driver.startGame();
+					resolve(tmpGame);
 				}
 			);
 
@@ -231,15 +227,9 @@ export class RunnerV1 extends Runner {
 					});
 				}
 				this.fps = game.fps;
+				tmpGame = game;
 				return true;
 			});
-		});
-	}
-
-	private startGameDriver(): Promise<RunnerV1Game> {
-		return new Promise<RunnerV1Game>((resolve, _reject) => {
-			this.driver!._game._started.handle(() => resolve(this.driver!._game));
-			this.driver!.startGame();
 		});
 	}
 
