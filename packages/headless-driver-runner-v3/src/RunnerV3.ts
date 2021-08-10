@@ -236,7 +236,7 @@ export class RunnerV3 extends Runner {
 						reject(e);
 						return;
 					}
-					this.platform?.pauseLoopers();
+					this.pause();
 					driver.startGame();
 					resolve(tmpGame);
 				}
