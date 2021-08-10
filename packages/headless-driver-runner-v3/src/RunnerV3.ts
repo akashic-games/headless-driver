@@ -206,6 +206,7 @@ export class RunnerV3 extends Runner {
 				errorHandler: (e) => this.onError(e),
 				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)
 			});
+			this.pause();
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
@@ -214,7 +215,7 @@ export class RunnerV3 extends Runner {
 			});
 
 			this.driver = driver;
-			let tmpGame: RunnerV3Game;
+			let result: RunnerV3Game;
 			// TODO: パラメータを外部から変更可能にする
 			driver.initialize(
 				{
@@ -236,9 +237,8 @@ export class RunnerV3 extends Runner {
 						reject(e);
 						return;
 					}
-					this.pause();
 					driver.startGame();
-					resolve(tmpGame);
+					resolve(result);
 				}
 			);
 
@@ -249,7 +249,7 @@ export class RunnerV3 extends Runner {
 					});
 				}
 				this.fps = game.fps;
-				tmpGame = game;
+				result = game;
 			});
 		});
 	}

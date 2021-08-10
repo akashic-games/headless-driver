@@ -9,6 +9,7 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 	private primarySurface: g.Surface | null = null;
 	private eventHandler: pdi.PlatformEventHandler | null = null;
 	private loopers: Looper[] = [];
+	private isLooperPaused: boolean = false;
 
 	constructor(param: PlatformParameters) {
 		super(param);
@@ -44,6 +45,9 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 
 	createLooper(fun: (deltaTime: number) => number): Looper {
 		const looper = new Looper(fun, (e: Error) => this.errorHandler(e));
+		if (this.isLooperPaused) {
+			looper.debugStop();
+		}
 		this.loopers.push(looper);
 		return looper;
 	}
@@ -55,12 +59,14 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 	}
 
 	pauseLoopers(): void {
+		this.isLooperPaused = true;
 		for (let i = 0; i < this.loopers.length; i++) {
 			this.loopers[i].debugStop();
 		}
 	}
 
 	resumeLoopers(): void {
+		this.isLooperPaused = false;
 		for (let i = 0; i < this.loopers.length; i++) {
 			this.loopers[i].debugStart();
 		}
