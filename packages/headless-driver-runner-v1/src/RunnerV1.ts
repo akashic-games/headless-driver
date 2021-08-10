@@ -192,7 +192,7 @@ export class RunnerV1 extends Runner {
 			});
 
 			this.driver = driver;
-			let result: RunnerV1Game;
+			let result: RunnerV1Game | null = null;
 			// TODO: パラメータを外部から変更可能にする
 			driver.initialize(
 				{
@@ -213,6 +213,9 @@ export class RunnerV1 extends Runner {
 					if (e) {
 						reject(e);
 						return;
+					}
+					if (!result) {
+						return reject(new Error("Game is null."));
 					}
 					driver.startGame();
 					resolve(result);
