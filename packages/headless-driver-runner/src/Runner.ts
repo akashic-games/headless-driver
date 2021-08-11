@@ -24,7 +24,7 @@ export interface RunnerParameters {
 
 export interface RunnerStartParameters {
 	/**
-	 * コンテンツの進行を停止するかどうか。
+	 * コンテンツの進行を一時停止するかどうか。
 	 * 初期値は `false` 。
 	 */
 	paused?: boolean;

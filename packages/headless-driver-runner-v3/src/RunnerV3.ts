@@ -238,6 +238,7 @@ export class RunnerV3 extends Runner {
 						return;
 					}
 					if (!result) {
+						// GameDriver の内部実装上ここに来ることはないはずだが念のため確認
 						return reject(new Error("Game is null."));
 					}
 					driver.startGame();
