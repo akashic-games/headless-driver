@@ -1,4 +1,4 @@
-import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
+import { Runner, RunnerPointEvent, RunnerStartParameters } from "@akashic/headless-driver-runner";
 import type { Canvas } from "canvas";
 import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
 import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSurface";
@@ -19,12 +19,15 @@ export class RunnerV3 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	async start(): Promise<RunnerV3Game | null> {
+	async start(params?: RunnerStartParameters): Promise<RunnerV3Game | null> {
 		let game: RunnerV3Game | null = null;
+		const paused = !!params?.paused;
 
 		try {
 			game = await this.initGameDriver();
-			this.running = true;
+			if (!paused) {
+				this.resume();
+			}
 		} catch (e) {
 			this.onError(e);
 		}
@@ -203,6 +206,7 @@ export class RunnerV3 extends Runner {
 				errorHandler: (e) => this.onError(e),
 				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)
 			});
+			this.pause();
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
@@ -211,7 +215,7 @@ export class RunnerV3 extends Runner {
 			});
 
 			this.driver = driver;
-
+			let result: RunnerV3Game | null = null;
 			// TODO: パラメータを外部から変更可能にする
 			driver.initialize(
 				{
@@ -233,7 +237,12 @@ export class RunnerV3 extends Runner {
 						reject(e);
 						return;
 					}
+					if (!result) {
+						// GameDriver の内部実装上ここに来ることはないはずだが念のため確認
+						return reject(new Error("Game is null."));
+					}
 					driver.startGame();
+					resolve(result);
 				}
 			);
 
@@ -244,7 +253,7 @@ export class RunnerV3 extends Runner {
 					});
 				}
 				this.fps = game.fps;
-				game._onStart.addOnce(() => resolve(game));
+				result = game;
 			});
 		});
 	}

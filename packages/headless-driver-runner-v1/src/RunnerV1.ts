@@ -1,5 +1,5 @@
 import { akashicEngine as g, gameDriver as gdr, pdi } from "@akashic/engine-files";
-import { Runner, RunnerPointEvent } from "@akashic/headless-driver-runner";
+import { Runner, RunnerPointEvent, RunnerStartParameters } from "@akashic/headless-driver-runner";
 import { PlatformV1 } from "./platform/PlatformV1";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -16,12 +16,15 @@ export class RunnerV1 extends Runner {
 	private fps: number | null = null;
 	private running: boolean = false;
 
-	async start(): Promise<RunnerV1Game | null> {
+	async start(params?: RunnerStartParameters): Promise<RunnerV1Game | null> {
 		let game: RunnerV1Game | null = null;
+		const paused = !!params?.paused;
 
 		try {
 			game = await this.initGameDriver();
-			this.running = true;
+			if (!paused) {
+				this.resume();
+			}
 		} catch (e) {
 			this.onError(e);
 		}
@@ -180,6 +183,7 @@ export class RunnerV1 extends Runner {
 				errorHandler: (e) => this.onError(e),
 				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)
 			});
+			this.pause();
 
 			const driver = new gdr.GameDriver({
 				platform: this.platform,
@@ -188,7 +192,7 @@ export class RunnerV1 extends Runner {
 			});
 
 			this.driver = driver;
-
+			let result: RunnerV1Game | null = null;
 			// TODO: パラメータを外部から変更可能にする
 			driver.initialize(
 				{
@@ -210,7 +214,12 @@ export class RunnerV1 extends Runner {
 						reject(e);
 						return;
 					}
+					if (!result) {
+						// GameDriver の内部実装上ここに来ることはないはずだが念のため確認
+						return reject(new Error("Game is null."));
+					}
 					driver.startGame();
+					resolve(result);
 				}
 			);
 
@@ -221,10 +230,7 @@ export class RunnerV1 extends Runner {
 					});
 				}
 				this.fps = game.fps;
-				game._started.handle(() => {
-					resolve(game);
-					return true;
-				});
+				result = game;
 				return true;
 			});
 		});
