@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.9.0 (2021-08-12)
+
+#### Enhancement
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#272](https://github.com/akashic-games/headless-driver/pull/272) Add argument RunnerStartParameters of Runner#start() ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v1.8.5 (2021-08-04)
 
 #### Bug Fix
