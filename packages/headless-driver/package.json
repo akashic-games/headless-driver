@@ -38,7 +38,7 @@
     "@akashic/engine-files": "3.0.19",
     "@akashic/eslint-config": "0.1.2",
     "@types/get-port": "4.0.1",
-    "@types/jest": "26.0.24",
+    "@types/jest": "27.0.1",
     "@types/lodash.clonedeep": "4.5.6",
     "@types/node": "13.13.46",
     "@types/node-fetch": "2.5.12",
