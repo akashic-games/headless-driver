@@ -21,9 +21,9 @@ describe("engineFiles", () => {
 			engineFiles = require("../engineFiles");
 		});
 
-		expect(engineFiles.akashicEngine).toBe(akashicEngine);
-		expect(engineFiles.gameDriver).toBe(gameDriver);
-		expect(engineFiles.pdi).toBe(pdi);
+		expect(JSON.stringify(engineFiles.akashicEngine)).toBe(JSON.stringify(akashicEngine));
+		expect(JSON.stringify(engineFiles.gameDriver)).toBe(JSON.stringify(gameDriver));
+		expect(JSON.stringify(engineFiles.pdi)).toBe(JSON.stringify(pdi));
 	});
 
 	it("can override engineFiles via trustedFunctions (absolute path)", async () => {
