@@ -28,23 +28,23 @@
   },
   "devDependencies": {
     "@akashic/eslint-config": "0.1.2",
-    "@types/jest": "26.0.20",
-    "@types/pixelmatch": "5.2.2",
-    "@types/pngjs": "6.0.0",
+    "@types/jest": "26.0.24",
+    "@types/pixelmatch": "5.2.4",
+    "@types/pngjs": "6.0.1",
     "@typescript-eslint/eslint-plugin": "4.19.0",
     "canvas": "2.7.0",
     "eslint": "7.22.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-jest": "24.3.2",
-    "image-size": "0.9.5",
+    "eslint-plugin-jest": "24.3.7",
+    "image-size": "0.9.7",
     "jest": "26.6.3",
     "pixelmatch": "5.2.1",
     "pngjs": "6.0.0",
     "prettier": "2.2.1",
     "rimraf": "3.0.2",
-    "ts-jest": "26.5.3",
-    "typescript": "4.2.3"
+    "ts-jest": "26.5.6",
+    "typescript": "4.2.4"
   },
   "jest": {
     "globals": {
