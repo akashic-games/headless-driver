@@ -22,7 +22,7 @@
     "lib"
   ],
   "dependencies": {
-    "@akashic/amflow": "~3.0.0",
+    "@akashic/amflow": "~3.1.0",
     "@akashic/headless-driver-runner": "1.9.0",
     "@akashic/headless-driver-runner-v1": "1.9.0",
     "@akashic/headless-driver-runner-v2": "1.9.0",
