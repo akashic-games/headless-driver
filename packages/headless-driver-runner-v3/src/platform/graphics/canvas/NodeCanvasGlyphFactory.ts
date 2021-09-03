@@ -288,7 +288,7 @@ export class NodeCanvasGlyphFactory implements g.GlyphFactory {
 	measureMinimumFontSize(): number {
 		let fontSize = 1;
 		const str = "M";
-		const canvas = document.createElement("canvas");
+		const canvas = new Canvas(50, 50);
 		const context = canvas.getContext("2d");
 		if (context == null) {
 			throw new Error("cannot get canvas context");

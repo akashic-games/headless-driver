@@ -1,5 +1,4 @@
 import * as path from "path";
-import { akashicEngine, gameDriver, pdi } from "@akashic/engine-files";
 
 declare global {
 	var trustedFunctions: TrustedFunctions;
@@ -16,9 +15,16 @@ describe("engineFiles", () => {
 
 	it("can require engineFiles", async () => {
 		let engineFiles: any;
+		let akashicEngine: any;
+		let gameDriver: any;
+		let pdi: any;
 		jest.isolateModules(() => {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			/* eslint-disable @typescript-eslint/no-var-requires */
+			akashicEngine = require("@akashic/engine-files").akashicEngine;
+			gameDriver = require("@akashic/engine-files").gameDriver;
+			pdi = require("@akashic/engine-files").pdi;
 			engineFiles = require("../engineFiles");
+			/* eslint-enable @typescript-eslint/no-var-requires */
 		});
 
 		expect(engineFiles.akashicEngine).toBe(akashicEngine);
