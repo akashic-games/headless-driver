@@ -90,6 +90,10 @@ export class AMFlowClient implements AMFlow {
 		this.store.setTickList(tickList);
 	}
 
+	setDumpedPlaylog(dumped: DumpedPlaylog): void {
+		this.store.setDumpedPlaylog(dumped);
+	}
+
 	sendTick(tick: Tick): void {
 		if (this.state !== "open") {
 			throw createError("invalid_status", "Client is not open");

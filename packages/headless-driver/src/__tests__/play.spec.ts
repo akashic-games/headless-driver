@@ -611,4 +611,129 @@ describe("プレイ周りの結合動作テスト", () => {
 			.then(done)
 			.catch((e) => done(e));
 	});
+
+	it("AMFlow#setDumpedPlaylog() で内容を設定できる", (done) => {
+		const playManager = new PlayManager();
+		let activeAMFlow: AMFlowClient;
+		let passiveAMFlow: AMFlowClient;
+		let playId: string;
+
+		const sp0 = {
+			frame: 0,
+			timestamp: 0,
+			data: {
+				seed: 1628673373839,
+				fps: 30,
+				startedAt: 1628673373839
+			}
+		};
+
+		const sp100 = {
+			frame: 100,
+			timestamp: 10000,
+			data: {
+				randGenSer: {
+					_seed: 1628673373839,
+					_xorshift: {
+						_state0U: 1903457992,
+						_state0L: 157751404,
+						_state1U: -106591148,
+						_state1L: -981538619
+					}
+				},
+				nextEntityId: 10,
+				gameSnapshot: {
+					value: 42
+				}
+			}
+		};
+
+		playManager
+			.createPlay({
+				contentUrl: "dummy"
+			})
+			.then((p) => {
+				return new Promise<void>((resolve, reject) => {
+					playId = p;
+					activeAMFlow = playManager.createAMFlow(playId);
+					activeAMFlow.open(playId, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					passiveAMFlow = playManager.createAMFlow(playId);
+					passiveAMFlow.open(playId, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					// 認証できる
+					const playToken = playManager.createPlayToken(playId, passivePermission);
+					passiveAMFlow.authenticate(playToken, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					// Active の認証
+					const playToken = playManager.createPlayToken(playId, activePermission);
+					activeAMFlow.authenticate(playToken, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				activeAMFlow.setDumpedPlaylog({
+					tickList: [0, 200, [[77, [[33, 2, "pid1", 1, 174, 243, null]]]]],
+					startPoints: [sp0, sp100]
+				});
+			})
+			.then(() => {
+				return new Promise<TickList>((res, rej) => {
+					passiveAMFlow.getTickList({ begin: 70, end: 150 }, (err, ticks) => (err ? rej(err) : res(ticks!)));
+				});
+			})
+			.then((tickList) => {
+				expect(tickList).toEqual([70, 149, [[77, [[33, 2, "pid1", 1, 174, 243, null]]]]]);
+			})
+			.then(() => {
+				return new Promise<TickList>((res, rej) => {
+					passiveAMFlow.getStartPoint({ frame: 20 }, (err, sp) => (err ? rej(err) : res(sp!)));
+				});
+			})
+			.then((sp20) => {
+				expect(sp20).toEqual(sp0);
+			})
+			.then(() => {
+				return new Promise<TickList>((res, rej) => {
+					passiveAMFlow.getStartPoint({ frame: 110 }, (err, sp) => (err ? rej(err) : res(sp!)));
+				});
+			})
+			.then((sp110) => {
+				expect(sp110).toEqual(sp100);
+			})
+			.then(done)
+			.catch((e) => done(e));
+	});
 });
