@@ -5,6 +5,7 @@ import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { BadRequestError, PermissionError } from "../play/amflow/ErrorFactory";
+import { DumpedPlaylog } from "../play/amflow/types";
 import { PlayManager } from "../play/PlayManager";
 import { activePermission, passivePermission } from "./constants";
 import { MockRunnerManager } from "./helpers/MockRunnerManager";
@@ -612,7 +613,7 @@ describe("プレイ周りの結合動作テスト", () => {
 			.catch((e) => done(e));
 	});
 
-	it("AMFlow#setDumpedPlaylog() で内容を設定できる", (done) => {
+	it("プレイログを渡してプレイを生成できる", (done) => {
 		const playManager = new PlayManager();
 		let amflow: AMFlowClient;
 		let playId: string;
@@ -626,7 +627,6 @@ describe("プレイ周りの結合動作テスト", () => {
 				startedAt: 1628673373839
 			}
 		};
-
 		const sp100 = {
 			frame: 100,
 			timestamp: 10000,
@@ -646,20 +646,17 @@ describe("プレイ周りの結合動作テスト", () => {
 				}
 			}
 		};
+		const playlog: DumpedPlaylog = {
+			tickList: [0, 200, [[77, [[33, 2, "pid1", 1, 174, 243, null]]]]],
+			startPoints: [sp0, sp100]
+		};
 
 		playManager
-			.createPlay({
-				contentUrl: "dummy"
-			})
+			.createPlay({ contentUrl: "dummy" }, playlog)
 			.then((p) => {
 				return new Promise<void>((resolve, reject) => {
 					playId = p;
 					amflow = playManager.createAMFlow(playId);
-					amflow.setDumpedPlaylog({
-						tickList: [0, 200, [[77, [[33, 2, "pid1", 1, 174, 243, null]]]]],
-						startPoints: [sp0, sp100]
-					});
-
 					amflow.open(playId, (err) => {
 						if (err) {
 							reject(err);
