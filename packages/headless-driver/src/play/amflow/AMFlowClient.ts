@@ -86,7 +86,7 @@ export class AMFlowClient implements AMFlow {
 		});
 	}
 
-	setTickList(tickList: TickList): void {
+	setTickList(tickList: TickList | null): void {
 		this.store.setTickList(tickList);
 	}
 
