@@ -140,9 +140,14 @@ export class AMFlowStore {
 		this.suspended = false;
 	}
 
-	setTickList(tickList: TickList): void {
-		this.unfilteredTickList = this.cloneDeep(tickList);
-		this.filteredTickList = this.cloneDeep(tickList);
+	setTickList(tickList: TickList | null): void {
+		this.unfilteredTickList = tickList ? this.cloneDeep(tickList) : null;
+		this.filteredTickList = tickList ? this.cloneDeep(tickList) : null;
+	}
+
+	setDumpedPlaylog(dumped: DumpedPlaylog): void {
+		this.setTickList(dumped.tickList);
+		dumped.startPoints.forEach((sp) => this.putStartPoint(sp));
 	}
 
 	destroy(): void {

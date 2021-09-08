@@ -5,6 +5,7 @@ import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { BadRequestError, PermissionError } from "../play/amflow/ErrorFactory";
+import { DumpedPlaylog } from "../play/amflow/types";
 import { PlayManager } from "../play/PlayManager";
 import { activePermission, passivePermission } from "./constants";
 import { MockRunnerManager } from "./helpers/MockRunnerManager";
@@ -607,6 +608,108 @@ describe("プレイ周りの結合動作テスト", () => {
 					[0x20, 0, null, { ordinal: 3 }],
 					[0x20, 0, null, { ordinal: 4 }]
 				]);
+			})
+			.then(done)
+			.catch((e) => done(e));
+	});
+
+	it("プレイログを渡してプレイを生成できる", (done) => {
+		const playManager = new PlayManager();
+		let amflow: AMFlowClient;
+		let playId: string;
+
+		const sp0 = {
+			frame: 0,
+			timestamp: 0,
+			data: {
+				seed: 1628673373839,
+				fps: 30,
+				startedAt: 1628673373839
+			}
+		};
+		const sp100 = {
+			frame: 100,
+			timestamp: 10000,
+			data: {
+				randGenSer: {
+					_seed: 1628673373839,
+					_xorshift: {
+						_state0U: 1903457992,
+						_state0L: 157751404,
+						_state1U: -106591148,
+						_state1L: -981538619
+					}
+				},
+				nextEntityId: 10,
+				gameSnapshot: {
+					value: 42
+				}
+			}
+		};
+		const playlog: DumpedPlaylog = {
+			tickList: [0, 200, [[77, [[33, 2, "pid1", 1, 174, 243, null]]]]],
+			startPoints: [sp0, sp100]
+		};
+
+		playManager
+			.createPlay({ contentUrl: "dummy" }, playlog)
+			.then((p) => {
+				return new Promise<void>((resolve, reject) => {
+					playId = p;
+					amflow = playManager.createAMFlow(playId);
+					amflow.open(playId, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					// 認証できる
+					const playToken = playManager.createPlayToken(playId, passivePermission);
+					amflow.authenticate(playToken, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
+			})
+			.then(() => {
+				return new Promise<TickList>((res, rej) => {
+					amflow.getTickList({ begin: 70, end: 150 }, (err, ticks) => (err ? rej(err) : res(ticks!)));
+				});
+			})
+			.then((tickList) => {
+				expect(tickList).toEqual([70, 149, [[77, [[33, 2, "pid1", 1, 174, 243, null]]]]]);
+			})
+			.then(() => {
+				return new Promise<StartPoint>((res, rej) => {
+					amflow.getStartPoint({ frame: 20 }, (err, sp) => (err ? rej(err) : res(sp!)));
+				});
+			})
+			.then((sp) => {
+				expect(sp).toEqual(sp0);
+			})
+			.then(() => {
+				return new Promise<StartPoint>((res, rej) => {
+					amflow.getStartPoint({ frame: 110 }, (err, sp) => (err ? rej(err) : res(sp!)));
+				});
+			})
+			.then((sp) => {
+				expect(sp).toEqual(sp100);
+			})
+			.then(() => {
+				return new Promise<StartPoint>((res, rej) => {
+					amflow.getStartPoint({ timestamp: 10001 }, (err, sp) => (err ? rej(err) : res(sp!)));
+				});
+			})
+			.then((sp) => {
+				expect(sp).toEqual(sp100);
 			})
 			.then(done)
 			.catch((e) => done(e));
