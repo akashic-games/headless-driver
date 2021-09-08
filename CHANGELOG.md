@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v1.9.4 (2021-09-08)
+
+#### Bug Fix
+* `headless-driver`
+  * [#293](https://github.com/akashic-games/headless-driver/pull/293)  fix: handle non-zero startpoints in PlayManager#createPlay() ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#260](https://github.com/akashic-games/headless-driver/pull/260) chore(deps): update jest monorepo (major) ([@renovate[bot]](https://github.com/apps/renovate))
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#277](https://github.com/akashic-games/headless-driver/pull/277) chore(deps): update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 2
+- [@yu-ogi](https://github.com/yu-ogi)
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.9.3 (2021-09-01)
 
 #### Enhancement
