@@ -31,7 +31,7 @@ export class NodeScriptAsset extends Asset implements g.ScriptAsset {
 					message: err.message,
 					retriable: false
 				});
-			} else if (!text) {
+			} else if (text == null) {
 				loader._onAssetError(this, {
 					name: "AssetLoadError",
 					message: "NoteScriptAsset#_load(): No data received",
