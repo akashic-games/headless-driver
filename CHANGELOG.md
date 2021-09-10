@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.9.5 (2021-09-10)
+
+#### Bug Fix
+* `headless-driver-runner-v3`
+  * [#294](https://github.com/akashic-games/headless-driver/pull/294) Fix runner-v3's NodeScriptAsset and NodeTextAsset to allow empty string ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
+#### Committers: 1
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+
 ## v1.9.4 (2021-09-08)
 
 #### Bug Fix
