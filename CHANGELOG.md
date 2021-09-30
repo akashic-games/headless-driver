@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.9.6 (2021-09-30)
+
+#### Enhancement
+* `headless-driver-runner-v3`
+  * [#298](https://github.com/akashic-games/headless-driver/pull/298) 【v1.9.6】内部コンポーネントの更新(engineFiles@3.0.22, engineFiles@2.1.57, engineFiles@1.1.16) ([@xnv](https://github.com/xnv))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#291](https://github.com/akashic-games/headless-driver/pull/291) chore(deps): update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#295](https://github.com/akashic-games/headless-driver/pull/295) chore(deps): update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- xnv ([@xnv](https://github.com/xnv))
+
 ## v1.9.5 (2021-09-10)
 
 #### Bug Fix
