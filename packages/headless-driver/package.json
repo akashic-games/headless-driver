@@ -45,7 +45,7 @@
     "@types/pixelmatch": "5.2.4",
     "@types/pngjs": "6.0.1",
     "@typescript-eslint/eslint-plugin": "4.33.0",
-    "eslint": "7.32.0",
+    "eslint": "8.1.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.2",
     "eslint-plugin-jest": "24.7.0",
