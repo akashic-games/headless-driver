@@ -2,14 +2,11 @@ import { akashicEngine as g, gameDriver as gdr, pdi } from "@akashic/engine-file
 import { Runner, RunnerPointEvent, RunnerStartParameters } from "@akashic/headless-driver-runner";
 import { PlatformV2 } from "./platform/PlatformV2";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export type RunnerV2_g = typeof g;
-
 export type RunnerV2Game = g.Game;
 
 export class RunnerV2 extends Runner {
 	readonly engineVersion: string = "2";
-	readonly g: RunnerV2_g = g;
+	readonly g: typeof g = g;
 	platform: PlatformV2 | null = null;
 
 	private driver: gdr.GameDriver | null = null;

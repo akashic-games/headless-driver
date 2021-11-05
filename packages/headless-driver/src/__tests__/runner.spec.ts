@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import { RunnerV1, RunnerV1Game } from "@akashic/headless-driver-runner-v1";
-import { RunnerV2, RunnerV2Game } from "@akashic/headless-driver-runner-v2";
-import { RunnerV3, RunnerV3Game } from "@akashic/headless-driver-runner-v3";
+import { RunnerV1, RunnerV1Game, RunnerV1_g } from "@akashic/headless-driver-runner-v1";
+import { RunnerV2, RunnerV2Game, RunnerV2_g } from "@akashic/headless-driver-runner-v2";
+import { RunnerV3, RunnerV3Game, RunnerV3_g } from "@akashic/headless-driver-runner-v3";
 import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
 import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
@@ -54,6 +54,10 @@ async function readyRunner(gameJsonPath: string): Promise<(RunnerV1 | RunnerV2 |
 }
 
 describe("Runner の動作確認 (v1)", () => {
+	it("RunnerV3_g が参照できることを確認", () => {
+		expect(RunnerV1_g.Util.charCodeAt("a", 0)).toBe(97);
+	});
+
 	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 
@@ -141,6 +145,10 @@ describe("Runner の動作確認 (v1)", () => {
 });
 
 describe("Runner の動作確認 (v2)", () => {
+	it("RunnerV2_g が参照できることを確認", () => {
+		expect(RunnerV2_g.Util.charCodeAt("a", 0)).toBe(97);
+	});
+
 	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 
@@ -236,6 +244,10 @@ describe("Runner の動作確認 (v2)", () => {
 });
 
 describe("Runner の動作確認 (v3)", () => {
+	it("RunnerV3_g が参照できることを確認", () => {
+		expect(RunnerV3_g.Util.charCodeAt("a", 0)).toBe(97);
+	});
+
 	it("Runner#pause() / resume() でコンテンツが一時停止・再開できる", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 
