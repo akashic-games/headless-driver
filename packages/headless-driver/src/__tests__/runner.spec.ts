@@ -54,7 +54,7 @@ async function readyRunner(gameJsonPath: string): Promise<(RunnerV1 | RunnerV2 |
 }
 
 describe("Runner の動作確認 (v1)", () => {
-	it("RunnerV3_g が参照できることを確認", () => {
+	it("RunnerV1_g が参照できることを確認", () => {
 		expect(RunnerV1_g.Util.charCodeAt("a", 0)).toBe(97);
 	});
 
