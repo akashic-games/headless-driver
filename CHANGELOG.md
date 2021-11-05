@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v1.11.0 (2021-11-05)
+
+#### Bug Fix
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver`
+  * [#309](https://github.com/akashic-games/headless-driver/pull/309) fix: export `g` namespaces ([@yu-ogi](https://github.com/yu-ogi))
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#302](https://github.com/akashic-games/headless-driver/pull/302) chore(deps): update dependency eslint to v8 ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#297](https://github.com/akashic-games/headless-driver/pull/297) chore(deps): update all dependencies (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+  * [#296](https://github.com/akashic-games/headless-driver/pull/296) chore(deps): update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 2
+- ShinobuTakahashi ([@ShinobuTakahashi](https://github.com/ShinobuTakahashi))
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.10.1 (2021-10-06)
 
 #### Enhancement
