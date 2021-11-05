@@ -2,5 +2,6 @@
 interface TrustedFunctions {
 	engineFiles(): any | undefined;
 }
-
+// グローバルスコープのため var を許容
+// eslint-disable-next-line no-var
 declare var trustedFunctions: TrustedFunctions;
