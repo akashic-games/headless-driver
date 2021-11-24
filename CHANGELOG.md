@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.2 (2021-11-24)
+
+#### Update Dependencies
+* `headless-driver-runner`
+  * [#310](https://github.com/akashic-games/headless-driver/pull/310) chore(deps): pin dependency @types/jest to 27.0.3 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.1 (2021-11-16)
 
 #### Enhancement
