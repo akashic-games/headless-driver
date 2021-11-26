@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.5 (2021-11-27)
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#313](https://github.com/akashic-games/headless-driver/pull/313) chore(deps): update dependency prettier to v2.5.0 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.4 (2021-11-25)
 
 #### Update Dependencies
