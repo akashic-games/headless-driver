@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.11.7 (2021-12-04)
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#316](https://github.com/akashic-games/headless-driver/pull/316) chore(deps): update dependency eslint to v8.4.0 ([@renovate[bot]](https://github.com/apps/renovate))
+* Other
+  * [#314](https://github.com/akashic-games/headless-driver/pull/314) chore(deps): update all dependencies (patch) ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.6 (2021-12-04)
 
 #### Update Dependencies
