@@ -1,31 +1,46 @@
 {
   "extends": [
-    "config:base"
+    "config:base",
+    ":timezone(Asia/Tokyo)",
+    ":prConcurrentLimitNone",
+    ":prHourlyLimitNone",
+    ":dependencyDashboard",
+    ":preserveSemverRanges",
+    "group:definitelyTyped"
   ],
-  "timezone": "Asia/Tokyo",
-  "schedule": ["every weekend"],
+  "schedule": ["after 10pm and before 6am every weekday", "every weekend"],
   "labels": ["dependencies"],
-  "assignees": [""],
-  "reviewers": [""],
-  "prConcurrentLimit": 0,
-  "prHourlyLimit": 0,
-  "separateMinorPatch": true,
+  "separateMinorPatch": false,
+  "automerge": true,
   "packageRules": [
     {
-      "packagePatterns": ["^@akashic/"],
-      "enabled": false
+      "matchPackagePatterns": ["^@akashic/"],
+      "schedule": "at any time",
+      "groupName": "akashic non-major packages",
+      "minor": {
+        "automerge": false
+      },
+      "major": {
+        "automerge": false
+      }
     },
     {
-      "updateTypes": ["minor"],
-      "groupName": "all dependencies"
+      "matchPackagePatterns": ["eslint"],
+      "groupName": "eslint packages"
     },
     {
-      "updateTypes": ["patch"],
-      "groupName": "all dependencies"
+      "matchPackagePatterns": ["jest"],
+      "groupName": "jest packages"
     },
     {
-      "packageNames": ["vm2"],
-      "enabled": false
+      "matchUpdateTypes": ["patch"],
+      "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
+      "groupName": "patch dependencies"
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
+      "groupName": "minor dependencies"
     }
   ]
 }
