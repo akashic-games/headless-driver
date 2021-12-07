@@ -8,7 +8,11 @@
     ":preserveSemverRanges",
     "group:definitelyTyped"
   ],
-  "schedule": ["after 10pm and before 6am every weekday", "every weekend"],
+  "schedule": [
+    "every weekend",
+    "after 10pm every weekday",
+    "before 6am every weekday"
+  ],
   "labels": ["dependencies"],
   "separateMinorPatch": true,
   "automerge": true,
