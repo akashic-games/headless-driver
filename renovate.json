@@ -21,12 +21,7 @@
       "matchPackagePatterns": ["^@akashic/"],
       "schedule": "at any time",
       "groupName": "akashic non-major packages",
-      "minor": {
-        "automerge": false
-      },
-      "major": {
-        "automerge": false
-      }
+      "automerge": false
     },
     {
       "matchPackagePatterns": ["eslint"],
