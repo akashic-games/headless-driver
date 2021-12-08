@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.11.11 (2021-12-08)
+
+#### Update Dependencies
+* `headless-driver-runner`, `headless-driver`
+  * [#322](https://github.com/akashic-games/headless-driver/pull/322) fix(deps): update akashic non-major packages (minor) ([@renovate[bot]](https://github.com/apps/renovate))
+
+#### Committers: 1
+- [@yu-ogi](https://github.com/yu-ogi)
+
 ## v1.11.10 (2021-12-08)
 
 #### Enhancement
