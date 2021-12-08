@@ -35,7 +35,7 @@
     "vm2": "3.9.5"
   },
   "devDependencies": {
-    "@akashic/engine-files": "3.0.19",
+    "@akashic/engine-files": "3.1.4",
     "@akashic/eslint-config": "1.0.0",
     "@types/get-port": "4.0.1",
     "@types/jest": "27.0.3",
