@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.16 (2021-12-28)
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#341](https://github.com/akashic-games/headless-driver/pull/341) chore(deps): update dependency eslint-plugin-jest to v25.3.2 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.15 (2021-12-21)
 
 #### Update Dependencies
