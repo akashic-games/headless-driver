@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.17 (2021-12-31)
+
+#### Update Dependencies
+* `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#343](https://github.com/akashic-games/headless-driver/pull/343) chore(deps): update dependency @types/jest to v27.4.0 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.16 (2021-12-28)
 
 #### Update Dependencies
