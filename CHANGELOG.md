@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.18 (2022-01-01)
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#344](https://github.com/akashic-games/headless-driver/pull/344) chore(deps): update dependency eslint to v8.6.0 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.17 (2021-12-31)
 
 #### Update Dependencies
