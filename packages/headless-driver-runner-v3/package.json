@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver-runner-v3",
-  "version": "1.11.21",
+  "version": "1.11.22",
   "description": "A runner module for contents using Akashic Engine v3",
   "main": "lib/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@akashic/engine-files": "3.1.4",
-    "@akashic/headless-driver-runner": "1.11.21",
+    "@akashic/headless-driver-runner": "1.11.22",
     "@akashic/pdi-common-impl": "0.2.0"
   },
   "devDependencies": {
