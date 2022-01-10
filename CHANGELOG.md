@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.22 (2022-01-11)
+
+#### Update Dependencies
+* `headless-driver-runner-v3`
+  * [#352](https://github.com/akashic-games/headless-driver/pull/352) chore(deps): update dependency image-size to v1.0.1 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.21 (2022-01-05)
 
 #### Update Dependencies
