@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.24 (2022-01-19)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#363](https://github.com/akashic-games/headless-driver/pull/363) chore(deps): update dependency @types/node to v14.18.9 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.23 (2022-01-18)
 
 #### Enhancement
