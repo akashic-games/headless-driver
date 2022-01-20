@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.25 (2022-01-21)
+
+#### Update Dependencies
+* `headless-driver-runner-v1`, `headless-driver-runner-v2`, `headless-driver-runner-v3`, `headless-driver-runner`, `headless-driver`
+  * [#364](https://github.com/akashic-games/headless-driver/pull/364) chore(deps): update dependency typescript to v4.5.5 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.24 (2022-01-19)
 
 #### Update Dependencies
