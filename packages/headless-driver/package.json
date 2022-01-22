@@ -31,7 +31,7 @@
     "@akashic/trigger": "~1.0.0",
     "js-sha256": "0.9.0",
     "lodash.clonedeep": "4.5.0",
-    "node-fetch": "2.6.7",
+    "node-fetch": "3.1.1",
     "vm2": "3.9.5"
   },
   "devDependencies": {
