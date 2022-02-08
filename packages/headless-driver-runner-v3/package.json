@@ -38,7 +38,7 @@
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-jest": "25.7.0",
     "image-size": "1.0.1",
-    "jest": "27.5.0",
+    "jest": "27.5.1",
     "pixelmatch": "5.2.1",
     "pngjs": "6.0.0",
     "prettier": "2.5.1",
