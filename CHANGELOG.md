@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.29 (2022-02-11)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#380](https://github.com/akashic-games/headless-driver/pull/380) fix(deps): update dependency vm2 to v3.9.7 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.28 (2022-02-10)
 
 #### Update Dependencies
