@@ -41,5 +41,9 @@
       "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
       "groupName": "minor dependencies"
     }
+  ],
+  "ignorePaths": [
+    "packages/headless-driver-runner-v1/**",
+    "packages/headless-driver-runner-v2/**"
   ]
 }
