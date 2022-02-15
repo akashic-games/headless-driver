@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.11.31 (2022-02-15)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#385](https://github.com/akashic-games/headless-driver/pull/385) chore(deps): update dependency @types/node-fetch to v2.6.0 ([@renovate[bot]](https://github.com/apps/renovate))
+
 ## v1.11.30 (2022-02-12)
 
 #### Update Dependencies
