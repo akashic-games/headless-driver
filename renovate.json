@@ -43,7 +43,7 @@
     }
   ],
   "ignorePaths": [
-    "packages/headless-driver-runner-v1/**",
-    "packages/headless-driver-runner-v2/**"
+    "packages/headless-driver-runner-v1/node_modules/@akashic/engine-files/**",
+    "packages/headless-driver-runner-v2/node_modules/@akashic/engine-files/**"
   ]
 }
