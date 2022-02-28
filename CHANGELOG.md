@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.11.34 (2022-02-28)
+
+#### Update Dependencies
+* `headless-driver`
+  * [#360](https://github.com/akashic-games/headless-driver/pull/360) chore(deps): update dependency @akashic/engine-files to v3.1.6 ([@renovate[bot]](https://github.com/apps/renovate))
+* Other
+  * [#369](https://github.com/akashic-games/headless-driver/pull/369) chore(deps): bump shelljs from 0.8.4 to 0.8.5 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
 ## v1.11.33 (2022-02-26)
 
 #### Update Dependencies
