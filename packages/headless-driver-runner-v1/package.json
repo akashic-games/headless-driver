@@ -25,7 +25,7 @@
     "@akashic/headless-driver-runner": "1.11.33"
   },
   "devDependencies": {
-    "@akashic/eslint-config": "1.0.0",
+    "@akashic/eslint-config": "1.1.0",
     "@typescript-eslint/eslint-plugin": "5.12.1",
     "eslint": "8.10.0",
     "eslint-config-prettier": "8.4.0",
