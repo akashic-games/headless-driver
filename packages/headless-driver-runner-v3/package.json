@@ -27,7 +27,7 @@
     "@akashic/pdi-common-impl": "0.2.0"
   },
   "devDependencies": {
-    "@akashic/eslint-config": "1.0.0",
+    "@akashic/eslint-config": "1.1.0",
     "@types/jest": "27.4.1",
     "@types/pixelmatch": "5.2.4",
     "@types/pngjs": "6.0.1",
