@@ -40,10 +40,13 @@
       "matchUpdateTypes": ["minor"],
       "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
       "groupName": "minor dependencies"
+    },
+    {
+      "matchPaths": [
+          "packages/headless-driver-runner-v1/**",
+          "packages/headless-driver-runner-v2/**"
+      ],
+      "ignoreDeps": ["@akashic/engine-files"]
     }
-  ],
-  "ignorePaths": [
-    "packages/headless-driver-runner-v1/node_modules/@akashic/engine-files/**",
-    "packages/headless-driver-runner-v2/node_modules/@akashic/engine-files/**"
   ]
 }
