@@ -46,7 +46,8 @@
           "packages/headless-driver-runner-v1/**",
           "packages/headless-driver-runner-v2/**"
       ],
-      "ignoreDeps": ["@akashic/engine-files"]
+      "ignoreDeps": ["@akashic/engine-files"],
+      "groupName": "headless-driver-runner v1 v2"
     }
   ]
 }
