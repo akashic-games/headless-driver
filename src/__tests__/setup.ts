@@ -5,10 +5,10 @@ import * as getPort from "get-port";
 const handler = require("serve-handler"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 declare global {
+	// eslint-disable-next-line no-var
+	var server: http.Server;
+
 	namespace NodeJS {
-		interface Global {
-			server: http.Server;
-		}
 		interface ProcessEnv {
 			HOST: string;
 			PORT: number;
