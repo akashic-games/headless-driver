@@ -6,6 +6,8 @@
     ":prHourlyLimitNone",
     ":dependencyDashboard",
     ":preserveSemverRanges",
+    ":label(dependencies)",
+    ":separatePatchReleases",
     "group:definitelyTyped"
   ],
   "schedule": [
@@ -13,14 +15,15 @@
     "after 10pm every weekday",
     "before 6am every weekday"
   ],
-  "labels": ["dependencies"],
-  "separateMinorPatch": true,
   "automerge": true,
   "packageRules": [
     {
       "matchPackagePatterns": ["^@akashic/"],
       "schedule": "at any time",
-      "groupName": "akashic non-major packages",
+      "groupName": "akashic packages",
+      "major": {
+        "excludePackageNames": ["aev1", "aev2"]
+      },
       "automerge": false
     },
     {
