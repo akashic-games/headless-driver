@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "lib": ["es6"],
+    "noImplicitAny": true,
+    "module": "commonjs" ,
+    "noUnusedLocals": true,
+    "declaration": true,
+    "useUnknownInCatchVariables": false,
+    "strict": true,
+    "outDir": "./lib"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/__tests__/**/*.ts"
+  ]
+}
