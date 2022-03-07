@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver",
-  "version": "2.0.0",
+  "version": "2.0.0-beta.0",
   "description": "A library to execute contents using Akashic Engine headlessly",
   "main": "lib/index.js",
   "author": "DWANGO Co., Ltd.",
@@ -18,6 +18,7 @@
   },
   "publishConfig": {
     "access": "public",
+    "tag": "beta",
     "@akashic:registry": "https://registry.npmjs.org/"
   },
   "files": [
