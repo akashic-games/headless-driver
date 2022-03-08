@@ -3,20 +3,20 @@ import { akashicEngine as g } from "aev2";
 export interface NodeScriptAssetParameters {
 	id: string;
 	path: string;
-	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 	errorHandler: (err: any) => void;
+	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 }
 
 export class NodeScriptAsset extends g.ScriptAsset {
 	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
 	static POST_SCRIPT: string = "\n})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
-	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 	private errorHandler: (err: any) => void;
+	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
 
 	constructor(param: NodeScriptAssetParameters) {
 		super(param.id, param.path);
-		this.loadFileHandler = param.loadFileHandler;
 		this.errorHandler = param.errorHandler;
+		this.loadFileHandler = param.loadFileHandler;
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
