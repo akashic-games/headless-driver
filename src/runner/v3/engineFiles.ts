@@ -1,6 +1,6 @@
 // 環境に応じて適当な engineFiles を返すモジュール。
 // 通常の engine-files と同様に `import { akashicEngine, gameDriver, pdi } from "./engineFiles"` という形で呼び出せる。
-// headless-driver-runner-v3 内では基本的に本モジュールを介して engine-files の読み込みを行うこと。
+// RunnerV3 内では基本的に本モジュールを介して engine-files の読み込みを行うこと。
 //
 // NOTE: このモジュールは現実装において NodeVM のサンドボックスの内側と外側の両方から require される。
 // サンドボックスの内側ではグローバル関数 trustedFunctions.engineFiles() が存在するため、下の (1) のパスから engine-files を読みようにする。
