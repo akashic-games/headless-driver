@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.0
+* リポジトリのモノレポを廃止
+  * それに伴い `@akashic/headless-driver-runner-v*` 及び `@akashic/headless-driver-runner` は 2.0.0 以降新たなバージョンはリリースされなくなります。
+
 ## v1.11.36 (2022-03-03)
 
 #### Update Dependencies
