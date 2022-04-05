@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.1
+* @akashic/engine-files@3.1.8 に更新
+
 ## 2.0.0
 * リポジトリのモノレポを廃止
   * それに伴い `@akashic/headless-driver-runner-v*` 及び `@akashic/headless-driver-runner` は 2.0.0 以降新たなバージョンはリリースされなくなります。
