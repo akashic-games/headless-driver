@@ -16,6 +16,7 @@
     "before 6am every weekday"
   ],
   "automerge": true,
+  "ignoreDeps": ["aev1", "aev2"],
   "packageRules": [
     {
       "matchPackagePatterns": ["^@akashic/"],
@@ -40,12 +41,6 @@
       "matchUpdateTypes": ["minor"],
       "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
       "groupName": "minor dependencies"
-    },
-    {
-      "matchUpdateTypes": ["major"],
-      "matchPackageNames": ["aev1", "aev2"],
-      "enabled": false,
-      "groupName": "engine-files v1 v2"
     }
   ]
 }
