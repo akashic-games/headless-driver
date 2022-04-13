@@ -18,6 +18,18 @@
   "automerge": true,
   "packageRules": [
     {
+      "matchPackageNames": ["aev1"],
+      "allowedVersions": "<2.0"
+    },
+    {
+      "matchPackageNames": ["aev2"],
+      "allowedVersions": "<3.0"
+    },
+    {
+      "matchPackageNames": ["aev3"],
+      "allowedVersions": "<4.0"
+    },
+    {
       "matchPackagePatterns": ["^@akashic/"],
       "schedule": "at any time",
       "groupName": "akashic packages",
