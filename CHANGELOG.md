@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.1.0
+* @akashic/engine-files@3.2.0 に更新
+* @akashic/engine-files@2.2.0 に更新
+* @akashic/engine-files@1.2.0 に更新
+
 ## 2.0.2
 * @akashic/engine-files@3.1.9 に更新
 
