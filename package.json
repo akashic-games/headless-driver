@@ -39,7 +39,7 @@
     "@akashic/eslint-config": "1.1.0",
     "@akashic/remark-preset-lint": "0.1.2",
     "@types/get-port": "4.0.1",
-    "@types/jest": "27.5.0",
+    "@types/jest": "27.5.1",
     "@types/lodash.clonedeep": "4.5.7",
     "@types/node": "16.11.34",
     "@types/node-fetch": "2.6.1",
