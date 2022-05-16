@@ -41,7 +41,7 @@
     "@types/get-port": "4.0.1",
     "@types/jest": "27.5.1",
     "@types/lodash.clonedeep": "4.5.7",
-    "@types/node": "16.11.34",
+    "@types/node": "16.11.36",
     "@types/node-fetch": "2.6.1",
     "@types/pixelmatch": "5.2.4",
     "@types/pngjs": "6.0.1",
