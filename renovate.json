@@ -1,39 +1,55 @@
 {
   "extends": [
-    "config:base",
-    ":timezone(Asia/Tokyo)",
-    ":prConcurrentLimitNone",
-    ":prHourlyLimitNone",
-    ":dependencyDashboard",
-    ":preserveSemverRanges",
-    ":label(dependencies)",
-    ":separatePatchReleases",
-    "group:definitelyTyped"
-  ],
-  "schedule": [
-    "every weekend",
-    "after 10pm every weekday",
-    "before 6am every weekday"
+    "github>akashic-games/renovate-config",
+    "github>akashic-games/renovate-config:groupPatchMinor",
+    "github>akashic-games/renovate-config:bumpAkashicPatch"
   ],
   "automerge": true,
   "packageRules": [
     {
       "matchPackageNames": ["aev1"],
-      "allowedVersions": "<2.0"
+      "allowedVersions": "<2.0",
+      "schedule": "at any time"
+    },
+    {
+      "matchPackageNames": ["aev1"],
+      "matchUpdateTypes": ["patch"],
+      "bumpVersion": "patch"
+    },
+    {
+      "matchPackageNames": ["aev1"],
+      "matchUpdateTypes": ["minor"],
+      "bumpVersion": "minor"
     },
     {
       "matchPackageNames": ["aev2"],
-      "allowedVersions": "<3.0"
+      "allowedVersions": "<3.0",
+      "schedule": "at any time"
+    },
+    {
+      "matchPackageNames": ["aev2"],
+      "matchUpdateTypes": ["patch"],
+      "bumpVersion": "patch"
+    },
+    {
+      "matchPackageNames": ["aev2"],
+      "matchUpdateTypes": ["minor"],
+      "bumpVersion": "minor"
     },
     {
       "matchPackageNames": ["aev3"],
-      "allowedVersions": "<4.0"
+      "allowedVersions": "<4.0",
+      "schedule": "at any time"
     },
     {
-      "matchPackagePatterns": ["^@akashic/"],
-      "schedule": "at any time",
-      "groupName": "akashic packages",
-      "automerge": false
+      "matchPackageNames": ["aev3"],
+      "matchUpdateTypes": ["patch"],
+      "bumpVersion": "patch"
+    },
+    {
+      "matchPackageNames": ["aev3"],
+      "matchUpdateTypes": ["minor"],
+      "bumpVersion": "minor"
     },
     {
       "matchPackagePatterns": ["eslint"],
