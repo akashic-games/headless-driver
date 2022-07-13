@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/akashic-games/headless-driver/blob/master/img/akashic.png"/>
+<img src="https://raw.githubusercontent.com/akashic-games/headless-driver/main/img/akashic.png"/>
 </p>
 
 # headless-driver
@@ -26,6 +26,6 @@ npm run build
 ## ライセンス
 本リポジトリは MIT License の元で公開されています。
 詳しくは [LICENSE](https://github.com/akashic-games/headless-driver/blob/master/LICENSE) をご覧ください。
- 
+
 ただし、画像ファイルおよび音声ファイルは
 [CC BY 2.1 JP](https://creativecommons.org/licenses/by/2.1/jp/) の元で公開されています。
