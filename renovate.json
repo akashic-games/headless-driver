@@ -64,16 +64,6 @@
     {
       "matchPackagePatterns": ["jest"],
       "groupName": "jest packages"
-    },
-    {
-      "matchUpdateTypes": ["patch"],
-      "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
-      "groupName": "patch dependencies"
-    },
-    {
-      "matchUpdateTypes": ["minor"],
-      "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
-      "groupName": "minor dependencies"
     }
   ]
 }
