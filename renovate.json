@@ -10,43 +10,52 @@
       "matchPackageNames": ["aev1"],
       "matchUpdateTypes": ["patch"],
       "bumpVersion": "patch",
-      "allowedVersions": "<2.0",
       "schedule": "at any time"
     },
     {
       "matchPackageNames": ["aev1"],
       "matchUpdateTypes": ["minor"],
       "bumpVersion": "minor",
-      "allowedVersions": "<2.0",
       "schedule": "at any time"
+    },
+    {
+      "matchPackageNames": ["aev1"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
       "matchPackageNames": ["aev2"],
       "matchUpdateTypes": ["patch"],
       "bumpVersion": "patch",
-      "allowedVersions": "<3.0",
       "schedule": "at any time"
     },
     {
       "matchPackageNames": ["aev2"],
       "matchUpdateTypes": ["minor"],
       "bumpVersion": "minor",
-      "allowedVersions": "<3.0",
       "schedule": "at any time"
+    },
+    {
+      "matchPackageNames": ["aev2"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
       "matchPackageNames": ["aev3"],
       "matchUpdateTypes": ["patch"],
       "bumpVersion": "patch",
-      "allowedVersions": "<4.0",
       "schedule": "at any time"
     },
     {
       "matchPackageNames": ["aev3"],
       "matchUpdateTypes": ["minor"],
       "bumpVersion": "minor",
-      "allowedVersions": "<4.0",
       "schedule": "at any time"
+    },
+    {
+      "matchPackageNames": ["aev3"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
       "matchPackagePatterns": ["eslint"],
