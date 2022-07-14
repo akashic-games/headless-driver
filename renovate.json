@@ -1,6 +1,6 @@
 {
   "extends": [
-    "github>akashic-games/renovate-config#remove-group-policies",
+    "github>akashic-games/renovate-config",
     "github>akashic-games/renovate-config:groupPatchMinor",
     "github>akashic-games/renovate-config:bumpAkashicPatch"
   ],
@@ -8,54 +8,51 @@
   "packageRules": [
     {
       "matchPackageNames": ["aev1"],
-      "matchUpdateTypes": ["patch"],
-      "bumpVersion": "patch",
+      "allowedVersions": "<2.0",
+      "groupName": "engine-files@1",
       "schedule": "at any time"
     },
     {
       "matchPackageNames": ["aev1"],
-      "matchUpdateTypes": ["minor"],
-      "bumpVersion": "minor",
-      "schedule": "at any time"
+      "matchUpdateTypes": ["patch"],
+      "bumpVersion": "patch"
     },
     {
       "matchPackageNames": ["aev1"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
+      "matchUpdateTypes": ["minor"],
+      "bumpVersion": "minor"
+    },
+    {
+      "matchPackageNames": ["aev2"],
+      "allowedVersions": "<3.0",
+      "groupName": "engine-files@2",
+      "schedule": "at any time"
     },
     {
       "matchPackageNames": ["aev2"],
       "matchUpdateTypes": ["patch"],
-      "bumpVersion": "patch",
-      "schedule": "at any time"
+      "bumpVersion": "patch"
     },
     {
       "matchPackageNames": ["aev2"],
       "matchUpdateTypes": ["minor"],
-      "bumpVersion": "minor",
-      "schedule": "at any time"
+      "bumpVersion": "minor"
     },
     {
-      "matchPackageNames": ["aev2"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
+      "matchPackageNames": ["aev3"],
+      "allowedVersions": "<4.0",
+      "groupName": "engine-files@3",
+      "schedule": "at any time"
     },
     {
       "matchPackageNames": ["aev3"],
       "matchUpdateTypes": ["patch"],
-      "bumpVersion": "patch",
-      "schedule": "at any time"
+      "bumpVersion": "patch"
     },
     {
       "matchPackageNames": ["aev3"],
       "matchUpdateTypes": ["minor"],
-      "bumpVersion": "minor",
-      "schedule": "at any time"
-    },
-    {
-      "matchPackageNames": ["aev3"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
+      "bumpVersion": "minor"
     },
     {
       "matchPackagePatterns": ["eslint"],
@@ -64,6 +61,17 @@
     {
       "matchPackagePatterns": ["jest"],
       "groupName": "jest packages"
+    },
+    {
+      "matchUpdateTypes": ["patch"],
+      "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
+      "groupName": "patch dependencies"
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "excludePackagePatterns": ["@akashic/", "eslint", "jest"],
+      "groupName": "minor dependencies"
     }
   ]
 }
+
