@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.2
+* 内部モジュールの更新
+
 ## 2.1.1
 * @akashic/engine-files@3.2.2 に更新
 
