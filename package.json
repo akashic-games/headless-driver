@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "A library to execute contents using Akashic Engine headlessly",
   "main": "lib/index.js",
   "author": "DWANGO Co., Ltd.",
@@ -29,7 +29,7 @@
     "@akashic/trigger": "1.0.1",
     "aev1": "npm:@akashic/engine-files@1.2.1",
     "aev2": "npm:@akashic/engine-files@2.2.1",
-    "aev3": "npm:@akashic/engine-files@3.2.3",
+    "aev3": "npm:@akashic/engine-files@3.2.4",
     "js-sha256": "0.9.0",
     "lodash.clonedeep": "4.5.0",
     "node-fetch": "2.6.7",
