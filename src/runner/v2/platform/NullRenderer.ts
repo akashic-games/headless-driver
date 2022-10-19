@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "aev2";
+import { akashicEngine as g } from "engine-files-v2";
 
 export class NullRenderer extends g.Renderer {
 	clear(): void {

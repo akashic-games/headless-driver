@@ -22,9 +22,9 @@ describe("engineFiles", () => {
 		let pdi: any;
 		jest.isolateModules(() => {
 			/* eslint-disable @typescript-eslint/no-var-requires */
-			akashicEngine = require("aev3").akashicEngine;
-			gameDriver = require("aev3").gameDriver;
-			pdi = require("aev3").pdi;
+			akashicEngine = require("engine-files-v3").akashicEngine;
+			gameDriver = require("engine-files-v3").gameDriver;
+			pdi = require("engine-files-v3").pdi;
 			engineFiles = require("../engineFiles");
 			/* eslint-enable @typescript-eslint/no-var-requires */
 		});

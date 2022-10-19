@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "aev1";
+import { akashicEngine as g } from "engine-files-v1";
 
 export interface NodeScriptAssetParameters {
 	id: string;
