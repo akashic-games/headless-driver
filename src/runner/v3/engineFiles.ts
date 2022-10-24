@@ -6,7 +6,7 @@
 // サンドボックスの内側ではグローバル関数 trustedFunctions.engineFiles() が存在するため、下の (1) のパスから engine-files を読みようにする。
 // 一方、このモジュール自体が NodeVM の外側から require されるケースも存在するため、下の (2) のパスから engine-files を読み込むようにしている。
 
-import { akashicEngine, gameDriver, pdi } from "aev3";
+import { akashicEngine, gameDriver, pdi } from "engine-files-v3";
 
 let e: any;
 if (typeof trustedFunctions !== "undefined") {

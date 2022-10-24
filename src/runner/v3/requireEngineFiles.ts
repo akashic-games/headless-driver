@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import type * as engineFiles from "aev3";
+import type * as engineFiles from "engine-files-v3";
 
 /**
  * 環境に応じた適当な engineFiles を返す。

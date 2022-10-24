@@ -1,4 +1,4 @@
-import type { akashicEngine as g, pdi } from "aev2";
+import type { akashicEngine as g, pdi } from "engine-files-v2";
 import { Looper } from "../../../Looper";
 import type { PlatformParameters } from "../../Platform";
 import { Platform } from "../../Platform";

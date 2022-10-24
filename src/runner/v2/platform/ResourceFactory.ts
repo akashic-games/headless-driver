@@ -1,4 +1,4 @@
-import { akashicEngine as g } from "aev2";
+import { akashicEngine as g } from "engine-files-v2";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
 import { NullAudioAsset } from "./assets/NullAudioAsset";

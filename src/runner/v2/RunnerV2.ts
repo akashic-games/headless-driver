@@ -1,4 +1,4 @@
-import { akashicEngine as g, gameDriver as gdr, pdi } from "aev2";
+import { akashicEngine as g, gameDriver as gdr, pdi } from "engine-files-v2";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
 import type { RunnerPointEvent } from "../types";
