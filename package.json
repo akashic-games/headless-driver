@@ -36,7 +36,7 @@
     "vm2": "^3.9.11"
   },
   "devDependencies": {
-    "@akashic/eslint-config": "^1.1.0",
+    "@akashic/eslint-config": "^1.1.1",
     "@akashic/remark-preset-lint": "^0.1.2",
     "@types/jest": "^29.1.1",
     "@types/lodash.clonedeep": "^4.5.7",
