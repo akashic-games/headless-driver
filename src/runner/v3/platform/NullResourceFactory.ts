@@ -47,9 +47,10 @@ export class NullResourceFactory implements g.ResourceFactory {
 		duration: number,
 		system: g.AudioSystem,
 		loop: boolean,
-		hint: g.AudioAssetHint
+		hint: g.AudioAssetHint,
+		offset?: number
 	): g.AudioAsset {
-		return new NullAudioAsset(id, assetPath, duration, system, loop, hint);
+		return new NullAudioAsset(id, assetPath, duration, system, loop, hint, offset ?? 0);
 	}
 
 	createAudioPlayer(system: g.AudioSystem): g.AudioPlayer {
