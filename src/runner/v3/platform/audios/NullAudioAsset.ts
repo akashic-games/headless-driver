@@ -8,13 +8,23 @@ export class NullAudioAsset extends Asset implements g.AudioAsset {
 	loop: boolean;
 	hint: g.AudioAssetHint;
 	_system: g.AudioSystem;
+	offset: number;
 
-	constructor(id: string, assetPath: string, duration: number, system: g.AudioSystem, loop: boolean, hint: g.AudioAssetHint) {
+	constructor(
+		id: string,
+		assetPath: string,
+		duration: number,
+		system: g.AudioSystem,
+		loop: boolean,
+		hint: g.AudioAssetHint,
+		offset: number
+	) {
 		super(id, assetPath);
 		this.duration = duration;
 		this.loop = loop;
 		this.hint = hint;
 		this._system = system;
+		this.offset = offset;
 		this.data = undefined;
 	}
 
