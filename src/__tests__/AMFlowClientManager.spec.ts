@@ -1,4 +1,6 @@
-import type { GetStartPointOptions, StartPoint } from "@akashic/amflow";
+import type { GetStartPointOptions, GetTickListOptions, StartPoint } from "@akashic/amflow";
+import type { MessageEvent, TickList } from "@akashic/playlog";
+import { EventCode } from "@akashic/playlog";
 import { setSystemLogger } from "../Logger";
 import type { AMFlowStore } from "../play/amflow/AMFlowStore";
 import { AMFlowClientManager } from "../play/AMFlowClientManager";
@@ -109,6 +111,37 @@ describe("AMFlowClientManager の単体テスト", () => {
 					// no startPoint found
 					expect(e.message).toBe("No start point");
 				}
+
+				done();
+			});
+		});
+	});
+
+	it("getTickList で正しく tickList が得られる", (done) => {
+		const amflowClientManager = new AMFlowClientManager();
+		const amflowClient = amflowClientManager.createAMFlow("0");
+		amflowClient.open("0", () => {
+			const token = amflowClientManager.createPlayToken("0", activePermission);
+			amflowClient.authenticate(token, async () => {
+				const getTickList: (opts: GetTickListOptions) => Promise<TickList | undefined> = (opts) =>
+					new Promise<TickList | undefined>((resolve, reject) => {
+						amflowClient.getTickList(opts, (e, data) => (e ? reject(e) : resolve(data!)));
+					});
+
+				// when nothing
+				const tl1 = await getTickList({ begin: 0, end: 10 });
+				expect(tl1).toBe(undefined);
+
+				// out of range
+				amflowClient.sendTick([0]);
+				const tl2 = await getTickList({ begin: 100, end: 120 });
+				expect(tl2).toBe(undefined);
+
+				// typical
+				const msg: MessageEvent = [EventCode.Message, 0, "dummy", {}];
+				amflowClient.sendTick([1, [msg]]);
+				const tl4 = await getTickList({ begin: 0, end: 10 });
+				expect(tl4).toEqual([0, 1, [[1, [msg]]]]);
 
 				done();
 			});
