@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.6.0
+* `RunnerManager#startRunner()` の引数にオプションを追加。ポーズ状態で開始できるように
+
 ## 2.5.3
 * ティックがない状態で AMFlowClient#getTickList() が誤ってエラーになる問題を修正
 
