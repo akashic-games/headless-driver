@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.6.1
+* 内部モジュールの更新
+
 ## 2.6.0
 * `RunnerManager#startRunner()` の引数にオプションを追加。ポーズ状態で開始できるように
 
