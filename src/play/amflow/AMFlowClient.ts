@@ -224,11 +224,7 @@ export class AMFlowClient implements AMFlow {
 				return;
 			}
 			const tickList = this.store.getTickList(opts);
-			if (tickList) {
-				callback(null, tickList);
-			} else {
-				callback(createError("runtime_error", "No tick list"), undefined);
-			}
+			callback(null, tickList ?? undefined);
 		});
 	}
 
