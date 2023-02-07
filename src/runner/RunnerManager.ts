@@ -9,7 +9,7 @@ import { getSystemLogger } from "../Logger";
 import type { AMFlowClient } from "../play/amflow/AMFlowClient";
 import type { PlayManager } from "../play/PlayManager";
 import { loadFile } from "../utils";
-import type { RunnerParameters } from "./Runner";
+import type { RunnerParameters, RunnerStartParameters } from "./Runner";
 import type { RunnerExecutionMode, RunnerPlayer, RunnerRenderingMode } from "./types";
 import type { RunnerV1, RunnerV1Game } from "./v1";
 import type { RunnerV2, RunnerV2Game } from "./v2";
@@ -214,14 +214,14 @@ export class RunnerManager {
 	 * Runner を開始する。
 	 * @param runnerId RunnerID
 	 */
-	async startRunner(runnerId: string): Promise<RunnerV1Game | RunnerV2Game | RunnerV3Game | null> {
+	async startRunner(runnerId: string, options?: RunnerStartParameters): Promise<RunnerV1Game | RunnerV2Game | RunnerV3Game | null> {
 		const runner = this.getRunner(runnerId);
 
 		if (!runner) {
 			throw new Error("Runner is not found");
 		}
 
-		return runner.start();
+		return runner.start(options);
 	}
 
 	/**
