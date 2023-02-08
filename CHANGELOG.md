@@ -1,7 +1,15 @@
 # CHANGELOG
 
-## 2.5.3
+## 2.6.2
 * canvas を optionalDependencies　から devDependencies へ変更
+## 2.6.1
+* 内部モジュールの更新
+
+## 2.6.0
+* `RunnerManager#startRunner()` の引数にオプションを追加。ポーズ状態で開始できるように
+
+## 2.5.3
+* ティックがない状態で AMFlowClient#getTickList() が誤ってエラーになる問題を修正
 
 ## 2.5.2
 * 内部モジュールの更新

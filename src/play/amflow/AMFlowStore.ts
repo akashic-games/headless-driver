@@ -62,6 +62,9 @@ export class AMFlowStore {
 		const tickList = opts.excludeEventFlags && opts.excludeEventFlags.ignorable ? this.filteredTickList : this.unfilteredTickList;
 		const from = Math.max(opts.begin, tickList[TickListIndex.From]);
 		const to = Math.min(opts.end - 1, tickList[TickListIndex.To]);
+		if (to < from) {
+			return null;
+		}
 
 		const tickListTicks = tickList[TickListIndex.Ticks];
 		if (tickListTicks == null) {
