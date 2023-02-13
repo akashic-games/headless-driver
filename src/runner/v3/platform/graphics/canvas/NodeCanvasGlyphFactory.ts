@@ -1,3 +1,4 @@
+import type { ImageData } from "canvas";
 import { Canvas } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { NodeCanvasGlyph } from "./NodeCanvasGlyph";

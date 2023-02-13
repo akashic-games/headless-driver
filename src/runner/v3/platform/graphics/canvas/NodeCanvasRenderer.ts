@@ -1,4 +1,4 @@
-import type { CanvasRenderingContext2D } from "canvas";
+import type { CanvasRenderingContext2D, ImageData } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { CompositeOperationConverter } from "./CompositeOperationConverter";
 

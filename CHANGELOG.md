@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.6.2
+* canvas を optionalDependencies　から devDependencies へ変更
+
 ## 2.6.1
 * 内部モジュールの更新
 
