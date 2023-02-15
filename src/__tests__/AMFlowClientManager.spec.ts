@@ -103,7 +103,8 @@ describe("AMFlowClientManager の単体テスト", () => {
 				expect(sp3).not.toBe(null);
 				expect(sp4).not.toBe(null);
 
-				// no startPoint
+				// no startPoint for the given time
+				// 仕様未検討: frame での指定同様第 0 スタートポイントの書き込みを待ってそれを返すべき？
 				try {
 					await getStartPoint({ timestamp: 0 });
 					fail("Must throw error");
@@ -113,6 +114,38 @@ describe("AMFlowClientManager の単体テスト", () => {
 				}
 
 				done();
+			});
+		});
+	});
+
+	it("getStartPoint は startPoint の書き込みを待つ", (done) => {
+		const amflowClientManager = new AMFlowClientManager();
+		const amflowClient = amflowClientManager.createAMFlow("0");
+		amflowClient.open("0", () => {
+			const token = amflowClientManager.createPlayToken("0", activePermission);
+			amflowClient.authenticate(token, async () => {
+				const getStartPoint: (opts: GetStartPointOptions) => Promise<StartPoint> = (opts) =>
+					new Promise<StartPoint>((resolve, reject) => {
+						amflowClient.getStartPoint(opts, (e, data) => (e ? reject(e) : resolve(data!)));
+					});
+				const putStartPoint: (sp: StartPoint) => Promise<void> = (sp) =>
+					new Promise<void>((resolve, reject) => {
+						amflowClient.putStartPoint(sp, (e) => (e ? reject(e) : resolve()));
+					});
+
+				getStartPoint({ frame: 0 }).then((sp) => {
+					expect(sp.data).toBe("frame0");
+					done();
+				});
+
+				// getStartPoint() が非同期で待機することの確認のため意図的に遅延
+				await new Promise((resolve) => setTimeout(resolve, 100));
+
+				await putStartPoint({
+					frame: 0,
+					timestamp: 100,
+					data: "frame0"
+				});
 			});
 		});
 	});

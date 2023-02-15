@@ -13,15 +13,16 @@ import type { DumpedPlaylog } from "./types";
  */
 export class AMFlowStore {
 	playId: string;
-	sendEventTrigger: Trigger<Event> = new Trigger();
-	sendTickTrigger: Trigger<Tick> = new Trigger();
 	putStartPointTrigger: Trigger<StartPoint> = new Trigger();
 
+	private sendEventTrigger: Trigger<Event> = new Trigger();
+	private sendTickTrigger: Trigger<Tick> = new Trigger();
 	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] = [];
 	private unfilteredTickList: TickList | null = null;
 	private filteredTickList: TickList | null = null;
 	private suspended: boolean;
+	private unconsumedEvents: Event[] = [];
 
 	constructor(playId: string) {
 		this.playId = playId;
@@ -52,7 +53,35 @@ export class AMFlowStore {
 		if (this.isSuspended()) {
 			throw createError("bad_request", "Play may be suspended");
 		}
-		this.sendEventTrigger.fire(this.cloneDeep<Event>(event));
+
+		const ev = this.cloneDeep<Event>(event);
+		if (this.sendEventTrigger.length === 0) {
+			// 誰も受信できない場合は最初にハンドラが登録されるまで溜め込んでおく
+			this.unconsumedEvents.push(ev);
+			return;
+		}
+
+		this.sendEventTrigger.fire(ev);
+	}
+
+	onTick(handler: (tick: Tick) => void): void {
+		this.sendTickTrigger.add(handler);
+	}
+
+	offTick(handler: (tick: Tick) => void): void {
+		this.sendTickTrigger.remove(handler);
+	}
+
+	onEvent(handler: (event: Event) => void): void {
+		this.sendEventTrigger.add(handler);
+		if (0 < this.unconsumedEvents.length) {
+			this.unconsumedEvents.forEach((ev) => this.sendEventTrigger.fire(ev));
+			this.unconsumedEvents = [];
+		}
+	}
+
+	offEvent(handler: (event: Event) => void): void {
+		this.sendEventTrigger.remove(handler);
 	}
 
 	getTickList(opts: GetTickListOptions): TickList | null {
@@ -164,6 +193,7 @@ export class AMFlowStore {
 		this.sendTickTrigger = null!;
 		this.permissionMap = null!;
 		this.startPoints = null!;
+		this.unconsumedEvents = null!;
 		this.putStartPointTrigger = null!;
 	}
 
