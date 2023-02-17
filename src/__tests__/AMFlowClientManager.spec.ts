@@ -103,16 +103,6 @@ describe("AMFlowClientManager の単体テスト", () => {
 				expect(sp3).not.toBe(null);
 				expect(sp4).not.toBe(null);
 
-				// no startPoint for the given time
-				// 仕様未検討: frame での指定同様第 0 スタートポイントの書き込みを待ってそれを返すべき？
-				try {
-					await getStartPoint({ timestamp: 0 });
-					fail("Must throw error");
-				} catch (e) {
-					// no startPoint found
-					expect(e.message).toBe("No start point");
-				}
-
 				done();
 			});
 		});
@@ -133,19 +123,32 @@ describe("AMFlowClientManager の単体テスト", () => {
 						amflowClient.putStartPoint(sp, (e) => (e ? reject(e) : resolve()));
 					});
 
-				getStartPoint({ frame: 0 }).then((sp) => {
-					expect(sp.data).toBe("frame0");
-					done();
-				});
+				Promise.all([
+					getStartPoint({ frame: 0 }).then((sp) => {
+						expect(sp.data).toBe("frame0");
+					}),
+					getStartPoint({}).then((sp) => {
+						expect(sp.data).toBe("frame0");
+					}),
+					getStartPoint({ timestamp: 200 }).then((sp) => {
+						expect(sp.data).toBe("frame1");
+					}),
+					getStartPoint({ timestamp: 50 }).then(
+						() => {
+							done.fail("should not succeed");
+						},
+						(e) => {
+							expect(e.name).toBe("BadRequest");
+						}
+					)
+				]).then(() => done());
 
 				// getStartPoint() が非同期で待機することの確認のため意図的に遅延
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
-				await putStartPoint({
-					frame: 0,
-					timestamp: 100,
-					data: "frame0"
-				});
+				// NOTE: 通常ありえないが、エッジケースのテストのため frame: 1 を 0 より先に書く
+				await putStartPoint({ frame: 1, timestamp: 150, data: "frame1" });
+				await putStartPoint({ frame: 0, timestamp: 100, data: "frame0" });
 			});
 		});
 	});

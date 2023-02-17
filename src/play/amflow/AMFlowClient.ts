@@ -9,6 +9,11 @@ import type { DumpedPlaylog } from "./types";
 
 export type AMFlowState = "connecting" | "open" | "closing" | "closed";
 
+interface StartPointRequest {
+	options: GetStartPointOptions;
+	callback: (error: Error | null, startPoint?: StartPoint) => void;
+}
+
 /**
  * Runnerと1対1で対応するAMFlow実装。
  */
@@ -23,7 +28,7 @@ export class AMFlowClient implements AMFlow {
 	private permission: Permission | null = null;
 	private tickHandlers: ((tick: Tick) => void)[] = [];
 	private eventHandlers: ((event: Event) => void)[] = [];
-	private waitingStartPointCallbacks: ((error: Error | null, startPoint?: StartPoint) => void)[] = [];
+	private waitingStartPointRequests: StartPointRequest[] = [];
 
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
@@ -267,13 +272,7 @@ export class AMFlowClient implements AMFlow {
 
 			const startPoint = this.store.getStartPoint(opts);
 			if (!startPoint) {
-				if (opts.frame != null) {
-					// フレーム指定で startPoint がない＝第 0 スタートポイント書き込みがまだ
-					this.waitingStartPointCallbacks.push(callback);
-				} else {
-					// TODO timestamp ベースでない時も待つべき？
-					callback(createError("runtime_error", "No start point"), undefined);
-				}
+				this.waitingStartPointRequests.push({ options: opts, callback });
 				return;
 			}
 
@@ -313,7 +312,7 @@ export class AMFlowClient implements AMFlow {
 		this.permission = null;
 		this.tickHandlers = null!;
 		this.eventHandlers = null!;
-		this.waitingStartPointCallbacks = null!;
+		this.waitingStartPointRequests = null!;
 		this.onPutStartPoint = null!;
 	}
 
@@ -336,9 +335,25 @@ export class AMFlowClient implements AMFlow {
 	private handlePutStartPoint: (startPoint: StartPoint) => void = (startPoint) => {
 		this.onPutStartPoint.fire(startPoint);
 
-		if (startPoint.frame === 0 && this.waitingStartPointCallbacks.length) {
-			this.waitingStartPointCallbacks.forEach((callback) => callback(null, startPoint));
-			this.waitingStartPointCallbacks = [];
+		if (this.waitingStartPointRequests.length) {
+			const remains: StartPointRequest[] = [];
+			this.waitingStartPointRequests.forEach((req) => {
+				const { frame, timestamp } = req.options;
+				if (
+					(frame != null && startPoint.frame <= frame) ||
+					(timestamp != null && startPoint.timestamp < timestamp) ||
+					(frame == null && timestamp == null && startPoint.frame === 0)
+				) {
+					req.callback(null, startPoint);
+					return;
+				}
+				if (startPoint.frame === 0) {
+					req.callback(createError("bad_request"));
+					return;
+				}
+				remains.push(req);
+			});
+			this.waitingStartPointRequests = remains;
 		}
 	};
 }
