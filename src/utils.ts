@@ -44,7 +44,7 @@ async function processWaitingLoad(): Promise<void> {
 export namespace LoadFileInternal {
 	/**
 	 * 最大並列ロード数。
-	 * 環境によって、一定数以上の fetch() を並列に実行すると応答がなくなったりエラーになる場合がある。
+	 * 環境によって、node-fetch を一定数以上並列に実行すると応答がなくなったりエラーになる場合がある。
 	 * 具体的な値は調整の余地がある。少なくとも Windows 環境で、128 以上で問題が起きることがわかっている。
 	 */
 	export const MAX_PARALLEL_LOAD = 32;
