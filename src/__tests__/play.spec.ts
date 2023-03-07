@@ -532,9 +532,11 @@ describe("プレイ周りの結合動作テスト", () => {
 		let playId: string;
 		const events: Event[] = [];
 		playManager
-			.createPlay({
-				contentUrl: "dummy"
-			})
+			.createPlay(
+				{ contentUrl: "dummy" },
+				undefined,
+				{ preservesUnhandledEvents: true }
+			)
 			.then((p) => {
 				return new Promise<void>((resolve, reject) => {
 					playId = p;

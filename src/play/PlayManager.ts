@@ -1,4 +1,5 @@
 import type { Permission } from "@akashic/amflow";
+import type { AMFlowStoreOptions } from "./amflow";
 import type { AMFlowClient } from "./amflow/AMFlowClient";
 import type { DumpedPlaylog } from "./amflow/types";
 import { AMFlowClientManager } from "./AMFlowClientManager";
@@ -23,7 +24,7 @@ export class PlayManager {
 	 * Play を作成する。
 	 * @param playLocation パラメータ
 	 */
-	async createPlay(playLocation: PlayManagerParameters, playlog?: DumpedPlaylog): Promise<string> {
+	async createPlay(playLocation: PlayManagerParameters, playlog?: DumpedPlaylog, options?: AMFlowStoreOptions): Promise<string> {
 		const playId = `${this.nextPlayId++}`;
 		this.plays.push({
 			playId,
@@ -32,6 +33,9 @@ export class PlayManager {
 			lastSuspendedAt: null,
 			...playLocation
 		});
+
+		if (options) this.amflowClientManager.setAMFlowStoreOptions(playId, options);
+
 		if (playlog) {
 			const amflow = this.createAMFlow(playId);
 			amflow.setDumpedPlaylog(playlog);

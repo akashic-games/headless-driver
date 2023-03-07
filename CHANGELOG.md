@@ -1,8 +1,7 @@
 # CHANGELOG
 
-## 2.6.3
-* 受信者が生成されるより前に送信されたイベントが失われる問題を修正
-* `AMFlowClient#getStartPonint()` で値がない時、最初の書き込みを待つように
+## 2.7.0
+* `PlayManager#createPlay()` にオプショナル引数 `AMFlowStoreOptions` を追加
 
 ## 2.6.2
 * canvas を optionalDependencies　から devDependencies へ変更

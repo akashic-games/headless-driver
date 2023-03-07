@@ -7,6 +7,17 @@ import cloneDeep = require("lodash.clonedeep");
 import { createError } from "./ErrorFactory";
 import type { DumpedPlaylog } from "./types";
 
+export interface AMFlowStoreOptions {
+	/**
+	 * 受信されないイベントをバッファリングするか。
+	 *
+	 * 真の場合、受信者が一つもない状態で送信されたイベントをバッファに保持する。
+	 * 保持されたイベントは、最初のイベントハンドラが (AMFlow#onEvent() で) 登録された時、そのハンドラにすべて引き渡される。
+	 * (二つ目以降のハンドラは受け取れないことに注意)
+	 */
+	preservesUnhandledEvents?: boolean;
+}
+
 /**
  * AMFlow のストア。
  * 一つのプレーに対して一つ存在する。
@@ -22,7 +33,9 @@ export class AMFlowStore {
 	private unfilteredTickList: TickList | null = null;
 	private filteredTickList: TickList | null = null;
 	private suspended: boolean;
-	private unconsumedEvents: Event[] = [];
+
+	private options: AMFlowStoreOptions | null = null;
+	private unhandledEvents: Event[] = [];
 
 	constructor(playId: string) {
 		this.playId = playId;
@@ -55,9 +68,8 @@ export class AMFlowStore {
 		}
 
 		const ev = this.cloneDeep<Event>(event);
-		if (this.sendEventTrigger.length === 0) {
-			// 誰も受信できない場合は最初にハンドラが登録されるまで溜め込んでおく
-			this.unconsumedEvents.push(ev);
+		if (this.options?.preservesUnhandledEvents && this.sendEventTrigger.length === 0) {
+			this.unhandledEvents.push(ev);
 			return;
 		}
 
@@ -74,9 +86,9 @@ export class AMFlowStore {
 
 	onEvent(handler: (event: Event) => void): void {
 		this.sendEventTrigger.add(handler);
-		if (0 < this.unconsumedEvents.length) {
-			this.unconsumedEvents.forEach((ev) => this.sendEventTrigger.fire(ev));
-			this.unconsumedEvents = [];
+		if (0 < this.unhandledEvents.length) {
+			this.unhandledEvents.forEach((ev) => this.sendEventTrigger.fire(ev));
+			this.unhandledEvents = [];
 		}
 	}
 
@@ -183,6 +195,10 @@ export class AMFlowStore {
 		dumped.startPoints.forEach((sp) => this.putStartPoint(sp));
 	}
 
+	setOptions(options: AMFlowStoreOptions | null): void {
+		this.options = options;
+	}
+
 	destroy(): void {
 		if (this.isDestroyed()) {
 			return;
@@ -193,7 +209,7 @@ export class AMFlowStore {
 		this.sendTickTrigger = null!;
 		this.permissionMap = null!;
 		this.startPoints = null!;
-		this.unconsumedEvents = null!;
+		this.unhandledEvents = null!;
 		this.putStartPointTrigger = null!;
 	}
 
