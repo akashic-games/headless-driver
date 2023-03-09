@@ -26,8 +26,10 @@ export class AMFlowStore {
 	playId: string;
 	putStartPointTrigger: Trigger<StartPoint> = new Trigger();
 
-	private sendEventTrigger: Trigger<Event> = new Trigger();
-	private sendTickTrigger: Trigger<Tick> = new Trigger();
+	// 現状外部から参照する必要はないが、互換性のため少なくとも 2.x.x の間は公開する
+	sendEventTrigger: Trigger<Event> = new Trigger();
+	sendTickTrigger: Trigger<Tick> = new Trigger();
+
 	private permissionMap: Map<string, Permission> = new Map();
 	private startPoints: StartPoint[] = [];
 	private unfilteredTickList: TickList | null = null;
