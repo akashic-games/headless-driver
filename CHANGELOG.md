@@ -3,6 +3,9 @@
 ## 2.7.0
 * `PlayManager#createPlay()` にオプショナル引数 `AMFlowStoreOptions` を追加
 
+## 2.6.3
+* Windows で大量のアセットを使うコンテンツで実行が止まる問題を修正 (ファイル読み込み・ネットワークアクセスの並列実行数を制限するように)
+
 ## 2.6.2
 * canvas を optionalDependencies　から devDependencies へ変更
 
