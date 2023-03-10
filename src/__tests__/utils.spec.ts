@@ -63,7 +63,7 @@ describe("utils.loadFile()", () => {
 		expect(resolverTable["delayed-3"]).not.toBe(undefined);
 
 		// 最終的に全部のロードが完了する。
-		Object.values(resolverTable).forEach(r => r());
+		Object.values(resolverTable).forEach((r) => r());
 		const contents = await Promise.all(Object.values(promiseTable));
 		expect(contents.length).toBe(LoadFileInternal.MAX_PARALLEL_LOAD + 3); // test-0〜(MAX_PARALLEL_LOAD-1) と delayed-1〜3
 	});
