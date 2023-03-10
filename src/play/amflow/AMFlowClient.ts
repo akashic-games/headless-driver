@@ -9,6 +9,11 @@ import type { DumpedPlaylog } from "./types";
 
 export type AMFlowState = "connecting" | "open" | "closing" | "closed";
 
+interface StartPointRequest {
+	options: GetStartPointOptions;
+	callback: (error: Error | null, startPoint?: StartPoint) => void;
+}
+
 /**
  * Runnerと1対1で対応するAMFlow実装。
  */
@@ -23,7 +28,7 @@ export class AMFlowClient implements AMFlow {
 	private permission: Permission | null = null;
 	private tickHandlers: ((tick: Tick) => void)[] = [];
 	private eventHandlers: ((event: Event) => void)[] = [];
-	private unconsumedEvents: Event[] = [];
+	private waitingStartPointRequests: StartPointRequest[] = [];
 
 	constructor(playId: string, store: AMFlowStore) {
 		this.playId = playId;
@@ -33,8 +38,6 @@ export class AMFlowClient implements AMFlow {
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		getSystemLogger().info("AMFlowClient#open()", playId);
 
-		this.store.sendEventTrigger.add(this.handleSendEvent, this);
-		this.store.sendTickTrigger.add(this.handleSendTick, this);
 		this.store.putStartPointTrigger.add(this.handlePutStartPoint, this);
 		this.state = "open";
 
@@ -118,7 +121,9 @@ export class AMFlowClient implements AMFlow {
 		if (!this.permission.subscribeTick) {
 			throw createError("permission_error", "Permission denied");
 		}
+
 		this.tickHandlers.push(handler);
+		if (this.tickHandlers.length === 1) this.store.onTick(this.handleSendTick);
 	}
 
 	offTick(handler: (tick: Tick) => void): void {
@@ -128,7 +133,9 @@ export class AMFlowClient implements AMFlow {
 		if (this.permission == null) {
 			throw createError("invalid_status", "Not authenticated");
 		}
+
 		this.tickHandlers = this.tickHandlers.filter((h) => h !== handler);
+		if (this.tickHandlers.length === 0) this.store.offTick(this.handleSendTick);
 	}
 
 	sendEvent(event: Event): void {
@@ -160,13 +167,7 @@ export class AMFlowClient implements AMFlow {
 		}
 
 		this.eventHandlers.push(handler);
-
-		if (0 < this.unconsumedEvents.length) {
-			this.eventHandlers.forEach((h) => {
-				this.unconsumedEvents.forEach((ev) => h(ev));
-			});
-			this.unconsumedEvents = [];
-		}
+		if (this.eventHandlers.length === 1) this.store.onEvent(this.handleSendEvent);
 	}
 
 	offEvent(handler: (event: Event) => void): void {
@@ -176,7 +177,9 @@ export class AMFlowClient implements AMFlow {
 		if (this.permission == null) {
 			throw createError("invalid_status", "Not authenticated");
 		}
+
 		this.eventHandlers = this.eventHandlers.filter((h) => h !== handler);
+		if (this.eventHandlers.length === 0) this.store.offEvent(this.handleSendEvent);
 	}
 
 	/**
@@ -266,12 +269,14 @@ export class AMFlowClient implements AMFlow {
 				callback(createError("permission_error", "Permission denied"), undefined);
 				return;
 			}
+
 			const startPoint = this.store.getStartPoint(opts);
-			if (startPoint) {
-				callback(null, startPoint);
-			} else {
-				callback(createError("runtime_error", "No start point"), undefined);
+			if (!startPoint) {
+				this.waitingStartPointRequests.push({ options: opts, callback });
+				return;
 			}
+
+			callback(null, startPoint);
 		});
 	}
 	/* eslint-disable @typescript-eslint/no-unused-vars */
@@ -298,8 +303,8 @@ export class AMFlowClient implements AMFlow {
 			return;
 		}
 		if (!this.store.isDestroyed()) {
-			this.store.sendEventTrigger.remove(this.handleSendEvent, this);
-			this.store.sendTickTrigger.remove(this.handleSendTick, this);
+			this.store.offEvent(this.handleSendEvent);
+			this.store.offTick(this.handleSendTick);
 			this.store.putStartPointTrigger.remove(this.handlePutStartPoint, this);
 		}
 
@@ -307,7 +312,7 @@ export class AMFlowClient implements AMFlow {
 		this.permission = null;
 		this.tickHandlers = null!;
 		this.eventHandlers = null!;
-		this.unconsumedEvents = null!;
+		this.waitingStartPointRequests = null!;
 		this.onPutStartPoint = null!;
 	}
 
@@ -319,19 +324,36 @@ export class AMFlowClient implements AMFlow {
 		return this.store.dump();
 	}
 
-	private handleSendTick(tick: Tick): void {
+	private handleSendTick: (tick: Tick) => void = (tick) => {
 		this.tickHandlers.forEach((h) => h(tick));
-	}
+	};
 
-	private handleSendEvent(event: Event): void {
-		if (this.eventHandlers.length <= 0) {
-			this.unconsumedEvents.push(event);
-			return;
-		}
+	private handleSendEvent: (event: Event) => void = (event) => {
 		this.eventHandlers.forEach((h) => h(event));
-	}
+	};
 
-	private handlePutStartPoint(startPoint: StartPoint): void {
+	private handlePutStartPoint: (startPoint: StartPoint) => void = (startPoint) => {
 		this.onPutStartPoint.fire(startPoint);
-	}
+
+		if (this.waitingStartPointRequests.length) {
+			const remains: StartPointRequest[] = [];
+			this.waitingStartPointRequests.forEach((req) => {
+				const { frame, timestamp } = req.options;
+				if (
+					(frame != null && startPoint.frame <= frame) ||
+					(timestamp != null && startPoint.timestamp < timestamp) ||
+					(frame == null && timestamp == null && startPoint.frame === 0)
+				) {
+					req.callback(null, startPoint);
+					return;
+				}
+				if (startPoint.frame === 0) {
+					req.callback(createError("bad_request"));
+					return;
+				}
+				remains.push(req);
+			});
+			this.waitingStartPointRequests = remains;
+		}
+	};
 }

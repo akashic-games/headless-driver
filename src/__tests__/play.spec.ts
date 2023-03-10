@@ -532,24 +532,10 @@ describe("プレイ周りの結合動作テスト", () => {
 		let playId: string;
 		const events: Event[] = [];
 		playManager
-			.createPlay({
-				contentUrl: "dummy"
-			})
+			.createPlay({ contentUrl: "dummy" }, undefined, { preservesUnhandledEvents: true })
 			.then((p) => {
 				return new Promise<void>((resolve, reject) => {
 					playId = p;
-					activeAMFlow = playManager.createAMFlow(playId);
-					activeAMFlow.open(playId, (err) => {
-						if (err) {
-							reject(err);
-							return;
-						}
-						resolve();
-					});
-				});
-			})
-			.then(() => {
-				return new Promise<void>((resolve, reject) => {
 					passiveAMFlow = playManager.createAMFlow(playId);
 					passiveAMFlow.open(playId, (err) => {
 						if (err) {
@@ -574,9 +560,22 @@ describe("プレイ周りの結合動作テスト", () => {
 				});
 			})
 			.then(() => {
-				// active の AMFlow#authenticate(), AMFlow#onEvent() 呼び出し前にイベントを送信
+				// active の生成前にイベントを送信
 				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 1, hoge: "fuga" }]);
 				passiveAMFlow.sendEvent([0x20, 0, null, { ordinal: 2, foo: "bar" }]);
+			})
+			.then(() => {
+				return new Promise<void>((resolve, reject) => {
+					// active の生成
+					activeAMFlow = playManager.createAMFlow(playId);
+					activeAMFlow.open(playId, (err) => {
+						if (err) {
+							reject(err);
+							return;
+						}
+						resolve();
+					});
+				});
 			})
 			.then(() => {
 				return new Promise<void>((resolve, reject) => {

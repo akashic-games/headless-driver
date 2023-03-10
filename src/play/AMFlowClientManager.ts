@@ -1,5 +1,6 @@
 import type { Permission } from "@akashic/amflow";
 import { AMFlowClient } from "./amflow/AMFlowClient";
+import type { AMFlowStoreOptions } from "./amflow/AMFlowStore";
 import { AMFlowStore } from "./amflow/AMFlowStore";
 
 export class AMFlowClientManager {
@@ -7,6 +8,19 @@ export class AMFlowClientManager {
 	 * PlayId と AMFlowStore を紐付けるマップ情報。
 	 */
 	private storeMap: Map<string, AMFlowStore> = new Map();
+
+	/**
+	 * 対象の PlayID の オプションを設定する。
+	 * @param playId PlayID
+	 * @param options オプション
+	 */
+	setAMFlowStoreOptions(playId: string, options: AMFlowStoreOptions | null): void {
+		let store = this.storeMap.get(playId);
+		if (!store) {
+			store = this.createAMFlowStore(playId);
+		}
+		store.setOptions(options);
+	}
 
 	/**
 	 * 対象の PlayID の AMFlowClient を作成する。
