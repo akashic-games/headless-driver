@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.7.1
+* 内部モジュールの更新
+
 ## 2.7.0
 * `PlayManager#createPlay()` にオプショナル引数 `AMFlowStoreOptions` を追加
 
