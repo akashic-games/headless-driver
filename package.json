@@ -33,7 +33,7 @@
     "js-sha256": "^0.9.0",
     "lodash.clonedeep": "^4.5.0",
     "node-fetch": "^2.6.7",
-    "vm2": "3.9.11"
+    "vm2": "3.9.16"
   },
   "devDependencies": {
     "@akashic/eslint-config": "^1.1.1",
