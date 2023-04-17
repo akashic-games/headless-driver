@@ -26,7 +26,7 @@
   "dependencies": {
     "@akashic/amflow": "^3.1.0",
     "@akashic/playlog": "^3.1.0",
-    "@akashic/trigger": "^1.0.1",
+    "@akashic/trigger": "^2.0.0",
     "engine-files-v1": "npm:@akashic/engine-files@1.2.1",
     "engine-files-v2": "npm:@akashic/engine-files@2.2.2",
     "engine-files-v3": "npm:@akashic/engine-files@3.6.9",
