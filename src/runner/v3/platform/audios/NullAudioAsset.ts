@@ -29,7 +29,10 @@ export class NullAudioAsset extends Asset implements g.AudioAsset {
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
-		loader._onAssetLoad(this);
+		// アセットのロードは原則非同期としたいのでsetTimeoutを使用
+		setTimeout(() => {
+			loader._onAssetLoad(this);
+		}, 0);
 	}
 
 	play(): g.AudioPlayer {
