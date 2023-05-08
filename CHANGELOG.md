@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.8.1
+* `NullAudioAsset`, `NullImageAsset`, `NullVideoAsset` を非同期でロードするように
+
 ## 2.8.0
 * 内部モジュールの更新
 
