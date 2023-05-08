@@ -1,6 +1,6 @@
 {
   "name": "@akashic/headless-driver",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "A library to execute contents using Akashic Engine headlessly",
   "main": "lib/index.js",
   "author": "DWANGO Co., Ltd.",
