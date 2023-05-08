@@ -5,7 +5,6 @@ export class NullImageAsset extends g.ImageAsset {
 	_surface: g.Surface | null = null;
 
 	_load(loader: g.AssetLoadHandler): void {
-		// アセットのロードは原則非同期としたいのでsetTimeoutを使用
 		setTimeout(() => {
 			loader._onAssetLoad(this);
 		}, 0);
