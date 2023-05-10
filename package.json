@@ -12,7 +12,7 @@
     "format:prettier": "prettier --write \"src/**/*.ts\"",
     "format:eslint": "eslint \"src/**/*.ts\" --fix",
     "test": "run-s test:*",
-    "test:jest": "NODE_OPTIONS='--dns-result-order=ipv4first' jest",
+    "test:jest": "cross-env NODE_OPTIONS='--dns-result-order=ipv4first' jest",
     "test:eslint": "eslint \"src/**/*.ts\"",
     "test:remark": "remark . --frail --no-stdout --quiet"
   },
@@ -46,6 +46,7 @@
     "@types/pngjs": "^6.0.1",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "canvas": "^2.10.1",
+    "cross-env":"^7.0.3",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
