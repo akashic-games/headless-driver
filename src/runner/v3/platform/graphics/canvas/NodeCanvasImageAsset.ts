@@ -1,4 +1,4 @@
-import { Canvas, Image as CanvasImage } from "canvas";
+import { Canvas } from "canvas";
 import type { Image } from "../../../../../../types/canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { Asset } from "../../assets/Asset";
@@ -51,6 +51,8 @@ export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 			this.height = this.dataCache.height;
 			loader._onAssetLoad(this);
 		} else {
+			// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires
+			const CanvasImage = require("canvas").Image;
 			const image = new CanvasImage();
 			image.onerror = () => {
 				loader._onAssetError(this, {
