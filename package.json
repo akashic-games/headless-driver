@@ -7,22 +7,22 @@
   "license": "MIT",
   "scripts": {
     "prepare": "npm run build",
-    "build": "rimraf ./lib && npm run format && tsc && npm run copy",
+    "build": "rimraf ./lib && npm run format && tsc",
     "format": "run-s format:*",
     "format:prettier": "prettier --write \"src/**/*.ts\"",
     "format:eslint": "eslint \"src/**/*.ts\" --fix",
     "test": "run-s test:*",
     "test:jest": "jest",
     "test:eslint": "eslint \"src/**/*.ts\"",
-    "test:remark": "remark . --frail --no-stdout --quiet",
-    "copy": "cpx \"src/runner/v3/types/canvas/*\" lib/runner/v3/types/canvas/"
+    "test:remark": "remark . --frail --no-stdout --quiet"
   },
   "publishConfig": {
     "access": "public",
     "@akashic:registry": "https://registry.npmjs.org/"
   },
   "files": [
-    "lib"
+    "lib",
+    "types"
   ],
   "dependencies": {
     "@akashic/amflow": "^3.1.0",
@@ -46,7 +46,6 @@
     "@types/pixelmatch": "^5.2.4",
     "@types/pngjs": "^6.0.1",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
-    "cpx": "^1.5.0",
     "canvas": "^2.11.2",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
