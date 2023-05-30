@@ -1,7 +1,5 @@
 import type { akashicEngine as g } from "../../../engineFiles";
 import type { Image } from "../../../types/canvas";
-// import { Image } from "../../../types/canvas/";
-// import { Canvas, Image } from "../../../types/canvas";
 import { Asset } from "../../assets/Asset";
 import { NodeCanvasSurface } from "./NodeCanvasSurface";
 

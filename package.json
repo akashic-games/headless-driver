@@ -12,7 +12,7 @@
     "format:prettier": "prettier --write \"src/**/*.ts\"",
     "format:eslint": "eslint \"src/**/*.ts\" --fix",
     "test": "run-s test:*",
-    "test:jest": "jest --no-cache",
+    "test:jest": "jest",
     "test:eslint": "eslint \"src/**/*.ts\"",
     "test:remark": "remark . --frail --no-stdout --quiet",
     "copy": "cpx \"src/runner/v3/types/canvas/*\" lib/runner/v3/types/canvas/"

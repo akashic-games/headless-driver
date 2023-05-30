@@ -1,5 +1,4 @@
 import type { akashicEngine as g } from "../engineFiles";
-// import { Canvas } from "../types/canvas";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
 import { NullAudioAsset } from "./audios/NullAudioAsset";
