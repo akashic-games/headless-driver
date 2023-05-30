@@ -1,3 +1,4 @@
+import type { Canvas } from "../../../types/canvas";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
 import type { RunnerPointEvent } from "../types";
@@ -5,7 +6,6 @@ import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
 import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSurface";
 import type { NullSurface } from "./platform/graphics/null/NullSurface";
 import { PlatformV3 } from "./platform/PlatformV3";
-import type { Canvas } from "./types/canvas";
 
 export type RunnerV3Game = g.Game;
 

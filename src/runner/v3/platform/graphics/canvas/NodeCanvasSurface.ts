@@ -1,5 +1,5 @@
+import type { Canvas } from "../../../../../../types/canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
-import type { Canvas } from "../../../types/canvas";
 import { NodeCanvasRenderer } from "./NodeCanvasRenderer";
 
 export class NodeCanvasSurface implements g.Surface {

@@ -1,5 +1,5 @@
+import type { CanvasRenderingContext2D, ImageData } from "../../../../../../types/canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
-import type { CanvasRenderingContext2D, ImageData } from "../../../types/canvas";
 import { CompositeOperationConverter } from "./CompositeOperationConverter";
 
 export class NodeCanvasRenderer implements g.Renderer {
