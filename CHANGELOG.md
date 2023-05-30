@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 2.8.2
-* ユーザに canvas を必須でなくするため型ファイルを追加
+* Canvas の型ファイルを追加
 
 ## 2.8.1
 * `NullAudioAsset`, `NullImageAsset`, `NullVideoAsset` を非同期でロードするように
