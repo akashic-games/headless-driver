@@ -1,3 +1,4 @@
+import { Canvas } from "canvas";
 import type { akashicEngine as g } from "../engineFiles";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
@@ -76,8 +77,6 @@ export class NodeCanvasResourceFactory implements g.ResourceFactory {
 	}
 
 	createSurface(width: number, height: number): g.Surface {
-		// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires
-		const Canvas = require("canvas").Canvas;
 		const canvas = new Canvas(width, height);
 		return new NodeCanvasSurface(canvas);
 	}

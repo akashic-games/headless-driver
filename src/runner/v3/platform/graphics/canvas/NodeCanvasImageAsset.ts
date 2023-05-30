@@ -1,3 +1,4 @@
+import { Canvas, Image as CanvasImage } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import type { Image } from "../../../types/canvas";
 import { Asset } from "../../assets/Asset";
@@ -50,9 +51,7 @@ export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 			this.height = this.dataCache.height;
 			loader._onAssetLoad(this);
 		} else {
-			// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires
-			const Image = require("canvas").Image;
-			const image = new Image();
+			const image = new CanvasImage();
 			image.onerror = () => {
 				loader._onAssetError(this, {
 					name: "AssetLoadError",
@@ -82,8 +81,6 @@ export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 			throw new Error("NodeCanvasImageAsset#asSurface(): not yet loaded.");
 		}
 		if (this._surface == null) {
-			// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires
-			const Canvas = require("canvas").Canvas;
 			const canvas = new Canvas(this.width, this.height);
 			const context = canvas.getContext("2d");
 			context.drawImage(this.data, 0, 0, this.width, this.height);

@@ -1,3 +1,4 @@
+import { Canvas } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import type { ImageData } from "../../../types/canvas";
 import { NodeCanvasGlyph } from "./NodeCanvasGlyph";
@@ -34,8 +35,6 @@ function createGlyphRenderedSurface(
 	// 理由:
 	// * Renderer#drawSystemText()を廃止または非推奨にしたいのでそれを用いず文字列を描画する
 	// * RenderingHelperがcontextの状態を復帰するためTextMetricsを取れない
-	// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires
-	const Canvas = require("canvas").Canvas;
 	const canvas = new Canvas(surfaceWidth, surfaceHeight);
 	const context = canvas.getContext("2d");
 
@@ -290,8 +289,6 @@ export class NodeCanvasGlyphFactory implements g.GlyphFactory {
 	measureMinimumFontSize(): number {
 		let fontSize = 1;
 		const str = "M";
-		// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires
-		const Canvas = require("canvas").Canvas;
 		const canvas = new Canvas(50, 50);
 		const context = canvas.getContext("2d");
 		if (context == null) {
