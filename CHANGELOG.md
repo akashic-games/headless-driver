@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 2.8.2
-* headless-driver の利用側で Canvas の型エラーとなる箇所に `@ts-ignore` を追加
+* headless-driver の利用側で Canvas の参照エラーとなる箇所に `@ts-ignore` を追加
 
 ## 2.8.1
 * `NullAudioAsset`, `NullImageAsset`, `NullVideoAsset` を非同期でロードするように
