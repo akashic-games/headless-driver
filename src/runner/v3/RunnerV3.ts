@@ -1,3 +1,4 @@
+/** @ts-ignore */
 import type { Canvas } from "canvas";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
