@@ -1,3 +1,4 @@
+/** @ts-ignore */
 import type { Canvas } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { NodeCanvasRenderer } from "./NodeCanvasRenderer";

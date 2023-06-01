@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.8.2
+* TypeScript での利用時に `node-canvas` がインストールされていなくてもコンパイルできるように
+
 ## 2.8.1
 * `NullAudioAsset`, `NullImageAsset`, `NullVideoAsset` を非同期でロードするように
 
