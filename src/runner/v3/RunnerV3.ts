@@ -148,7 +148,8 @@ export class RunnerV3 extends Runner {
 		this.platform.firePointEvent({
 			type,
 			identifier: event.identifier,
-			offset: event.offset
+			offset: event.offset,
+			button: event.button || 0
 		});
 	}
 

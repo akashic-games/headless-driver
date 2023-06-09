@@ -11,6 +11,7 @@ export interface RunnerPointEvent {
 		x: number;
 		y: number;
 	};
+	button?: number;
 }
 
 export interface RunnerPlayer {
