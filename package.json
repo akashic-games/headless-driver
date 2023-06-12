@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@akashic/eslint-config": "^1.1.1",
-    "@akashic/pdi-types": "file:../pdi-types/akashic-pdi-types-1.8.0.tgz",
     "@akashic/remark-preset-lint": "^0.1.2",
     "@types/jest": "^29.1.1",
     "@types/lodash.clonedeep": "^4.5.7",

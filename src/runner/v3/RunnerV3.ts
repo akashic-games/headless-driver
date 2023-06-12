@@ -1,10 +1,9 @@
 /** @ts-ignore */
-import { PlatformButtonType } from "@akashic/pdi-types";
 import type { Canvas } from "canvas";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
 import type { RunnerPointEvent } from "../types";
-import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
+import { akashicEngine as g, gameDriver as gdr, pdi } from "./engineFiles";
 import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSurface";
 import type { NullSurface } from "./platform/graphics/null/NullSurface";
 import { PlatformV3 } from "./platform/PlatformV3";
@@ -150,7 +149,7 @@ export class RunnerV3 extends Runner {
 			type,
 			identifier: event.identifier,
 			offset: event.offset,
-			button: event.button ?? PlatformButtonType.Primary
+			button: event.button ?? pdi.PlatformButtonType.Primary
 		});
 	}
 
