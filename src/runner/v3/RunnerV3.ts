@@ -1,4 +1,5 @@
 /** @ts-ignore */
+import { PlatformButtonType } from "@akashic/pdi-types";
 import type { Canvas } from "canvas";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
@@ -149,7 +150,7 @@ export class RunnerV3 extends Runner {
 			type,
 			identifier: event.identifier,
 			offset: event.offset,
-			button: event.button || 0
+			button: event.button ?? PlatformButtonType.Primary
 		});
 	}
 
