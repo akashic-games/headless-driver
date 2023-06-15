@@ -36,7 +36,7 @@ declare global {
 
 export const initialize = async (): Promise<void> => {
 	const port = await getPort();
-	const host = "::0";
+	const host = "::0"; // Node v17 から ipv6 がデフォルトとなったため ipv6 を利用
 	const baseUrl = `http://[${host}]:${port}`;
 	const extPort = port;
 	const extHost = "::ffff:7f00:1";
