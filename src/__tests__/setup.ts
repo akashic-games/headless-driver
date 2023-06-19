@@ -36,11 +36,11 @@ declare global {
 
 export const initialize = async (): Promise<void> => {
 	const port = await getPort();
-	const host = "localhost";
-	const baseUrl = `http://${host}:${port}`;
+	const host = "::0"; // Node v17 から ipv6 がデフォルトとなったため ipv6 を利用
+	const baseUrl = `http://[${host}]:${port}`;
 	const extPort = port;
-	const extHost = "127.0.0.1";
-	const extBaseUrl = `http://${extHost}:${extPort}`;
+	const extHost = "::ffff:7f00:1";
+	const extBaseUrl = `http://[${extHost}]:${extPort}`;
 
 	const server = http.createServer((request, response) => {
 		handler(request, response, {
