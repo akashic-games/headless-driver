@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased changes
+* 内部モジュールの更新
+* `RunnerPointEvent#button` を追加
+
 ## 2.8.3
 * 内部モジュールの更新
 
