@@ -1,17 +1,18 @@
 import { akashicEngine as g } from "engine-files-v1";
+import type { RunnerLoadFileHandler } from "../../../types";
 
 export interface NodeScriptAssetParameters {
 	id: string;
 	path: string;
 	errorHandler: (err: any) => void;
-	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	loadFileHandler: RunnerLoadFileHandler;
 }
 
 export class NodeScriptAsset extends g.ScriptAsset {
 	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
 	static POST_SCRIPT: string = "\n})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
 	private errorHandler: (err: any) => void;
-	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	private loadFileHandler: RunnerLoadFileHandler;
 
 	constructor(param: NodeScriptAssetParameters) {
 		super(param.id, param.path);
@@ -20,12 +21,12 @@ export class NodeScriptAsset extends g.ScriptAsset {
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
-		this.loadFileHandler(this.path, (err, text) => {
+		this.loadFileHandler(this.path, "utf-8", (err, text) => {
 			// NOTE: 過去バージョンのため型については精査しない
 			if (err) {
 				loader._onAssetError(this, err as any);
 			} else {
-				this.script = text!;
+				this.script = text as string;
 				loader._onAssetLoad(this);
 			}
 		});

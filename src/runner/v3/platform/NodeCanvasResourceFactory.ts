@@ -1,5 +1,7 @@
 import { Canvas } from "canvas";
+import type { RunnerLoadFileHandler } from "../../types";
 import type { akashicEngine as g } from "../engineFiles";
+import { NodeBinaryAsset } from "./assets/NodeBinaryAsset";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
 import { NullAudioAsset } from "./audios/NullAudioAsset";
@@ -10,7 +12,7 @@ import { NodeCanvasSurface } from "./graphics/canvas/NodeCanvasSurface";
 import { NullVideoAsset } from "./videos/NullVideoAsset";
 
 export interface NodeCanvasResourceFactoryParameters {
-	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	loadFileHandler: RunnerLoadFileHandler;
 	errorHandler: (err: Error) => void;
 }
 
@@ -19,7 +21,7 @@ export interface NodeCanvasResourceFactoryParameters {
  * 音声再生には未対応。
  */
 export class NodeCanvasResourceFactory implements g.ResourceFactory {
-	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	private loadFileHandler: RunnerLoadFileHandler;
 	private errorHandler: (err: Error) => void;
 
 	constructor({ loadFileHandler, errorHandler }: NodeCanvasResourceFactoryParameters) {
@@ -72,6 +74,14 @@ export class NodeCanvasResourceFactory implements g.ResourceFactory {
 			id,
 			path: assetPath,
 			errorHandler: this.errorHandler,
+			loadFileHandler: this.loadFileHandler
+		});
+	}
+
+	createBinaryAsset(id: string, assetPath: string): g.BinaryAsset {
+		return new NodeBinaryAsset({
+			id,
+			path: assetPath,
 			loadFileHandler: this.loadFileHandler
 		});
 	}

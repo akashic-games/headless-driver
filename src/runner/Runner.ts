@@ -1,7 +1,14 @@
 import type { AMFlow } from "@akashic/amflow";
 import { Trigger } from "@akashic/trigger";
 import type { Platform } from "./Platform";
-import type { RunnerAdvanceConditionFunc, RunnerExecutionMode, RunnerPlayer, RunnerPointEvent, RunnerRenderingMode } from "./types";
+import type {
+	RunnerAdvanceConditionFunc,
+	RunnerExecutionMode,
+	RunnerLoadFileHandler,
+	RunnerPlayer,
+	RunnerPointEvent,
+	RunnerRenderingMode
+} from "./types";
 
 export interface RunnerParameters {
 	contentUrl: string;
@@ -15,7 +22,7 @@ export interface RunnerParameters {
 	executionMode: RunnerExecutionMode;
 	trusted?: boolean;
 	renderingMode?: RunnerRenderingMode;
-	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	loadFileHandler: RunnerLoadFileHandler;
 	external?: { [key: string]: string };
 	gameArgs?: any;
 	player?: RunnerPlayer;
@@ -90,7 +97,7 @@ export abstract class Runner {
 		return this.params.renderingMode ?? "none";
 	}
 
-	get loadFileHandler(): (url: string, callback: (err: Error | null, data?: string) => void) => void {
+	get loadFileHandler(): RunnerLoadFileHandler {
 		return this.params.loadFileHandler;
 	}
 

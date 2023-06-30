@@ -1,5 +1,5 @@
 import type { AMFlow } from "@akashic/amflow";
-import type { RunnerRenderingMode } from "./types";
+import type { RunnerLoadFileHandler, RunnerRenderingMode } from "./types";
 
 export interface PlatformParameters {
 	assetBaseUrl: string;
@@ -9,7 +9,7 @@ export interface PlatformParameters {
 	trusted?: boolean;
 	renderingMode?: RunnerRenderingMode;
 	errorHandler: (err: any) => void;
-	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	loadFileHandler: RunnerLoadFileHandler;
 }
 
 export abstract class Platform {
@@ -21,7 +21,7 @@ export abstract class Platform {
 
 	protected sendToExternalHandler: (data: any) => void;
 	protected errorHandler: (err: any) => void;
-	protected loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	protected loadFileHandler: RunnerLoadFileHandler;
 
 	constructor(param: PlatformParameters) {
 		this.assetBaseUrl = param.assetBaseUrl;
@@ -39,14 +39,15 @@ export abstract class Platform {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/typedef
-	loadGameConfiguration = (url: string, callback: (err: Error | null, data?: string) => void): void => {
-		this.loadFileHandler(url, (err, str) => {
+	loadGameConfiguration = (url: string, callback: (err: Error | null, data?: string | Uint8Array) => void): void => {
+		this.loadFileHandler(url, "utf-8", (err, str) => {
 			if (err) {
 				callback(err);
 			} else if (!str) {
 				callback(new Error("Platform#loadGameConfiguration(): No data received"));
 			} else {
-				callback(null, JSON.parse(str));
+				// FIXME: as の回避
+				callback(null, JSON.parse(str as string));
 			}
 		});
 	};

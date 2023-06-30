@@ -1,14 +1,25 @@
+import { join } from "path";
 import { loadFile, LoadFileInternal } from "../utils";
+
+const assetBaseUrlV3 = process.env.ASSET_BASE_URL_V3!;
 
 describe("utils.loadFile()", () => {
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
 
-	it("ファイルをロードできる", async () => {
-		jest.spyOn(LoadFileInternal, "loadImpl").mockImplementation((url) => Promise.resolve(url));
-		const loaded = await loadFile("test");
-		expect(loaded).toBe("test");
+	it("HTTP 経由でファイルをロードできる", async () => {
+		expect(await loadFile(assetBaseUrlV3 + "/assets/akashic.bin", "utf-8")).toBe("akashic!!");
+		expect(await loadFile(assetBaseUrlV3 + "/assets/akashic.bin", "uint8array")).toEqual(
+			Uint8Array.from([97, 107, 97, 115, 104, 105, 99, 33, 33]) // akashic!!
+		);
+	});
+
+	it("ローカルのファイルをロードできる", async () => {
+		expect(await loadFile(join(__dirname, "fixtures", "content-v3", "assets", "akashic.bin"), "utf-8")).toBe("akashic!!");
+		expect(await loadFile(join(__dirname, "fixtures", "content-v3", "assets", "akashic.bin"), "uint8array")).toEqual(
+			Uint8Array.from([97, 107, 97, 115, 104, 105, 99, 33, 33]) // akashic!!
+		);
 	});
 
 	it("並列ロード数を制限する", async () => {
@@ -24,7 +35,7 @@ describe("utils.loadFile()", () => {
 
 		const promiseTable: { [url: string]: Promise<string> } = {};
 		function load(url: string): void {
-			promiseTable[url] = loadFile(url);
+			promiseTable[url] = loadFile(url, "utf-8");
 		}
 
 		for (let i = 0; i < LoadFileInternal.MAX_PARALLEL_LOAD; ++i) {

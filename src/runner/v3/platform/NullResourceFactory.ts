@@ -1,4 +1,6 @@
+import type { RunnerLoadFileHandler } from "../../types";
 import type { akashicEngine as g } from "../engineFiles";
+import { NodeBinaryAsset } from "./assets/NodeBinaryAsset";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
 import { NullAudioAsset } from "./audios/NullAudioAsset";
@@ -9,7 +11,7 @@ import { NullSurface } from "./graphics/null/NullSurface";
 import { NullVideoAsset } from "./videos/NullVideoAsset";
 
 export interface NullResourceFactoryParameters {
-	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	loadFileHandler: RunnerLoadFileHandler;
 	errorHandler: (err: Error) => void;
 }
 
@@ -17,7 +19,7 @@ export interface NullResourceFactoryParameters {
  * 描画出力や音声再生機能を持たない最小限の ResourceFactory の実装。
  */
 export class NullResourceFactory implements g.ResourceFactory {
-	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	private loadFileHandler: RunnerLoadFileHandler;
 	private errorHandler: (err: Error) => void;
 
 	constructor({ loadFileHandler, errorHandler }: NullResourceFactoryParameters) {
@@ -70,6 +72,14 @@ export class NullResourceFactory implements g.ResourceFactory {
 			id,
 			path: assetPath,
 			errorHandler: this.errorHandler,
+			loadFileHandler: this.loadFileHandler
+		});
+	}
+
+	createBinaryAsset(id: string, assetPath: string): g.BinaryAsset {
+		return new NodeBinaryAsset({
+			id,
+			path: assetPath,
 			loadFileHandler: this.loadFileHandler
 		});
 	}
