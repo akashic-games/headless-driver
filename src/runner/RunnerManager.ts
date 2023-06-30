@@ -348,20 +348,6 @@ export class RunnerManager {
 		};
 	}
 
-	protected assertArrowedUrls(url: string, allowedUrls: (string | RegExp)[]): void {
-		const isAllowedUrl = allowedUrls.some((u) => {
-			if (typeof u === "string") {
-				return url.startsWith(u);
-			} else if (u instanceof RegExp) {
-				return u.test(url);
-			}
-			return false;
-		});
-		if (!isAllowedUrl) {
-			throw new Error(`Not allowed to read this URL. ${url}`);
-		}
-	}
-
 	protected createVm(trusted: boolean = false): NodeVM {
 		return new NodeVM({
 			sandbox: {
