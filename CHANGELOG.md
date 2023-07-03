@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.9.0
+* pdi-types@1.11.1 に追従
+  * `BinaryAsset` に対応
+  * `ScriptAsset#exports` に対応
+
 ## 2.8.4
 * 内部モジュールの更新
 
