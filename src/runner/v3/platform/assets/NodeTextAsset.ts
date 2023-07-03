@@ -33,7 +33,7 @@ export class NodeTextAsset extends Asset implements g.TextAsset {
 					retriable: false
 				});
 			} else {
-				// as の回避
+				// FIXME: as の回避
 				this.data = text as string;
 				loader._onAssetLoad(this);
 			}
