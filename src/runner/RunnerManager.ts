@@ -2,12 +2,13 @@ import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
 import { NodeVM, VMScript } from "vm2";
-import * as ExecVmScriptV3 from "..//ExecuteVmScriptV3";
 import * as ExecVmScriptV1 from "../ExecuteVmScriptV1";
 import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
+import * as ExecVmScriptV3 from "../ExecuteVmScriptV3";
 import { getSystemLogger } from "../Logger";
 import type { AMFlowClient } from "../play/amflow/AMFlowClient";
 import type { PlayManager } from "../play/PlayManager";
+import type { EncodingType } from "../utils";
 import { loadFile } from "../utils";
 import type { RunnerParameters, RunnerStartParameters } from "./Runner";
 import type { RunnerExecutionMode, RunnerPlayer, RunnerRenderingMode } from "./types";
@@ -319,11 +320,11 @@ export class RunnerManager {
 	}
 
 	protected async loadJSON<T>(contentUrl: string): Promise<T> {
-		return loadFile(contentUrl).then((text) => JSON.parse(text));
+		return loadFile(contentUrl, "utf-8").then((text) => JSON.parse(text));
 	}
 
 	protected createLoadFileHandler(allowedUrls: (string | RegExp)[] | null) {
-		return (url: string, callback: (err: Error | null, data?: string) => void): void => {
+		return (url: string, encoding: EncodingType, callback: (err: Error | null, data?: string | Uint8Array) => void): void => {
 			if (allowedUrls != null) {
 				const isAllowedUrl = allowedUrls.some((u) => {
 					if (typeof u === "string") {
@@ -337,7 +338,7 @@ export class RunnerManager {
 					return void callback(new Error(`Not allowed to read this URL. ${url}`));
 				}
 			}
-			loadFile(url)
+			loadFile(url, encoding)
 				.then((text) => {
 					callback(null, text);
 				})

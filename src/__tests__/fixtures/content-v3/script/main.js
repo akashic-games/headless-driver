@@ -3,7 +3,8 @@ const game = g.game;
 function main(param) {
 	const scene = new g.Scene({
 		game,
-		name: "content-v3-entry-scene"
+		name: "content-v3-entry-scene",
+		assetPaths: ["/assets/**/*"]
 	});
 
 	game.onSkipChange.add(function(skipped) {
@@ -67,7 +68,7 @@ function main(param) {
 			const dir = fs.readdirSync("/");
 			console.log(dir);
 		} else if (message.data.type === "load_external_asset") {
-			scene.assetLoadFailed.addOnce((errInfo) => {
+			scene.assetLoadFailed.addOnce(() => {
 				game.external.send("failed_load_external_asset");
 			});
 			// 別の場所にあるリソースを動的に読み込む
@@ -81,6 +82,13 @@ function main(param) {
 					game.external.send("loaded_external_asset");
 				}
 			});
+			return;
+		} else if (message.data.type === "load_binary_asset_data") {
+			// TODO: 他の種別のアセットのテストも追加すべきかもしれない
+			const asset = scene.asset.getBinary("/assets/akashic.bin");
+			const assetArrayBuffer = asset.data;
+			const str = String.fromCharCode.apply("", new Uint8Array(assetArrayBuffer)); // akashic!!
+			game.external.send(str);
 			return;
 		}
 		game.external.send(message);

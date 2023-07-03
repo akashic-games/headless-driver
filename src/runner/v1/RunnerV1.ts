@@ -180,7 +180,7 @@ export class RunnerV1 extends Runner {
 				renderingMode: this.renderingMode,
 				sendToExternalHandler: (data: any) => this.onSendedToExternal(data),
 				errorHandler: (e) => this.onError(e),
-				loadFileHandler: (url, callback) => this.loadFileHandler(url, callback)
+				loadFileHandler: (url, encoding, callback) => this.loadFileHandler(url, encoding, callback)
 			});
 			this.pause();
 

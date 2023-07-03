@@ -15,7 +15,7 @@ export class MockRunnerManager extends RunnerManager {
 	nvm: NodeVM | null = null;
 
 	protected async resolveContent(contentUrl: string): Promise<any> {
-		const config = JSON.parse(await loadFile(contentUrl));
+		const config = JSON.parse(await loadFile(contentUrl, "utf-8"));
 		if (config.content_url === "v1_content_url") {
 			config.content_url = gameJsonUrlV1;
 		} else if (config.content_url === "v2_content_url") {

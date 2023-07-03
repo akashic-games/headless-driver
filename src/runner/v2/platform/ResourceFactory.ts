@@ -1,4 +1,5 @@
 import { akashicEngine as g } from "engine-files-v2";
+import type { RunnerLoadFileHandler } from "../../types";
 import { NodeScriptAsset } from "./assets/NodeScriptAsset";
 import { NodeTextAsset } from "./assets/NodeTextAsset";
 import { NullAudioAsset } from "./assets/NullAudioAsset";
@@ -9,12 +10,12 @@ import { NullGlyphFactory } from "./NullGlyphFactory";
 import { NullSurface } from "./NullSurface";
 
 export interface ResourceFactoryParameters {
-	loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	loadFileHandler: RunnerLoadFileHandler;
 	errorHandler: (err: any) => void;
 }
 
 export class ResourceFactory extends g.ResourceFactory {
-	private loadFileHandler: (url: string, callback: (err: Error | null, data?: string) => void) => void;
+	private loadFileHandler: RunnerLoadFileHandler;
 	private errorHandler: (err: any) => void;
 
 	constructor({ loadFileHandler, errorHandler }: ResourceFactoryParameters) {

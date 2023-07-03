@@ -8,6 +8,10 @@
 			"type": "script",
 			"path": "script/main.js",
 			"global": true
+		},
+		"akashic": {
+			"type": "binary",
+			"path": "assets/akashic.bin"
 		}
 	},
 	"environment": {

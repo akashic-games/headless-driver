@@ -351,8 +351,8 @@ describe("Runner の engine-files 上書き動作確認", () => {
 	});
 
 	it("環境変数を利用して debug 用の engineFiles を上書きできる", async () => {
-		const engineFilesFromPath = path.join(__dirname, "fixtures", "engineFilesV3", "engineFilesV3_0_19.debug.js");
-		const engineFilesToPath = path.join(__dirname, "tmp", "engineFilesV3_0_19.debug.js");
+		const engineFilesFromPath = path.join(__dirname, "fixtures", "engineFilesV3", "engineFilesV3_7_3.debug.js");
+		const engineFilesToPath = path.join(__dirname, "tmp", "engineFilesV3_7_3.debug.js");
 		const engineFilesStr = fs.readFileSync(engineFilesFromPath);
 
 		// 読み込まれていることを確認するためテストコードを仕込んでおく
@@ -381,8 +381,8 @@ describe("Runner の engine-files 上書き動作確認", () => {
 	});
 
 	it("環境変数を利用して release 用の engineFiles を上書きできる", async () => {
-		const engineFilesFromPath = path.join(__dirname, "fixtures", "engineFilesV3", "engineFilesV3_0_19.release.js");
-		const engineFilesToPath = path.join(__dirname, "tmp", "engineFilesV3_0_19.release.js");
+		const engineFilesFromPath = path.join(__dirname, "fixtures", "engineFilesV3", "engineFilesV3_7_3.release.js");
+		const engineFilesToPath = path.join(__dirname, "tmp", "engineFilesV3_7_3.release.js");
 		const engineFilesStr = fs.readFileSync(engineFilesFromPath);
 
 		// 読み込まれていることを確認するためテストコードを仕込んでおく
