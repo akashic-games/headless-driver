@@ -343,6 +343,16 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(event.data).toEqual({ hoge: "fuga" });
 		expect(event.player.id).toBe(":akashic");
 
+		// コンテンツ側で ScriptAsset#exports が機能しているかを確認
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_script_asset_exports" }]);
+		expect(
+			await new Promise<number>((resolve, _reject) => {
+				runner.sendToExternalTrigger.addOnce((l: number) => {
+					resolve(l);
+				});
+			})
+		).toBe(43);
+
 		// コンテンツ側でバイナリアセットが読み込めているかを確認
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_binary_asset_data" }]);
 		expect(

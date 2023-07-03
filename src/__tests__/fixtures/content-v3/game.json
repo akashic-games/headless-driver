@@ -12,6 +12,11 @@
 		"akashic": {
 			"type": "binary",
 			"path": "assets/akashic.bin"
+		},
+		"exports": {
+			"type": "script",
+			"path": "assets/exports.js",
+			"exports": ["localVariable"]
 		}
 	},
 	"environment": {

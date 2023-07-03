@@ -83,6 +83,10 @@ function main(param) {
 				}
 			});
 			return;
+		} else if (message.data.type === "load_script_asset_exports") {
+			const { localVariable } = require("../assets/exports");
+			game.external.send(localVariable);
+			return;
 		} else if (message.data.type === "load_binary_asset_data") {
 			// TODO: 他の種別のアセットのテストも追加すべきかもしれない
 			const asset = scene.asset.getBinary("/assets/akashic.bin");

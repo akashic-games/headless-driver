@@ -69,10 +69,11 @@ export class NodeCanvasResourceFactory implements g.ResourceFactory {
 		});
 	}
 
-	createScriptAsset(id: string, assetPath: string): g.ScriptAsset {
+	createScriptAsset(id: string, assetPath: string, exports?: string[]): g.ScriptAsset {
 		return new NodeScriptAsset({
 			id,
 			path: assetPath,
+			exports,
 			errorHandler: this.errorHandler,
 			loadFileHandler: this.loadFileHandler
 		});
