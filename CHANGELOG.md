@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.9.1
+* `NodeScriptAsset` のコンストラクタに `exports` が渡されていなかった問題を修正
+
 ## 2.9.0
 * pdi-types@1.11.1 に追従
   * `BinaryAsset` に対応
