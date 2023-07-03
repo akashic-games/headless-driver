@@ -43,6 +43,7 @@ export class NodeBinaryAsset extends Asset implements g.BinaryAsset {
 }
 
 function toArrayBuffer(typedArray: Uint8Array): ArrayBuffer {
+	// sandbox の外側で初期化された TypedArray の .buffer を参照しても内容が正常に取得できないため、新たに TypedArray を生成し直す
 	const arrayBuffer = new ArrayBuffer(typedArray.length);
 	const view = new Uint8Array(arrayBuffer);
 	for (let i = 0; i < typedArray.length; ++i) {
