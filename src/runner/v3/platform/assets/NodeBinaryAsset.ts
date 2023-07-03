@@ -34,19 +34,9 @@ export class NodeBinaryAsset extends Asset implements g.BinaryAsset {
 				});
 			} else {
 				// FIXME: as の回避
-				const arrayBuffer = toArrayBuffer(data as Uint8Array);
-				this.data = arrayBuffer;
+				this.data = (data as Uint8Array).buffer;
 				loader._onAssetLoad(this);
 			}
 		});
 	}
-}
-
-function toArrayBuffer(typedArray: Uint8Array): ArrayBuffer {
-	const arrayBuffer = new ArrayBuffer(typedArray.length);
-	const view = new Uint8Array(arrayBuffer);
-	for (let i = 0; i < typedArray.length; ++i) {
-		view[i] = typedArray[i];
-	}
-	return arrayBuffer;
 }
