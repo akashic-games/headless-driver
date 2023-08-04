@@ -61,11 +61,8 @@ function main(param) {
 			}));
 			return;
 		} else if (message.data.type === "process") {
+			const process = (0, eval)("process");
 			process.exit();
-		} else if (message.data.type === "require") {
-			const fs = global._require("fs");
-			const dir = fs.readdirSync("/");
-			console.log(dir);
 		} else if (message.data.type === "load_external_asset") {
 			scene.assetLoadFailed.addOnce((errInfo) => {
 				game.external.send("failed_load_external_asset");

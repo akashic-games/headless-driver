@@ -1,3 +1,4 @@
+import { createContext, Script } from "vm";
 import { akashicEngine as g } from "engine-files-v2";
 import type { RunnerLoadFileHandler } from "../../../types";
 
@@ -9,8 +10,6 @@ export interface NodeScriptAssetParameters {
 }
 
 export class NodeScriptAsset extends g.ScriptAsset {
-	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
-	static POST_SCRIPT: string = "\n})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
 	private errorHandler: (err: any) => void;
 	private loadFileHandler: RunnerLoadFileHandler;
 
@@ -33,9 +32,17 @@ export class NodeScriptAsset extends g.ScriptAsset {
 	}
 
 	execute(execEnv: g.ScriptAssetExecuteEnvironment): any {
-		const func = new Function("g", NodeScriptAsset.PRE_SCRIPT + this.script + NodeScriptAsset.POST_SCRIPT);
 		try {
-			func(execEnv);
+			const context = {
+				g: execEnv
+			};
+			const script = new Script(`
+				(function(exports, require, module, __filename, __dirname, globalThis) {
+				${this.script}
+				})(g.module.exports, g.module.require, g.module, g.filename, g.dirname, undefined);
+			`);
+			createContext(context);
+			script.runInContext(context);
 		} catch (e) {
 			this.errorHandler(e);
 		}

@@ -3,7 +3,6 @@ import * as path from "path";
 import * as pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import type { RunnerV3, RunnerV3Game } from "..";
-import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { activePermission } from "./constants";
@@ -11,10 +10,6 @@ import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
 
 setSystemLogger(new SilentLogger());
-
-beforeAll(() => {
-	jest.spyOn(ExecuteVmScriptV3, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV3.js"));
-});
 
 describe("コンテンツのレンダリングテスト", () => {
 	/**
