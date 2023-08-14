@@ -34,15 +34,19 @@ export class NodeScriptAsset extends g.ScriptAsset {
 	execute(execEnv: g.ScriptAssetExecuteEnvironment): any {
 		try {
 			const context = {
-				g: execEnv
+				g: execEnv,
+				console
 			};
-			const script = new Script(`
+			const script = new Script(
+				`
 				(function(exports, require, module, __filename, __dirname, globalThis) {
 				${this.script}
 				})(g.module.exports, g.module.require, g.module, g.filename, g.dirname, undefined);
-			`);
+			`,
+				{ filename: this.path }
+			);
 			createContext(context);
-			script.runInContext(context);
+			script.runInNewContext(context);
 		} catch (e) {
 			this.errorHandler(e);
 		}
