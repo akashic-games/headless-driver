@@ -5,6 +5,6 @@ declare global {
 	var server: Server;
 }
 
-module.exports = () => {
+export default (): void => {
 	global.server.close();
 };
