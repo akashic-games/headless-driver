@@ -37,14 +37,12 @@ export class NodeScriptAsset extends g.ScriptAsset {
 				g: execEnv,
 				console
 			};
-			const script = new Script(
-				`
+			const code = `
 				(function(exports, require, module, __filename, __dirname, globalThis) {
 				${this.script}
 				})(g.module.exports, g.module.require, g.module, g.filename, g.dirname, undefined);
-			`,
-				{ filename: this.path }
-			);
+			`;
+			const script = new Script(code, { filename: this.path });
 			createContext(context);
 			script.runInNewContext(context);
 		} catch (e) {
