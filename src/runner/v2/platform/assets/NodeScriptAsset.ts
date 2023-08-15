@@ -33,7 +33,7 @@ export class NodeScriptAsset extends g.ScriptAsset {
 
 	execute(execEnv: g.ScriptAssetExecuteEnvironment): any {
 		try {
-			const context = createContext();
+			const context = createContext(Object.create(null));
 
 			runInContext(
 				`

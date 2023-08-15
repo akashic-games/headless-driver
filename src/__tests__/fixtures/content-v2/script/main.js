@@ -1,4 +1,5 @@
 const game = g.game;
+const _this = this;
 
 function main(param) {
 	const scene = new g.Scene({
@@ -61,8 +62,8 @@ function main(param) {
 			}));
 			return;
 		} else if (message.data.type === "process") {
-			const process = (0, eval)("process");
-			process.exit();
+			const process = _this.constructor.constructor("return process")() ?? (0, eval)("process");
+			process.exit(1);
 		} else if (message.data.type === "load_external_asset") {
 			scene.assetLoadFailed.addOnce((errInfo) => {
 				game.external.send("failed_load_external_asset");

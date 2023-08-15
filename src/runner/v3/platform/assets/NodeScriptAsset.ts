@@ -53,7 +53,7 @@ export class NodeScriptAsset extends Asset implements g.ScriptAsset {
 			postScript += `exports["${key}"] = typeof ${key} !== "undefined" ? ${key} : undefined;\n`;
 		}
 		try {
-			const context = createContext();
+			const context = createContext(Object.create(null));
 
 			runInContext(
 				`
