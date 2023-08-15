@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.9.2
+* 内部モジュールの更新
+
 ## 2.9.1
 * `NodeScriptAsset` のコンストラクタに `exports` が渡されていなかった問題を修正
 
