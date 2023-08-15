@@ -3,7 +3,7 @@ import { getSystemLogger } from "../Logger";
 import type { AMFlowClient } from "../play/amflow/AMFlowClient";
 import type { PlayManager } from "../play/PlayManager";
 import type { EncodingType } from "../utils";
-import { loadFile } from "../utils";
+import { loadFile, resolveUrl } from "../utils";
 import type { RunnerParameters, RunnerStartParameters } from "./Runner";
 import type { RunnerExecutionMode, RunnerPlayer, RunnerRenderingMode } from "./types";
 import type { RunnerV1Game } from "./v1";
@@ -135,14 +135,14 @@ export class RunnerManager {
 			if (gameConfiguration.definitions) {
 				const defs: GameConfiguration[] = [];
 				for (let i = 0; i < gameConfiguration.definitions.length; i++) {
-					const _url = new URL(gameConfiguration.definitions[i], engineConfiguration.asset_base_url).toString();
+					const _url = resolveUrl(engineConfiguration.asset_base_url, gameConfiguration.definitions[i]);
 					const _def: GameConfiguration = await this.loadJSON(_url);
 					defs.push(_def);
 				}
 				version = defs.reduce((acc: SandboxRuntimeVersion, def) => {
 					return (def.environment && def.environment["sandbox-runtime"]) ?? acc;
 				}, version);
-				configurationBaseUrl = new URL("./", engineConfiguration.content_url).toString();
+				configurationBaseUrl = resolveUrl(engineConfiguration.content_url, "./");
 			} else if (gameConfiguration.environment && gameConfiguration.environment["sandbox-runtime"]) {
 				version = gameConfiguration.environment["sandbox-runtime"];
 			}
