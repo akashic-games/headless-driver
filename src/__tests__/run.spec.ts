@@ -851,7 +851,6 @@ describe("untrusted コンテンツの動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
@@ -888,7 +887,6 @@ describe("untrusted コンテンツの動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
@@ -925,7 +923,6 @@ describe("untrusted コンテンツの動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
