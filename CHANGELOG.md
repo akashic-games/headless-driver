@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## unreleased changes
+* vm2 を dependencies から削除
+
 ## 2.9.1
 * `NodeScriptAsset` のコンストラクタに `exports` が渡されていなかった問題を修正
 
