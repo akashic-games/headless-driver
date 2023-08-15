@@ -1,4 +1,4 @@
-import { createContext, Script } from "vm";
+import { createContext, runInContext } from "vm";
 import type { RunnerLoadFileHandler } from "../../../types";
 import type { akashicEngine as g } from "../../engineFiles";
 import { Asset } from "./Asset";
@@ -53,19 +53,41 @@ export class NodeScriptAsset extends Asset implements g.ScriptAsset {
 			postScript += `exports["${key}"] = typeof ${key} !== "undefined" ? ${key} : undefined;\n`;
 		}
 		try {
-			const context = {
-				g: execEnv,
-				console
-			};
-			const code = `
-				(function(exports, require, module, __filename, __dirname, globalThis) {
-				${this.script}
-				${postScript}
-				})(g.module.exports, g.module.require, g.module, g.filename, g.dirname, undefined);
-			`;
-			const script = new Script(code, { filename: this.path });
-			createContext(context);
-			script.runInNewContext(context);
+			const context = createContext();
+
+			runInContext(
+				`
+					(console, g) => {
+						globalThis.console = {
+							log: console.log,
+							info: console.info,
+							warn: console.warn,
+							error: console.error,
+							assert: console.assert,
+							clear: console.clear,
+							dir: console.dir,
+							time: console.time,
+							timeEnd: console.timeEnd,
+							trace: console.trace
+						};
+						globalThis.g = g;
+					}
+				`,
+				context
+			)(console, execEnv);
+
+			runInContext(
+				`
+					(function(exports, require, module, __filename, __dirname) {
+					${this.script}
+					${postScript}
+					})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+				`,
+				context,
+				{
+					filename: `${this.path}`
+				}
+			);
 		} catch (e) {
 			this.errorHandler(e);
 		}
