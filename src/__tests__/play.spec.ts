@@ -1,7 +1,5 @@
-import * as path from "path";
 import type { GetTickListOptions, StartPoint } from "@akashic/amflow";
 import type { Event, TickList } from "@akashic/playlog";
-import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import type { AMFlowClient } from "../play/amflow/AMFlowClient";
 import { BadRequestError, PermissionError } from "../play/amflow/ErrorFactory";
@@ -14,10 +12,6 @@ import { SilentLogger } from "./helpers/SilentLogger";
 setSystemLogger(new SilentLogger());
 
 const contentUrl = process.env.CONTENT_URL_V3!;
-
-beforeAll(() => {
-	jest.spyOn(ExecuteVmScriptV3, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV3.js"));
-});
 
 describe("プレイ周りの結合動作テスト", () => {
 	it("各インスタンスを生成できる", async () => {

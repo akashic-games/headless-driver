@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.10.0
+* vm2 を dependencies から削除
+
 ## 2.9.2
 * 内部モジュールの更新
 

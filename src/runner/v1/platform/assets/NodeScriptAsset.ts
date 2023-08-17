@@ -1,3 +1,4 @@
+import { createContext, runInContext } from "vm";
 import { akashicEngine as g } from "engine-files-v1";
 import type { RunnerLoadFileHandler } from "../../../types";
 
@@ -9,8 +10,6 @@ export interface NodeScriptAssetParameters {
 }
 
 export class NodeScriptAsset extends g.ScriptAsset {
-	static PRE_SCRIPT: string = "(function(exports, require, module, __filename, __dirname) {\n";
-	static POST_SCRIPT: string = "\n})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);";
 	private errorHandler: (err: any) => void;
 	private loadFileHandler: RunnerLoadFileHandler;
 
@@ -33,9 +32,41 @@ export class NodeScriptAsset extends g.ScriptAsset {
 	}
 
 	execute(execEnv: g.ScriptAssetExecuteEnvironment): any {
-		const func = new Function("g", NodeScriptAsset.PRE_SCRIPT + this.script + NodeScriptAsset.POST_SCRIPT);
 		try {
-			func(execEnv);
+			const context = createContext(Object.create(null));
+
+			runInContext(
+				`
+					(console, g) => {
+						globalThis.console = {
+							log: console.log,
+							info: console.info,
+							warn: console.warn,
+							error: console.error,
+							assert: console.assert,
+							clear: console.clear,
+							dir: console.dir,
+							time: console.time,
+							timeEnd: console.timeEnd,
+							trace: console.trace
+						};
+						globalThis.g = g;
+					}
+				`,
+				context
+			)(console, execEnv);
+
+			runInContext(
+				`
+					(function(exports, require, module, __filename, __dirname) {
+					${this.script}
+					})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
+				`,
+				context,
+				{
+					filename: `${this.path}`
+				}
+			);
 		} catch (e) {
 			this.errorHandler(e);
 		}

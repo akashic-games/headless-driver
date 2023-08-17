@@ -1,8 +1,5 @@
 import * as path from "path";
 import type { RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "..";
-import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
-import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
-import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
@@ -25,12 +22,6 @@ const extAssetBaseUrlV2 = process.env.EXT_ASSET_BASE_URL_V2!;
 const extAssetBaseUrlV3 = process.env.EXT_ASSET_BASE_URL_V3!;
 
 setSystemLogger(new SilentLogger());
-
-beforeAll(() => {
-	jest.spyOn(ExecuteVmScriptV1, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV1.js"));
-	jest.spyOn(ExecuteVmScriptV2, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV2.js"));
-	jest.spyOn(ExecuteVmScriptV3, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV3.js"));
-});
 
 describe("untrusted コンテンツの動作テスト (URL)", () => {
 	it("Akashic V1 のコンテンツが動作できる", async () => {
@@ -860,12 +851,11 @@ describe("untrusted コンテンツの動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
+		expect(error.message).toBe("process is not defined");
 		runner.stop();
 	});
 
@@ -897,12 +887,11 @@ describe("untrusted コンテンツの動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
+		expect(error.message).toBe("process is not defined");
 		runner.stop();
 	});
 
@@ -934,129 +923,11 @@ describe("untrusted コンテンツの動作テスト: 異常系", () => {
 			});
 		};
 		// AMFlow 経由でコンテンツに例外を投げさせる
-		// vm2 の NodeVM 上で実行した場合は process が undefined となりエラーとなる。
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "process" }]);
 
 		const error = await handleError();
 		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
-		runner.stop();
-	});
-
-	it("Akashic V1 のコンテンツで require() を呼び出せないことを確認", async () => {
-		const playManager = new PlayManager();
-		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV1
-		});
-		const activeAMFlow = playManager.createAMFlow(playId);
-		const playToken = playManager.createPlayToken(playId, activePermission);
-		const runnerManager = new MockRunnerManager(playManager);
-		const runnerId = await runnerManager.createRunner({
-			playId,
-			amflow: activeAMFlow,
-			playToken,
-			executionMode: "active",
-			allowedUrls: null
-		});
-		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
-		// NOTE: 本来なら Node.js の require() はコンテンツ側で g._require() に上書きされるが、
-		// 何らかの方法で require() が参照されてもエラーとなることを確認するため明示的にバックドアを与える。
-		runnerManager.nvm?.run("global._require = require");
-		await runnerManager.startRunner(runner.runnerId);
-
-		const errorCalledFn = jest.fn();
-		const handleError = (): Promise<any> => {
-			return new Promise<any>((resolve, _reject) => {
-				runner.errorTrigger.add((e: any) => {
-					errorCalledFn();
-					resolve(e);
-				});
-			});
-		};
-		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "require" }]);
-
-		const error = await handleError();
-		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
-		runner.stop();
-	});
-
-	it("Akashic V2 のコンテンツで require() を呼び出せないことを確認", async () => {
-		const playManager = new PlayManager();
-		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV2
-		});
-		const activeAMFlow = playManager.createAMFlow(playId);
-		const playToken = playManager.createPlayToken(playId, activePermission);
-		const runnerManager = new MockRunnerManager(playManager);
-		const runnerId = await runnerManager.createRunner({
-			playId,
-			amflow: activeAMFlow,
-			playToken,
-			executionMode: "active",
-			allowedUrls: null
-		});
-		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
-		// NOTE: 本来なら Node.js の require() はコンテンツ側で g._require() に上書きされるが、
-		// 何らかの方法で require() が参照されてもエラーとなることを確認するため明示的にバックドアを与える。
-		runnerManager.nvm?.run("global._require = require");
-		await runnerManager.startRunner(runner.runnerId);
-
-		const errorCalledFn = jest.fn();
-		const handleError = (): Promise<any> => {
-			return new Promise<any>((resolve, _reject) => {
-				runner.errorTrigger.add((e: any) => {
-					errorCalledFn();
-					resolve(e);
-				});
-			});
-		};
-		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "require" }]);
-
-		const error = await handleError();
-		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
-		runner.stop();
-	});
-
-	it("Akashic V3 のコンテンツで require() を呼び出せないことを確認", async () => {
-		const playManager = new PlayManager();
-		const playId = await playManager.createPlay({
-			contentUrl: contentUrlV3
-		});
-		const activeAMFlow = playManager.createAMFlow(playId);
-		const playToken = playManager.createPlayToken(playId, activePermission);
-		const runnerManager = new MockRunnerManager(playManager);
-		const runnerId = await runnerManager.createRunner({
-			playId,
-			amflow: activeAMFlow,
-			playToken,
-			executionMode: "active",
-			allowedUrls: null
-		});
-		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
-		// NOTE: 本来なら Node.js の require() はコンテンツ側で g._require() に上書きされるが、
-		// 何らかの方法で require() が参照されてもエラーとなることを確認するため明示的にバックドアを与える。
-		runnerManager.nvm?.run("global._require = require");
-		await runnerManager.startRunner(runner.runnerId);
-
-		const errorCalledFn = jest.fn();
-		const handleError = (): Promise<any> => {
-			return new Promise<any>((resolve, _reject) => {
-				runner.errorTrigger.add((e: any) => {
-					errorCalledFn();
-					resolve(e);
-				});
-			});
-		};
-		// AMFlow 経由でコンテンツに例外を投げさせる
-		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "require" }]);
-
-		const error = await handleError();
-		expect(errorCalledFn).toHaveBeenCalled();
-		expect(error instanceof Error).toBeTruthy();
+		expect(error.message).toBe("process is not defined");
 		runner.stop();
 	});
 

@@ -34,7 +34,7 @@ declare global {
 	}
 }
 
-export const initialize = async (): Promise<void> => {
+export default async (): Promise<void> => {
 	const port = await getPort();
 	const host = "::0"; // Node v17 から ipv6 がデフォルトとなったため ipv6 を利用
 	const baseUrl = `http://[${host}]:${port}`;
@@ -75,5 +75,3 @@ export const initialize = async (): Promise<void> => {
 	process.env.CASCADE_CONTENT_URL_V2 = url.resolve(baseUrl, "content-v2/content.cascade.json");
 	process.env.CASCADE_GAME_JSON_URL_V2 = url.resolve(baseUrl, "content-v2/game.definitions.json");
 };
-
-module.exports = initialize;

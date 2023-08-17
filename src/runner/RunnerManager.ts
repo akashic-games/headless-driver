@@ -1,21 +1,17 @@
-import * as fs from "fs";
 import * as path from "path";
-import * as url from "url";
-import { NodeVM, VMScript } from "vm2";
-import * as ExecVmScriptV1 from "../ExecuteVmScriptV1";
-import * as ExecVmScriptV2 from "../ExecuteVmScriptV2";
-import * as ExecVmScriptV3 from "../ExecuteVmScriptV3";
 import { getSystemLogger } from "../Logger";
 import type { AMFlowClient } from "../play/amflow/AMFlowClient";
 import type { PlayManager } from "../play/PlayManager";
 import type { EncodingType } from "../utils";
-import { loadFile } from "../utils";
+import { loadFile, resolveUrl } from "../utils";
 import type { RunnerParameters, RunnerStartParameters } from "./Runner";
 import type { RunnerExecutionMode, RunnerPlayer, RunnerRenderingMode } from "./types";
-import type { RunnerV1, RunnerV1Game } from "./v1";
-import type { RunnerV2, RunnerV2Game } from "./v2";
-import type { RunnerV3, RunnerV3Game } from "./v3";
-import { requireEngineFiles } from "./v3/requireEngineFiles";
+import type { RunnerV1Game } from "./v1";
+import { RunnerV1 } from "./v1";
+import type { RunnerV2Game } from "./v2";
+import { RunnerV2 } from "./v2";
+import type { RunnerV3Game } from "./v3";
+import { RunnerV3 } from "./v3";
 
 export interface CreateRunnerParameters {
 	playId: string;
@@ -26,16 +22,14 @@ export interface CreateRunnerParameters {
 	player?: RunnerPlayer;
 	/**
 	 * 信頼されたコンテンツであるかどうか。
-	 * `true` の場合、そのコンテンツを「信頼されたもの」として扱い、外部モジュールまたは組み込みモジュールへのアクセスが許可される。
-	 * `false` の場合、コンテンツまたはエンジンモジュールでの動作が一部制限される (外部モジュールまたは組み込みモジュールへのアクセスが制限など)。
-	 * 特に理由がない限り `false` にしておくことを推奨。
+	 * この設定は現在のバージョンにおいて形骸化している。本値により振る舞いは変化しない。
 	 * 初期値は `false` 。
 	 */
 	trusted?: boolean;
 	/**
 	 * レンダリングモード。
 	 * `"canvas"` を指定するとプライマリサーフェスの描画内容を `Runner#getPrimarySurface()` を経由して取得できる。
-	 * `"canvas"` を指定した場合 `trusted` を `true` にしなければならない。また、利用側で node-canvas をインストールしなければならない。
+	 * `"canvas"` を指定した場合、利用側で node-canvas をインストールしなければならない。
 	 * 初期値は `"none"` 。
 	 */
 	renderingMode?: RunnerRenderingMode;
@@ -83,8 +77,6 @@ export class RunnerManager {
 
 	/**
 	 * Runner を作成する。
-	 * Runner は Node.js の Virtual Machine 上で実行される。
-	 * 主な制限事項として process へのアクセスが制限される。
 	 * @param params パラメータ
 	 */
 	async createRunner(params: CreateRunnerParameters): Promise<string> {
@@ -143,20 +135,19 @@ export class RunnerManager {
 			if (gameConfiguration.definitions) {
 				const defs: GameConfiguration[] = [];
 				for (let i = 0; i < gameConfiguration.definitions.length; i++) {
-					const _url = url.resolve(engineConfiguration.asset_base_url, gameConfiguration.definitions[i]);
+					const _url = resolveUrl(engineConfiguration.asset_base_url, gameConfiguration.definitions[i]);
 					const _def: GameConfiguration = await this.loadJSON(_url);
 					defs.push(_def);
 				}
 				version = defs.reduce((acc: SandboxRuntimeVersion, def) => {
-					return (def.environment && def.environment["sandbox-runtime"]) || acc;
+					return (def.environment && def.environment["sandbox-runtime"]) ?? acc;
 				}, version);
-				configurationBaseUrl = url.resolve(engineConfiguration.content_url, "./");
+				configurationBaseUrl = resolveUrl(engineConfiguration.content_url, "./");
 			} else if (gameConfiguration.environment && gameConfiguration.environment["sandbox-runtime"]) {
 				version = gameConfiguration.environment["sandbox-runtime"];
 			}
 
 			const runnerId = `${this.nextRunnerId++}`;
-			const nvm = this.createVm(params.trusted);
 
 			const runnerParameter: RunnerParameters = {
 				contentUrl,
@@ -179,22 +170,13 @@ export class RunnerManager {
 
 			if (version === "3") {
 				getSystemLogger().info("v3 content");
-				const filePath = ExecVmScriptV3.getFilePath();
-				const str = fs.readFileSync(filePath, { encoding: "utf8" });
-				const script = new VMScript(str, filePath);
-				runner = (nvm.run(script) as typeof ExecVmScriptV3).createRunnerV3(runnerParameter);
+				runner = new RunnerV3(runnerParameter);
 			} else if (version === "2") {
 				getSystemLogger().info("v2 content");
-				const filePath = ExecVmScriptV2.getFilePath();
-				const str = fs.readFileSync(filePath, { encoding: "utf8" });
-				const script = new VMScript(str, filePath);
-				runner = (nvm.run(script) as typeof ExecVmScriptV2).createRunnerV2(runnerParameter);
+				runner = new RunnerV2(runnerParameter);
 			} else {
 				getSystemLogger().info("v1 content");
-				const filePath = ExecVmScriptV1.getFilePath();
-				const str = fs.readFileSync(filePath, { encoding: "utf8" });
-				const script = new VMScript(str, filePath);
-				runner = (nvm.run(script) as typeof ExecVmScriptV1).createRunnerV1(runnerParameter);
+				runner = new RunnerV1(runnerParameter);
 			}
 
 			runner.errorTrigger.add((err) => {
@@ -346,28 +328,5 @@ export class RunnerManager {
 					callback(e);
 				});
 		};
-	}
-
-	protected createVm(trusted: boolean = false): NodeVM {
-		return new NodeVM({
-			sandbox: {
-				trustedFunctions: {
-					engineFiles: (): any | undefined => {
-						return requireEngineFiles();
-					}
-				}
-			},
-			require: trusted
-				? {
-						context: "host",
-						external: true,
-						builtin: ["*"]
-				  }
-				: {
-						context: "sandbox",
-						external: true,
-						builtin: []
-				  }
-		});
 	}
 }

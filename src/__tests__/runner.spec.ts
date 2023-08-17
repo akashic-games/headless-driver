@@ -2,9 +2,6 @@ import * as fs from "fs";
 import * as path from "path";
 import type { RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "../";
 import { RunnerV1_g, RunnerV2_g, RunnerV3_g } from "../";
-import * as ExecuteVmScriptV1 from "../ExecuteVmScriptV1";
-import * as ExecuteVmScriptV2 from "../ExecuteVmScriptV2";
-import * as ExecuteVmScriptV3 from "../ExecuteVmScriptV3";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
@@ -16,12 +13,6 @@ const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2!;
 const gameJsonUrlV3 = process.env.GAME_JSON_URL_V3!;
 
 setSystemLogger(new SilentLogger());
-
-beforeAll(() => {
-	jest.spyOn(ExecuteVmScriptV1, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV1.js"));
-	jest.spyOn(ExecuteVmScriptV2, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV2.js"));
-	jest.spyOn(ExecuteVmScriptV3, "getFilePath").mockReturnValue(path.resolve(__dirname, "../../lib/", "ExecuteVmScriptV3.js"));
-});
 
 function sleep(duration: number): Promise<void> {
 	return new Promise((resolve, _reject) => {
