@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## unreleased changes
+## 2.10.0
 * vm2 を dependencies から削除
 
 ## 2.9.1
