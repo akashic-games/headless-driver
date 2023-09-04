@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.10.1
+* 内部モジュールの更新
+
 ## 2.10.0
 * vm2 を dependencies から削除
 
