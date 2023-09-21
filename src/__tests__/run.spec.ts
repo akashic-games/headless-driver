@@ -132,7 +132,7 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "send_game_args" }]);
 		expect(
 			await new Promise<ArrayBuffer>((resolve, _reject) => {
-				runner.sendToExternalTrigger.addOnce((l: ArrayBuffer) => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			})
@@ -247,7 +247,7 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "send_game_args" }]);
 		expect(
 			await new Promise<ArrayBuffer>((resolve, _reject) => {
-				runner.sendToExternalTrigger.addOnce((l: ArrayBuffer) => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			})
@@ -362,7 +362,7 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "send_game_args" }]);
 		expect(
 			await new Promise<ArrayBuffer>((resolve, _reject) => {
-				runner.sendToExternalTrigger.addOnce((l: ArrayBuffer) => {
+				runner.sendToExternalTrigger.addOnce((l) => {
 					resolve(l);
 				});
 			})
