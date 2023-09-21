@@ -1,7 +1,7 @@
 const game = g.game;
 const _this = this;
 
-function main(param) {
+function main(gameArgs) {
 	const scene = new g.Scene({
 		game,
 		name: "content-v1-entry-scene"
@@ -50,7 +50,6 @@ function main(param) {
 			game.raiseEvent(new g.MessageEvent({
 				text: "data_from_content"
 			}));
-			return;
 		} else if (message.data.type === "process") {
 			const process = _this.constructor.constructor("return process")() ?? (0, eval)("process");
 			process.exit(1);
@@ -70,9 +69,11 @@ function main(param) {
 					game.external.send("loaded_external_asset");
 				}
 			});
-			return;
+		} else if (message.data.type === "send_game_args") {
+			game.external.send(gameArgs);
+		} else {
+			game.external.send(message);
 		}
-		game.external.send(message);
 	});
 	game.pushScene(scene);
 }
