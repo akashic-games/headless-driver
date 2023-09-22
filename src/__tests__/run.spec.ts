@@ -42,6 +42,7 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 			playToken,
 			executionMode: "active",
 			allowedUrls: null,
+			gameArgs: { foo: "bar" },
 			externalValue: { hoge: () => "hoge1", foo: () => "foo1" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV1;
@@ -127,6 +128,16 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(event.data).toEqual({ hoge: "fuga" });
 		expect(event.player.id).toBe(":akashic");
 
+		// コンテンツ側でゲーム起動引数が読み込めているかを確認
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "send_game_args" }]);
+		expect(
+			await new Promise<ArrayBuffer>((resolve, _reject) => {
+				runner.sendToExternalTrigger.addOnce((l) => {
+					resolve(l);
+				});
+			})
+		).toEqual({ args: { foo: "bar" }, globalArgs: undefined });
+
 		runner.stop();
 	});
 
@@ -148,6 +159,7 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 			playToken,
 			executionMode: "active",
 			allowedUrls: null,
+			gameArgs: { foo: "bar" },
 			externalValue: { hoge: () => "hoge2", foo: () => "foo2" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV2;
@@ -230,6 +242,17 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		const event = await handleEvent();
 		expect(event.data).toEqual({ hoge: "fuga" });
 		expect(event.player.id).toBe(":akashic");
+
+		// コンテンツ側でゲーム起動引数が読み込めているかを確認
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "send_game_args" }]);
+		expect(
+			await new Promise<ArrayBuffer>((resolve, _reject) => {
+				runner.sendToExternalTrigger.addOnce((l) => {
+					resolve(l);
+				});
+			})
+		).toEqual({ args: { foo: "bar" }, globalArgs: undefined });
+
 		runner.stop();
 	});
 
@@ -251,6 +274,7 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 			playToken,
 			executionMode: "active",
 			allowedUrls: null,
+			gameArgs: { foo: "bar" },
 			externalValue: { hoge: () => "hoge3", foo: () => "foo3" }
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
@@ -333,6 +357,16 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		const event = await handleEvent();
 		expect(event.data).toEqual({ hoge: "fuga" });
 		expect(event.player.id).toBe(":akashic");
+
+		// コンテンツ側でゲーム起動引数が読み込めているかを確認
+		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "send_game_args" }]);
+		expect(
+			await new Promise<ArrayBuffer>((resolve, _reject) => {
+				runner.sendToExternalTrigger.addOnce((l) => {
+					resolve(l);
+				});
+			})
+		).toEqual({ args: { foo: "bar" }, globalArgs: undefined });
 
 		// コンテンツ側で ScriptAsset#exports が機能しているかを確認
 		activeAMFlow.sendEvent([0x20, 0, ":akashic", { type: "load_script_asset_exports" }]);
