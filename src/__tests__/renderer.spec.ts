@@ -42,14 +42,12 @@ describe("コンテンツのレンダリングテスト", () => {
 	 */
 	it("content-v3 のレンダリング結果が正解データと正しいことを確認", async () => {
 		const playManager = new PlayManager();
-		console.warn("xnv_step0");
 		const playId = await playManager.createPlay({
 			gameJsonPath: path.join(contentPath, "game.json")
 		});
 		const activeAMFlow = playManager.createAMFlow(playId);
 		const playToken = playManager.createPlayToken(playId, activePermission);
 		const runnerManager = new MockRunnerManager(playManager);
-		console.warn("xnv_step1");
 		const runnerId = await runnerManager.createRunner({
 			playId,
 			amflow: activeAMFlow,
@@ -61,9 +59,7 @@ describe("コンテンツのレンダリングテスト", () => {
 		});
 		const runner = runnerManager.getRunner(runnerId) as RunnerV3;
 
-		console.warn("xnv_step2");
 		const game = (await runner.start({ paused: true })) as RunnerV3Game;
-		console.warn("xnv_step3");
 		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
 		const width = game.width;
@@ -90,5 +86,5 @@ describe("コンテンツのレンダリングテスト", () => {
 		});
 
 		runner.stop();
-	}, 10000); // ファイル IO が絡むため長めに設定しておく
+	}, 20000); // ファイル IO が絡む他、canvas の初期化で時間がかかる場合があるので長めに許容
 });
