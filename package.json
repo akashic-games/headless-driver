@@ -45,7 +45,7 @@
     "@types/pngjs": "^6.0.1",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "canvas": "^2.10.1",
-    "eslint": "^8.24.0",
+    "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.0.0",
