@@ -172,4 +172,40 @@ describe("NodeCanvasRenderer", () => {
 		fs.writeFileSync(path.join(outputPath, "rendering_test_02_composite_expected.png"), outputCanvas.toBuffer());
 		fs.writeFileSync(path.join(outputPath, "rendering_test_02_composite_actual.png"), outputSurface._drawable.toBuffer());
 	});
+
+	it("rendering - does not break even when rendered at scale 0", async () => {
+		const surface = new NodeCanvasSurface(new Canvas(800, 800));
+		const renderer = surface.renderer();
+
+		renderer.begin();
+
+		{
+			renderer.save();
+			renderer.transform([2, 0, 0, 2, 0, 0]);
+			renderer.transform([1, 0, 0, 0, 0, 0]);
+			renderer.fillRect(100, 100, 100, 100, "red");
+			renderer.restore();
+		}
+
+		{
+			renderer.save();
+			const asset = await createImageAsset(aksImagePath);
+			renderer.setTransform([0, 0, 0, 1, 0, 0]);
+			renderer.drawImage(asset.asSurface(), 20, 20, 80, 80, 10, 300);
+			renderer.restore();
+		}
+
+		{
+			renderer.save();
+			const asset = await createImageAsset(aksImagePath);
+			renderer.transform([3, 0, 0, 3, 0, 0]);
+			// この画像のみ描画される
+			renderer.drawImage(asset.asSurface(), 0, 0, 150, 107, 100, 100);
+			renderer.restore();
+		}
+
+		renderer.end();
+
+		fs.writeFileSync(path.join(outputPath, "rendering_test_03_actual.png"), surface._drawable.toBuffer());
+	});
 });

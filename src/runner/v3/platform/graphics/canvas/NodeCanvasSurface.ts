@@ -1,6 +1,7 @@
 /** @ts-ignore */
 import type { Canvas } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
+import { NodeCanvasContext } from "./NodeCanvasContext";
 import { NodeCanvasRenderer } from "./NodeCanvasRenderer";
 
 export class NodeCanvasSurface implements g.Surface {
@@ -13,7 +14,8 @@ export class NodeCanvasSurface implements g.Surface {
 		this.width = canvas.width;
 		this.height = canvas.height;
 		this._drawable = canvas;
-		this._renderer = new NodeCanvasRenderer(canvas.getContext("2d"), canvas.width, canvas.height);
+		const context = new NodeCanvasContext(canvas.getContext("2d"));
+		this._renderer = new NodeCanvasRenderer(context, canvas.width, canvas.height);
 	}
 
 	renderer(): NodeCanvasRenderer {
