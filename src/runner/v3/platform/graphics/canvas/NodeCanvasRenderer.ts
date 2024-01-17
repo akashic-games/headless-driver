@@ -1,14 +1,15 @@
 /** @ts-ignore */
-import type { CanvasRenderingContext2D, ImageData } from "canvas";
+import type { ImageData } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { CompositeOperationConverter } from "./CompositeOperationConverter";
+import type { NodeCanvasContext } from "./NodeCanvasContext";
 
 export class NodeCanvasRenderer implements g.Renderer {
-	private context: CanvasRenderingContext2D;
+	private context: NodeCanvasContext;
 	private width: number;
 	private height: number;
 
-	constructor(context: CanvasRenderingContext2D, width: number, height: number) {
+	constructor(context: NodeCanvasContext, width: number, height: number) {
 		this.context = context;
 		this.width = width;
 		this.height = height;
@@ -27,7 +28,7 @@ export class NodeCanvasRenderer implements g.Renderer {
 	}
 
 	end(): void {
-		// do notiong
+		// do nothing
 	}
 
 	drawImage(
@@ -39,7 +40,7 @@ export class NodeCanvasRenderer implements g.Renderer {
 		canvasOffsetX: number,
 		canvasOffsetY: number
 	): void {
-		this.context.drawImage(surface._drawable, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, width, height);
+		this.context.drawImage(surface, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, width, height);
 	}
 
 	translate(x: number, y: number): void {
