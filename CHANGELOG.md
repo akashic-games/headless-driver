@@ -3,6 +3,9 @@
 ## unreleased changes
 * `renderingMode` を `"canvas"` にした際に `scaleX` または `scaleY` が 0 のエンティティを描画すると、それ以降描画が停止してしまうバグを修正
 
+## 2.13.3
+* 内部モジュールの更新
+
 ## 2.13.2
 * 内部モジュールの更新
 
