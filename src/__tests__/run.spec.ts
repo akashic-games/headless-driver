@@ -49,11 +49,13 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(runner.runnerId).toBe("0");
 		expect(runner.engineVersion).toBe("1");
 		expect(runner.external).toEqual({});
+		expect(runner.fps).toBeNull();
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV1Game;
 		expect(game.playId).toBe(playId);
 		expect(game.external.hoge()).toBe("hoge1");
 		expect(game.external.foo()).toBe("foo1");
+		expect(runner.fps).toBe(30);
 
 		const handleData = (): Promise<any> =>
 			new Promise<any>((resolve, _reject) => {
@@ -166,11 +168,13 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(runner.runnerId).toBe("0");
 		expect(runner.engineVersion).toBe("2");
 		expect(runner.external).toEqual({ ext: "0" });
+		expect(runner.fps).toBeNull();
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV2Game;
 		expect(game.playId).toBe(playId);
 		expect(game.external.hoge()).toBe("hoge2");
 		expect(game.external.foo()).toBe("foo2");
+		expect(runner.fps).toBe(30);
 
 		const handleData = (): Promise<any> =>
 			new Promise<any>((resolve, _reject) => {
@@ -281,11 +285,13 @@ describe("untrusted コンテンツの動作テスト (URL)", () => {
 		expect(runner.runnerId).toBe("0");
 		expect(runner.engineVersion).toBe("3");
 		expect(runner.external).toEqual({ ext: "0" });
+		expect(runner.fps).toBeNull();
 
 		const game = (await runnerManager.startRunner(runner.runnerId)) as RunnerV3Game;
 		expect(game.playId).toBe(playId);
 		expect(game.external.hoge()).toBe("hoge3");
 		expect(game.external.foo()).toBe("foo3");
+		expect(runner.fps).toBe(30);
 
 		const handleData = (): Promise<any> =>
 			new Promise<any>((resolve) => {
