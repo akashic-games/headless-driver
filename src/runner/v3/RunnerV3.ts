@@ -14,9 +14,9 @@ export class RunnerV3 extends Runner {
 	readonly engineVersion: string = "3";
 	readonly g: typeof g = g;
 	platform: PlatformV3 | null = null;
+	fps: number | null = null;
 
 	private driver: gdr.GameDriver | null = null;
-	private fps: number | null = null;
 	private running: boolean = false;
 
 	async start(params?: RunnerStartParameters): Promise<RunnerV3Game | null> {

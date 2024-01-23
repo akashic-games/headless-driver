@@ -10,9 +10,9 @@ export class RunnerV2 extends Runner {
 	readonly engineVersion: string = "2";
 	readonly g: typeof g = g;
 	platform: PlatformV2 | null = null;
+	fps: number | null = null;
 
 	private driver: gdr.GameDriver | null = null;
-	private fps: number | null = null;
 	private running: boolean = false;
 
 	async start(params?: RunnerStartParameters): Promise<RunnerV2Game | null> {
