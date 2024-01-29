@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.13.8
+* 内部モジュールの更新
+
 ## 2.13.7
 * `Runner#fps` を public に変更
 
