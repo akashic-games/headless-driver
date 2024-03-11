@@ -1,4 +1,5 @@
 import { akashicEngine as g, gameDriver as gdr, pdi } from "engine-files-v2";
+import { TimeKeeper } from "../../TimeKeeper";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
 import type { RunnerPointEvent } from "../types";
@@ -14,6 +15,10 @@ export class RunnerV2 extends Runner {
 
 	private driver: gdr.GameDriver | null = null;
 	private running: boolean = false;
+
+	private timekeeper: TimeKeeper = new TimeKeeper();
+	private timekeeperTimerId: NodeJS.Timer | null = null;
+	private timekeeperPrevTime: number = 0;
 
 	async start(params?: RunnerStartParameters): Promise<RunnerV2Game | null> {
 		let game: RunnerV2Game | null = null;
@@ -36,6 +41,8 @@ export class RunnerV2 extends Runner {
 			this.driver.stopGame();
 			this.driver = null;
 		}
+
+		this.stopTimekeeper();
 		this.running = false;
 	}
 
@@ -46,6 +53,7 @@ export class RunnerV2 extends Runner {
 		}
 
 		this.platform.pauseLoopers();
+		this.stopTimekeeper();
 		this.running = false;
 	}
 
@@ -56,6 +64,7 @@ export class RunnerV2 extends Runner {
 		}
 
 		this.platform.resumeLoopers();
+		this.startTimekeeper();
 		this.running = true;
 	}
 
@@ -69,6 +78,7 @@ export class RunnerV2 extends Runner {
 			return;
 		}
 
+		this.timekeeper.advance(1000 / this.fps);
 		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
 	}
 
@@ -91,14 +101,24 @@ export class RunnerV2 extends Runner {
 				skipThreshold: Math.ceil(ms / this.fps) + 1
 			}
 		});
-		const delta = Math.ceil(1000 / this.fps);
+
+		const frame = 1000 / this.fps;
+		const frameWithGrace = frame * 1.2; // Looper を確実に進めるため 1 フレームよりも少し大きめの値を与える
+		const steps = Math.floor(ms / frame);
 		let progress = 0;
-		while (progress <= ms) {
+		for (let i = 0; i < steps; i++) {
+			const now = this.timekeeper.now();
+			// NOTE: 浮動小数による誤差を考慮し、 1 フレームよりも少し大きめに目標時刻を進め、その後 Looper を確実に進めた後に再度目標時刻を正常値に戻す。
+			this.timekeeper.advance(frameWithGrace);
 			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
 			// そのため一度に進める時間を fps に応じて分割する。
-			this.platform.advanceLoopers(delta);
-			progress += delta;
+			this.platform.advanceLoopers(frame);
+			this.timekeeper.set(now + frame);
+			progress += frame;
 		}
+		this.timekeeper.advance(ms - progress);
+		this.platform.advanceLoopers(ms - progress);
+
 		await this.changeGameDriverState({
 			loopConfiguration: {
 				loopMode,
@@ -156,6 +176,26 @@ export class RunnerV2 extends Runner {
 		}
 		// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。
 		this.platform.advanceLoopers(1000 / this.fps / 2);
+	}
+
+	private startTimekeeper(): void {
+		this.stopTimekeeper();
+		const duration = 1000 / this.fps! / 2; // this.fps != null の条件でのみしか呼ばれないため non-null assertion を利用
+		this.timekeeperPrevTime = performance.now();
+		this.timekeeperTimerId = setInterval(() => {
+			const now = performance.now();
+			const delta = now - this.timekeeperPrevTime;
+			this.timekeeper.advance(delta);
+			this.timekeeperPrevTime = now;
+		}, duration);
+	}
+
+	private stopTimekeeper(): void {
+		if (this.timekeeperTimerId == null) {
+			return;
+		}
+		clearInterval(this.timekeeperTimerId);
+		this.timekeeperTimerId = null;
 	}
 
 	private initGameDriver(): Promise<RunnerV2Game> {

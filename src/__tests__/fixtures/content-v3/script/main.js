@@ -1,14 +1,18 @@
 const game = g.game;
 const _this = this;
 
-function main(gameArgs) {
+module.exports = (gameArgs) => {
+	game.vars = {
+		messages: []
+	};
+
 	const scene = new g.Scene({
 		game,
 		name: "content-v3-entry-scene",
 		assetPaths: ["/assets/**/*"]
 	});
 
-	game.onSkipChange.add(function(skipped) {
+	game.onSkipChange.add((skipped) => {
 		if (game.external.isSendSkipChanged) {
 			if (skipped) {
 				game.external.send("start_skipping");
@@ -18,13 +22,13 @@ function main(gameArgs) {
 		}
 	});
 
-	scene.onUpdate.add(function() {
+	scene.onUpdate.add(() => {
 		if (game.external.isSendingSceneUpdateCalled) {
 			game.external.send("scene_update");
 		}
 	});
 
-	scene.onLoad.add(function() {
+	scene.onLoad.add(() => {
 		// 以下にゲームのロジックを記述します。
 		const rect = new g.FilledRect({
 			scene: scene,
@@ -32,7 +36,7 @@ function main(gameArgs) {
 			width: 32,
 			height: 32
 		});
-		rect.onUpdate.add(function () {
+		rect.onUpdate.add(() => {
 			// 以下のコードは毎フレーム実行されます。
 			rect.x += 10;
 			if (rect.x > game.width) {
@@ -44,17 +48,17 @@ function main(gameArgs) {
 		scene.append(rect);
 	});
 
-	scene.onPointDownCapture.add(function() {
+	scene.onPointDownCapture.add(() => {
 		game.external.send("fired point down event");
 	});
-	scene.onPointMoveCapture.add(function() {
+	scene.onPointMoveCapture.add(() => {
 		game.external.send("fired point move event");
 	});
-	scene.onPointUpCapture.add(function() {
+	scene.onPointUpCapture.add(() => {
 		game.external.send("fired point up event");
 	});
 
-	scene.onMessage.add(function(message) {
+	scene.onMessage.add((message) => {
 		if (message.data.type === "throw_error") {
 			throw new Error("unknown error");
 		} else if (message.data.type === "send_event") {
@@ -90,13 +94,13 @@ function main(gameArgs) {
 			game.external.send(str);
 		} else if (message.data.type === "send_game_args") {
 			game.external.send(gameArgs);
+		} else if (message.data.type === "stack") {
+			game.vars.messages.push(message);
 		} else {
 			game.external.send(message);
 		}
 	});
 	game.pushScene(scene);
 }
-
-module.exports = main;
 
 // line comment test in trailing

@@ -17,3 +17,12 @@ export const passivePermission: Permission = {
 	subscribeTick: false,
 	maxEventPriority: 2
 };
+
+export const replayPermission: Permission = {
+	readTick: true,
+	writeTick: false,
+	sendEvent: false,
+	subscribeEvent: true,
+	subscribeTick: true,
+	maxEventPriority: 0
+};

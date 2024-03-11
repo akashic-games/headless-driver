@@ -5,6 +5,7 @@ import type {
 	RunnerAdvanceConditionFunc,
 	RunnerExecutionMode,
 	RunnerLoadFileHandler,
+	RunnerLoopMode,
 	RunnerPlayer,
 	RunnerPointEvent,
 	RunnerRenderingMode
@@ -20,6 +21,7 @@ export interface RunnerParameters {
 	runnerId: string;
 	amflow: AMFlow;
 	executionMode: RunnerExecutionMode;
+	loopMode?: RunnerLoopMode;
 	trusted?: boolean;
 	renderingMode?: RunnerRenderingMode;
 	loadFileHandler: RunnerLoadFileHandler;
@@ -89,6 +91,10 @@ export abstract class Runner {
 		return this.params.executionMode;
 	}
 
+	get loopMode(): RunnerLoopMode {
+		return this.params.loopMode ?? "realtime";
+	}
+
 	get trusted(): boolean {
 		return !!this.params.trusted;
 	}
@@ -143,7 +149,7 @@ export abstract class Runner {
 	 * Runner を指定ミリ秒だけ進行する。
 	 * @param ms 進行するミリ秒。
 	 */
-	abstract advance(ms: number): void;
+	abstract advance(ms: number): Promise<void>;
 	/**
 	 * Runner を一フレーム進行する。
 	 */

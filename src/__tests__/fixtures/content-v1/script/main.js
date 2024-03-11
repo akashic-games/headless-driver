@@ -1,19 +1,23 @@
 const game = g.game;
 const _this = this;
 
-function main(gameArgs) {
+module.exports = (gameArgs) => {
+	game.vars = {
+		messages: []
+	};
+
 	const scene = new g.Scene({
 		game,
 		name: "content-v1-entry-scene"
 	});
 
-	scene.update.handle(function() {
+	scene.update.handle(() => {
 		if (game.external.isSendingSceneUpdateCalled) {
 			game.external.send("scene_update");
 		}
 	});
 
-	scene.loaded.handle(function() {
+	scene.loaded.handle(() => {
 		// 以下にゲームのロジックを記述します。
 		const rect = new g.FilledRect({
 			scene: scene,
@@ -21,7 +25,7 @@ function main(gameArgs) {
 			width: 32,
 			height: 32
 		});
-		rect.update.handle(function () {
+		rect.update.handle(() => {
 			// 以下のコードは毎フレーム実行されます。
 			rect.x += 10;
 			if (rect.x > game.width) {
@@ -33,17 +37,17 @@ function main(gameArgs) {
 		scene.append(rect);
 	});
 
-	scene.pointDownCapture.handle(function(ev) {
+	scene.pointDownCapture.handle((ev) => {
 		game.external.send("fired point down event");
 	});
-	scene.pointMoveCapture.handle(function() {
+	scene.pointMoveCapture.handle(() => {
 		game.external.send("fired point move event");
 	});
-	scene.pointUpCapture.handle(function() {
+	scene.pointUpCapture.handle(() => {
 		game.external.send("fired point up event");
 	});
 
-	scene.message.handle(function(message) {
+	scene.message.handle((message) => {
 		if (message.data.type === "throw_error") {
 			throw new Error("unknown error");
 		} else if (message.data.type === "send_event") {
@@ -71,13 +75,14 @@ function main(gameArgs) {
 			});
 		} else if (message.data.type === "send_game_args") {
 			game.external.send(gameArgs);
+		} else if (message.data.type === "stack") {
+			game.vars.messages.push(message);
 		} else {
 			game.external.send(message);
 		}
 	});
+
 	game.pushScene(scene);
 }
-
-module.exports = main;
 
 // line comment test in trailing
