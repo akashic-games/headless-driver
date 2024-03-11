@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## unreleased changes
+* `Runner` のリプレイモードをサポート
+
 ## 2.13.9
 * 内部モジュールの更新
 
