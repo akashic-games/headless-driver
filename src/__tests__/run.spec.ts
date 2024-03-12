@@ -1412,8 +1412,7 @@ describe("リプレイの動作確認", () => {
 		tickList: [0, 1000, ticks]
 	};
 
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-	async function createRunner(contentUrl: string) {
+	async function createRunner(contentUrl: string): Promise<Runner> {
 		const playManager = new PlayManager();
 		const playId = await playManager.createPlay(
 			{
@@ -1435,8 +1434,7 @@ describe("リプレイの動作確認", () => {
 		return runnerManager.getRunner(runnerId) as RunnerV3;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-	async function doStepTest(runner: Runner, entrySceneName: string) {
+	async function doStepTest(runner: Runner, entrySceneName: string): Promise<void> {
 		const game = (await runner.start({ paused: true })) as RunnerV3Game;
 
 		// runner#step() を同期的に利用した場合、setImmediate() による非同期の処理が行われないバグがある。
@@ -1460,8 +1458,7 @@ describe("リプレイの動作確認", () => {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-	async function doAdvanceTest(runner: Runner, entrySceneName: string) {
+	async function doAdvanceTest(runner: Runner, entrySceneName: string): Promise<void> {
 		const game = (await runner.start({ paused: true })) as RunnerV3Game;
 
 		// runner#step() を同期的に利用した場合、setImmediate() による非同期の処理が行われないバグがある。
