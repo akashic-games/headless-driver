@@ -34,6 +34,8 @@ export abstract class Platform {
 		this.loadFileHandler = param.loadFileHandler;
 	}
 
+	abstract advanceLoopers(ms: number): void;
+
 	sendToExternal(_playId: string, data: any): void {
 		this.sendToExternalHandler(data);
 	}
