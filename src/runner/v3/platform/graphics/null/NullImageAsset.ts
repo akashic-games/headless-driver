@@ -17,9 +17,9 @@ export class NullImageAsset extends Asset implements g.ImageAsset {
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
-		setTimeout(() => {
+		setImmediate(() => {
 			loader._onAssetLoad(this);
-		}, 0);
+		});
 	}
 
 	asSurface(): g.Surface {

@@ -1,3 +1,4 @@
+import { setImmediate } from "node:timers/promises";
 import { akashicEngine as g, gameDriver as gdr, pdi } from "engine-files-v2";
 import { TimeKeeper } from "../../TimeKeeper";
 import type { RunnerStartParameters } from "../Runner";
@@ -68,7 +69,7 @@ export class RunnerV2 extends Runner {
 		this.running = true;
 	}
 
-	step(): void {
+	async step(): Promise<void> {
 		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
@@ -80,6 +81,7 @@ export class RunnerV2 extends Runner {
 
 		this.timekeeper.advance(1000 / this.fps);
 		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
+		await setImmediate();
 	}
 
 	async advance(ms: number): Promise<void> {
@@ -167,11 +169,11 @@ export class RunnerV2 extends Runner {
 
 	protected _stepMinimal(): void {
 		if (this.fps == null || this.platform == null) {
-			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() before initialized"));
+			this.errorTrigger.fire(new Error("RunnerV2#_stepMinimal(): Cannot call Runner#step() before initialized"));
 			return;
 		}
 		if (this.running) {
-			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() in running"));
+			this.errorTrigger.fire(new Error("RunnerV2#_stepMinimal(): Cannot call Runner#step() in running"));
 			return;
 		}
 		// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。

@@ -1,3 +1,4 @@
+import { setImmediate } from "node:timers/promises";
 /** @ts-ignore */
 import type { Canvas } from "canvas";
 import { TimeKeeper } from "../../TimeKeeper";
@@ -72,7 +73,7 @@ export class RunnerV3 extends Runner {
 		this.running = true;
 	}
 
-	step(): void {
+	async step(): Promise<void> {
 		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
@@ -84,6 +85,7 @@ export class RunnerV3 extends Runner {
 
 		this.timekeeper.advance(1000 / this.fps);
 		this.platform.stepLoopers();
+		await setImmediate();
 	}
 
 	async advance(ms: number): Promise<void> {
@@ -199,7 +201,16 @@ export class RunnerV3 extends Runner {
 	}
 
 	protected _stepMinimal(): void {
-		this.step();
+		if (this.fps == null || this.platform == null) {
+			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() before initialized"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() in running"));
+			return;
+		}
+		// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。
+		this.platform.advanceLoopers(1000 / this.fps / 2);
 	}
 
 	private startTimekeeper(): void {

@@ -153,7 +153,7 @@ export abstract class Runner {
 	/**
 	 * Runner を一フレーム進行する。
 	 */
-	abstract step(): void;
+	abstract step(): Promise<void>;
 	/**
 	 * Runner に対して任意のポイントイベントを発火させる。
 	 * @param event 発火させるポイントイベント
@@ -172,9 +172,9 @@ export abstract class Runner {
 	 */
 	async advanceUntil(condition: RunnerAdvanceConditionFunc, timeout: number = 5000): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const limit = Date.now() + timeout;
+			const limit = performance.now() + timeout;
 			const handler = (): void => {
-				if (limit < Date.now()) {
+				if (limit < performance.now()) {
 					return void reject(new Error("Runner#advanceUntil(): processing timeout"));
 				}
 				try {
@@ -189,6 +189,9 @@ export abstract class Runner {
 		});
 	}
 
+	/**
+	 * 次フレームを飛ばさない程度に時間を進める。
+	 */
 	protected abstract _stepMinimal(): void;
 
 	protected onError(error: Error): void {
