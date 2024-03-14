@@ -14,6 +14,6 @@ export const passivePermission: Permission = {
 	writeTick: false,
 	sendEvent: true,
 	subscribeEvent: false,
-	subscribeTick: false,
+	subscribeTick: true,
 	maxEventPriority: 2
 };

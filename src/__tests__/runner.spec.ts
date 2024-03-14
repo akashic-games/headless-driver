@@ -277,11 +277,11 @@ describe("Runner の動作確認 (v3)", () => {
 		});
 
 		// step() を呼び出すたびに g.Scene#onUpdate が発火することを確認
-		runner.step();
+		await runner.step();
 		expect(logs).toEqual(["scene_update"]);
-		runner.step();
+		await runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update"]);
-		runner.step();
+		await runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
 
 		runner.stop();
@@ -362,9 +362,9 @@ describe("Runner の engine-files 上書き動作確認", () => {
 			if (l === "scene_update") logs.push(l);
 		});
 
-		runner.step();
-		runner.step();
-		runner.step();
+		await runner.step();
+		await runner.step();
+		await runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
 		expect((globalThis as any)[`__test_${randStr}__`]).toBe(true);
 
@@ -392,9 +392,9 @@ describe("Runner の engine-files 上書き動作確認", () => {
 			if (l === "scene_update") logs.push(l);
 		});
 
-		runner.step();
-		runner.step();
-		runner.step();
+		await runner.step();
+		await runner.step();
+		await runner.step();
 		expect(logs).toEqual(["scene_update", "scene_update", "scene_update"]);
 		expect((globalThis as any)[`__test_${randStr}__`]).toBe(true);
 
@@ -425,7 +425,7 @@ describe("Runner の動作確認 (異常系)", () => {
 		runner.errorTrigger.add((e) => {
 			err = e;
 		});
-		runner.step();
+		await runner.step();
 		// trigger 経由でエラーが通知されることを確認
 		expect(err).not.toBeUndefined();
 		runner.stop();
@@ -453,7 +453,7 @@ describe("Runner の動作確認 (異常系)", () => {
 		runner.errorTrigger.add((e) => {
 			err = e;
 		});
-		runner.step();
+		await runner.step();
 		// trigger 経由でエラーが通知されることを確認
 		expect(err).not.toBeUndefined();
 		runner.stop();
@@ -481,7 +481,7 @@ describe("Runner の動作確認 (異常系)", () => {
 		runner.errorTrigger.add((e) => {
 			err = e;
 		});
-		runner.step();
+		await runner.step();
 		// trigger 経由でエラーが通知されることを確認
 		expect(err).not.toBeUndefined();
 		runner.stop();

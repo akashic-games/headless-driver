@@ -1,9 +1,10 @@
-import * as path from "path";
-import type { RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "..";
+import * as path from "node:path";
+import type { Tick } from "@akashic/playlog";
+import type { DumpedPlaylog, Runner, RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "..";
 import { setSystemLogger } from "../Logger";
 import { PlayManager } from "../play/PlayManager";
 import { RunnerManager } from "../runner/RunnerManager";
-import { activePermission, passivePermission } from "./constants";
+import { activePermission, passivePermission, replayPermission } from "./constants";
 import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
 
@@ -1389,6 +1390,119 @@ describe("trusted コンテンツの動作テスト: 異常系", () => {
 
 		const event = await handleEvent();
 		expect(event).toBe("failed_load_external_asset");
+		runner.stop();
+	});
+});
+
+describe("リプレイの動作確認", () => {
+	const ticks: Tick[] = Array.from({ length: 100 }).map((_, i) => [100 + i, [[0x20, 2, "9999", { type: "stack", data: `${i}` }]]]);
+	const playlog: DumpedPlaylog = {
+		startPoints: [
+			{
+				frame: 0,
+				timestamp: 1705383926254,
+				data: {
+					seed: 1705383926254,
+					fps: 30,
+					startedAt: 1705383926254
+				}
+			}
+		],
+		tickList: [0, 1000, ticks]
+	};
+
+	async function createRunner(contentUrl: string): Promise<Runner> {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay(
+			{
+				contentUrl
+			},
+			playlog
+		);
+		const passiveAMFlow = playManager.createAMFlow(playId);
+		const playToken = playManager.createPlayToken(playId, replayPermission);
+		const runnerManager = new MockRunnerManager(playManager);
+		const runnerId = await runnerManager.createRunner({
+			playId,
+			amflow: passiveAMFlow,
+			playToken,
+			executionMode: "passive",
+			loopMode: "replay",
+			allowedUrls: null
+		});
+		return runnerManager.getRunner(runnerId) as RunnerV3;
+	}
+
+	async function doStepTest(runner: Runner, entrySceneName: string): Promise<void> {
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+
+		while (game.scene()!.name !== entrySceneName) {
+			await runner.step();
+		}
+		while (game.vars.messages.length === 0) {
+			await runner.step();
+		}
+
+		let beforeMessagesLength = game.vars.messages.length;
+		while (game.vars.messages.length < ticks.length) {
+			await runner.step();
+			// 必ず 1 フレームずつ進むことを確認
+			expect(game.vars.messages.length).toBe(beforeMessagesLength + 1);
+			beforeMessagesLength = game.vars.messages.length;
+		}
+	}
+
+	async function doAdvanceTest(runner: Runner, entrySceneName: string): Promise<void> {
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+
+		while (game.scene()!.name !== entrySceneName) {
+			await runner.step();
+		}
+		while (game.vars.messages.length === 0) {
+			await runner.step();
+		}
+
+		let beforeMessagesLength = game.vars.messages.length;
+		while (game.vars.messages.length < ticks.length) {
+			await runner.advance(500); // 500 / (1000 / fps) = 15 フレーム進むことを確認
+			expect(game.vars.messages.length).toBe(Math.min(beforeMessagesLength + 15, ticks.length));
+			beforeMessagesLength = game.vars.messages.length;
+		}
+	}
+
+	it("Akashic V1 コンテンツで Runner#step() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV1);
+		await doStepTest(runner, "content-v1-entry-scene");
+		runner.stop();
+	});
+
+	it("Akashic V1 コンテンツで Runner#advance() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV1);
+		await doAdvanceTest(runner, "content-v1-entry-scene");
+		runner.stop();
+	});
+
+	it("Akashic V2 コンテンツで Runner#step() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV2);
+		await doStepTest(runner, "content-v2-entry-scene");
+		runner.stop();
+	});
+
+	it("Akashic V2 コンテンツで Runner#advance() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV2);
+		await doAdvanceTest(runner, "content-v2-entry-scene");
+		runner.stop();
+	});
+
+	it("Akashic V3 コンテンツで Runner#step() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV3);
+		await doStepTest(runner, "content-v3-entry-scene");
+		runner.stop();
+	});
+
+	it("Akashic V3 コンテンツで Runner#advance() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV3);
+		await doAdvanceTest(runner, "content-v3-entry-scene");
 		runner.stop();
 	});
 });

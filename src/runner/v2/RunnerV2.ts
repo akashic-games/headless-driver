@@ -1,3 +1,4 @@
+import { setImmediate } from "node:timers/promises";
 import { akashicEngine as g, gameDriver as gdr, pdi } from "engine-files-v2";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
@@ -36,6 +37,8 @@ export class RunnerV2 extends Runner {
 			this.driver.stopGame();
 			this.driver = null;
 		}
+
+		this.stopTimekeeper();
 		this.running = false;
 	}
 
@@ -46,6 +49,7 @@ export class RunnerV2 extends Runner {
 		}
 
 		this.platform.pauseLoopers();
+		this.stopTimekeeper();
 		this.running = false;
 	}
 
@@ -56,10 +60,11 @@ export class RunnerV2 extends Runner {
 		}
 
 		this.platform.resumeLoopers();
+		this.startTimekeeper();
 		this.running = true;
 	}
 
-	step(): void {
+	async step(): Promise<void> {
 		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
@@ -69,7 +74,9 @@ export class RunnerV2 extends Runner {
 			return;
 		}
 
+		this.timekeeper.advance(1000 / this.fps);
 		this.platform.advanceLoopers(Math.ceil(1000 / this.fps));
+		await setImmediate();
 	}
 
 	async advance(ms: number): Promise<void> {
@@ -91,14 +98,9 @@ export class RunnerV2 extends Runner {
 				skipThreshold: Math.ceil(ms / this.fps) + 1
 			}
 		});
-		const delta = Math.ceil(1000 / this.fps);
-		let progress = 0;
-		while (progress <= ms) {
-			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
-			// そのため一度に進める時間を fps に応じて分割する。
-			this.platform.advanceLoopers(delta);
-			progress += delta;
-		}
+
+		this.advancePlatform(ms);
+
 		await this.changeGameDriverState({
 			loopConfiguration: {
 				loopMode,
@@ -147,11 +149,11 @@ export class RunnerV2 extends Runner {
 
 	protected _stepMinimal(): void {
 		if (this.fps == null || this.platform == null) {
-			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() before initialized"));
+			this.errorTrigger.fire(new Error("RunnerV2#_stepMinimal(): Cannot call Runner#step() before initialized"));
 			return;
 		}
 		if (this.running) {
-			this.errorTrigger.fire(new Error("RunnerV2#_stepHalf(): Cannot call Runner#step() in running"));
+			this.errorTrigger.fire(new Error("RunnerV2#_stepMinimal(): Cannot call Runner#step() in running"));
 			return;
 		}
 		// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。

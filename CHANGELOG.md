@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.14.0
+* `Runner` のリプレイモードをサポート
+* `Runner#step()` の戻り値の型を `Promise<void>` に変更
+
 ## 2.13.9
 * 内部モジュールの更新
 

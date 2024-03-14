@@ -1,3 +1,4 @@
+import { setImmediate } from "node:timers/promises";
 /** @ts-ignore */
 import type { Canvas } from "canvas";
 import type { RunnerStartParameters } from "../Runner";
@@ -40,6 +41,8 @@ export class RunnerV3 extends Runner {
 			this.driver.stopGame();
 			this.driver = null;
 		}
+
+		this.stopTimekeeper();
 		this.running = false;
 	}
 
@@ -50,6 +53,7 @@ export class RunnerV3 extends Runner {
 		}
 
 		this.platform.pauseLoopers();
+		this.stopTimekeeper();
 		this.running = false;
 	}
 
@@ -60,10 +64,11 @@ export class RunnerV3 extends Runner {
 		}
 
 		this.platform.resumeLoopers();
+		this.startTimekeeper();
 		this.running = true;
 	}
 
-	step(): void {
+	async step(): Promise<void> {
 		if (this.fps == null || this.platform == null) {
 			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
 			return;
@@ -73,7 +78,14 @@ export class RunnerV3 extends Runner {
 			return;
 		}
 
+		this.timekeeper.advance(1000 / this.fps);
 		this.platform.stepLoopers();
+
+		// Looper を進行させるとアセット読み込み・AMFlow のコールバックなどの setImmediate() が実行されるが、
+		// それらを Runner#step() の完了タイミングで確実に処理するため、Runner#step() の完了を setImmediate() で遅延させている。
+		// ここを単純な Promise で返しても microtask queue に積まれるため、macrotask queue に積まれる setImmediate() の処理の完了を待つことはできない。
+		// @see https://nodejs.org/en/learn/asynchronous-work/understanding-setimmediate
+		await setImmediate();
 	}
 
 	async advance(ms: number): Promise<void> {
@@ -102,14 +114,9 @@ export class RunnerV3 extends Runner {
 				skipThreshold: Math.ceil(ms / this.fps) + 1
 			}
 		});
-		const delta = Math.ceil(1000 / this.fps);
-		let progress = 0;
-		while (progress <= ms) {
-			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
-			// そのため一度に進める時間を fps に応じて分割する。
-			this.platform.advanceLoopers(delta);
-			progress += delta;
-		}
+
+		this.advancePlatform(ms);
+
 		await this.changeGameDriverState({
 			loopConfiguration: {
 				loopMode,
@@ -179,7 +186,16 @@ export class RunnerV3 extends Runner {
 	}
 
 	protected _stepMinimal(): void {
-		this.step();
+		if (this.fps == null || this.platform == null) {
+			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() before initialized"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() in running"));
+			return;
+		}
+		// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。
+		this.platform.advanceLoopers(1000 / this.fps / 2);
 	}
 
 	private initGameDriver(): Promise<RunnerV3Game> {
@@ -195,6 +211,7 @@ export class RunnerV3 extends Runner {
 			};
 
 			const executionMode = this.executionMode === "active" ? gdr.ExecutionMode.Active : gdr.ExecutionMode.Passive;
+			const loopMode = this.loopMode === "replay" ? gdr.LoopMode.Replay : gdr.LoopMode.Realtime;
 
 			this.platform = new PlatformV3({
 				configurationBaseUrl: this.configurationBaseUrl,
@@ -228,7 +245,8 @@ export class RunnerV3 extends Runner {
 						executionMode
 					},
 					loopConfiguration: {
-						loopMode: gdr.LoopMode.Realtime
+						loopMode,
+						targetTimeFunc: this.timekeeper.now
 					},
 					gameArgs: this.gameArgs
 				},

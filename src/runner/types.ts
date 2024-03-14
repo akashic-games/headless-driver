@@ -2,6 +2,8 @@ import type { EncodingType } from "../utils";
 
 export type RunnerExecutionMode = "active" | "passive";
 
+export type RunnerLoopMode = "realtime" | "replay";
+
 export type RunnerRenderingMode = "none" | "canvas";
 
 export type RunnerAdvanceConditionFunc = () => boolean;

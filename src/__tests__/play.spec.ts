@@ -168,7 +168,7 @@ describe("プレイ周りの結合動作テスト", () => {
 							writeTick: false,
 							sendEvent: true,
 							subscribeEvent: false,
-							subscribeTick: false,
+							subscribeTick: true,
 							maxEventPriority: 2
 						});
 						resolve();

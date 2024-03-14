@@ -5,7 +5,7 @@ import type { PlayManager } from "../play/PlayManager";
 import type { EncodingType } from "../utils";
 import { loadFile, resolveUrl } from "../utils";
 import type { RunnerParameters, RunnerStartParameters } from "./Runner";
-import type { RunnerExecutionMode, RunnerPlayer, RunnerRenderingMode } from "./types";
+import type { RunnerExecutionMode, RunnerLoopMode, RunnerPlayer, RunnerRenderingMode } from "./types";
 import type { RunnerV1Game } from "./v1";
 import { RunnerV1 } from "./v1";
 import type { RunnerV2Game } from "./v2";
@@ -18,6 +18,7 @@ export interface CreateRunnerParameters {
 	amflow: AMFlowClient;
 	playToken: string;
 	executionMode: RunnerExecutionMode;
+	loopMode?: RunnerLoopMode;
 	gameArgs?: any;
 	player?: RunnerPlayer;
 	/**
@@ -159,6 +160,7 @@ export class RunnerManager {
 				playToken: params.playToken,
 				amflow,
 				executionMode: params.executionMode,
+				loopMode: params.loopMode,
 				trusted: params.trusted,
 				renderingMode: params.renderingMode,
 				loadFileHandler: this.createLoadFileHandler(params.allowedUrls),

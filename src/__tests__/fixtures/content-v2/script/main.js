@@ -1,13 +1,17 @@
 const game = g.game;
 const _this = this;
 
-function main(gameArgs) {
+module.exports = (gameArgs) => {
+	game.vars = {
+		messages: []
+	};
+
 	const scene = new g.Scene({
 		game,
 		name: "content-v2-entry-scene"
 	});
 
-	game.skippingChanged.add(function(skipped) {
+	game.skippingChanged.add((skipped) => {
 		if (game.external.isSendSkipChanged) {
 			if (skipped) {
 				game.external.send("start_skipping");
@@ -17,13 +21,13 @@ function main(gameArgs) {
 		}
 	});
 
-	scene.update.add(function() {
+	scene.update.add(() => {
 		if (game.external.isSendingSceneUpdateCalled) {
 			game.external.send("scene_update");
 		}
 	});
 
-	scene.loaded.add(function() {
+	scene.loaded.add(() => {
 		// 以下にゲームのロジックを記述します。
 		const rect = new g.FilledRect({
 			scene: scene,
@@ -31,7 +35,7 @@ function main(gameArgs) {
 			width: 32,
 			height: 32
 		});
-		rect.update.add(function () {
+		rect.update.add(() => {
 			// 以下のコードは毎フレーム実行されます。
 			rect.x += 10;
 			if (rect.x > game.width) {
@@ -43,17 +47,17 @@ function main(gameArgs) {
 		scene.append(rect);
 	});
 
-	scene.pointDownCapture.add(function() {
+	scene.pointDownCapture.add(() => {
 		game.external.send("fired point down event");
 	});
-	scene.pointMoveCapture.add(function() {
+	scene.pointMoveCapture.add(() => {
 		game.external.send("fired point move event");
 	});
-	scene.pointUpCapture.add(function() {
+	scene.pointUpCapture.add(() => {
 		game.external.send("fired point up event");
 	});
 
-	scene.message.add(function(message) {
+	scene.message.add((message) => {
 		if (message.data.type === "throw_error") {
 			throw new Error("unknown error");
 		} else if (message.data.type === "send_event") {
@@ -80,13 +84,13 @@ function main(gameArgs) {
 			});
 		} else if (message.data.type === "send_game_args") {
 			game.external.send(gameArgs);
+		} else if (message.data.type === "stack") {
+			game.vars.messages.push(message);
 		} else {
 			game.external.send(message);
 		}
 	});
 	game.pushScene(scene);
 }
-
-module.exports = main;
 
 // line comment test in trailing
