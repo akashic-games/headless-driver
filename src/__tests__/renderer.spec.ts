@@ -68,7 +68,7 @@ describe("コンテンツのレンダリングテスト", () => {
 		const runnerContext = canvas.getContext("2d");
 
 		// compare and write the result
-		fs.readdirSync(expectedPath).forEach((filename, i) => {
+		for (const [i, filename] of fs.readdirSync(expectedPath).entries()) {
 			const expected = PNG.sync.read(fs.readFileSync(path.join(expectedPath, filename)));
 			const actual = runnerContext.getImageData(0, 0, width, height);
 			const diff = new PNG({ width, height });
@@ -82,8 +82,8 @@ describe("コンテンツのレンダリングテスト", () => {
 			fs.writeFileSync(path.join(diffPath, filenameTransformer(i)), diffPNG);
 			fs.writeFileSync(path.join(actualPath, filenameTransformer(i)), canvas.toBuffer());
 
-			runner.step();
-		});
+			await runner.step();
+		}
 
 		runner.stop();
 	}, 20000); // ファイル IO が絡む他、canvas の初期化で時間がかかる場合があるので長めに許容

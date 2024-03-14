@@ -1,5 +1,4 @@
 import * as path from "node:path";
-import { setTimeout } from "timers/promises";
 import type { Tick } from "@akashic/playlog";
 import type { DumpedPlaylog, Runner, RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "..";
 import { setSystemLogger } from "../Logger";
@@ -1437,21 +1436,16 @@ describe("リプレイの動作確認", () => {
 	async function doStepTest(runner: Runner, entrySceneName: string): Promise<void> {
 		const game = (await runner.start({ paused: true })) as RunnerV3Game;
 
-		// runner#step() を同期的に利用した場合、setImmediate() による非同期の処理が行われないバグがある。
-		// そのため明示的に setTimeout を挟んでいる。
 		while (game.scene()!.name !== entrySceneName) {
-			runner.step();
-			await setTimeout(0); // FIXME: この処理を消す
+			await runner.step();
 		}
 		while (game.vars.messages.length === 0) {
-			runner.step();
-			await setTimeout(0); // FIXME: この処理を消す
+			await runner.step();
 		}
 
 		let beforeMessagesLength = game.vars.messages.length;
 		while (game.vars.messages.length < ticks.length) {
-			runner.step();
-			await setTimeout(0);
+			await runner.step();
 			// 必ず 1 フレームずつ進むことを確認
 			expect(game.vars.messages.length).toBe(beforeMessagesLength + 1);
 			beforeMessagesLength = game.vars.messages.length;
@@ -1461,15 +1455,11 @@ describe("リプレイの動作確認", () => {
 	async function doAdvanceTest(runner: Runner, entrySceneName: string): Promise<void> {
 		const game = (await runner.start({ paused: true })) as RunnerV3Game;
 
-		// runner#step() を同期的に利用した場合、setImmediate() による非同期の処理が行われないバグがある。
-		// そのため明示的に setTimeout を挟んでいる。
 		while (game.scene()!.name !== entrySceneName) {
-			runner.step();
-			await setTimeout(0); // FIXME: この処理を消す
+			await runner.step();
 		}
 		while (game.vars.messages.length === 0) {
-			runner.step();
-			await setTimeout(0); // FIXME: この処理を消す
+			await runner.step();
 		}
 
 		let beforeMessagesLength = game.vars.messages.length;

@@ -1,5 +1,6 @@
 import type { AMFlow } from "@akashic/amflow";
 import { Trigger } from "@akashic/trigger";
+import { TimeKeeper } from "../TimeKeeper";
 import type { Platform } from "./Platform";
 import type {
 	RunnerAdvanceConditionFunc,
@@ -48,6 +49,8 @@ export abstract class Runner {
 	abstract readonly g: any;
 
 	abstract platform: Platform | null;
+
+	abstract fps: number | null;
 
 	errorTrigger: Trigger<Error> = new Trigger();
 
@@ -123,6 +126,10 @@ export abstract class Runner {
 		return this.params.externalValue;
 	}
 
+	protected timekeeper: TimeKeeper = new TimeKeeper();
+	protected timekeeperTimerId: NodeJS.Timer | null = null;
+	protected timekeeperPrevTime: number = 0;
+
 	constructor(params: RunnerParameters) {
 		this.params = params;
 	}
@@ -153,7 +160,7 @@ export abstract class Runner {
 	/**
 	 * Runner を一フレーム進行する。
 	 */
-	abstract step(): void;
+	abstract step(): Promise<void>;
 	/**
 	 * Runner に対して任意のポイントイベントを発火させる。
 	 * @param event 発火させるポイントイベント
@@ -172,9 +179,9 @@ export abstract class Runner {
 	 */
 	async advanceUntil(condition: RunnerAdvanceConditionFunc, timeout: number = 5000): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const limit = Date.now() + timeout;
+			const limit = performance.now() + timeout;
 			const handler = (): void => {
-				if (limit < Date.now()) {
+				if (limit < performance.now()) {
 					return void reject(new Error("Runner#advanceUntil(): processing timeout"));
 				}
 				try {
@@ -189,7 +196,54 @@ export abstract class Runner {
 		});
 	}
 
+	/**
+	 * 次フレームを飛ばさない程度に時間を進める。
+	 */
 	protected abstract _stepMinimal(): void;
+
+	protected advancePlatform(ms: number): void {
+		// 以下のメソッドプロパティが存在することは呼び出し側で保証する
+		const fps = this.fps!;
+		const platform = this.platform!;
+		const timekeeper = this.timekeeper;
+
+		const frame = 1000 / fps;
+		const frameWithGrace = frame * 1.2; // 1 フレームよりも少し大きめの値
+		const steps = Math.floor(ms / frame);
+		let progress = 0;
+		for (let i = 0; i < steps; i++) {
+			const now = timekeeper.now();
+			// NOTE: 浮動小数による誤差を考慮し、 1 フレームよりも少し大きめに目標時刻を進め、その後 Looper を確実に進めた後に再度目標時刻を正常値に戻す。
+			timekeeper.advance(frameWithGrace);
+			// NOTE: game-driver の内部実装により Looper 経由で一度に進める時間に制限がある。
+			// そのため一度に進める時間を fps に応じて分割する。
+			platform.advanceLoopers(frame);
+			timekeeper.set(now + frame);
+			progress += frame;
+		}
+		timekeeper.advance(ms - progress);
+		platform.advanceLoopers(ms - progress);
+	}
+
+	protected startTimekeeper(): void {
+		this.stopTimekeeper();
+		const duration = 1000 / this.fps! / 2; // this.fps != null の条件でのみしか呼ばれないため non-null assertion を利用
+		this.timekeeperPrevTime = performance.now();
+		this.timekeeperTimerId = setInterval(() => {
+			const now = performance.now();
+			const delta = now - this.timekeeperPrevTime;
+			this.timekeeper.advance(delta);
+			this.timekeeperPrevTime = now;
+		}, duration);
+	}
+
+	protected stopTimekeeper(): void {
+		if (this.timekeeperTimerId == null) {
+			return;
+		}
+		clearInterval(this.timekeeperTimerId);
+		this.timekeeperTimerId = null;
+	}
 
 	protected onError(error: Error): void {
 		this.stop();

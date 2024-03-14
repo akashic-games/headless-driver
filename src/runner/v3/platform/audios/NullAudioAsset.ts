@@ -29,9 +29,9 @@ export class NullAudioAsset extends Asset implements g.AudioAsset {
 	}
 
 	_load(loader: g.AssetLoadHandler): void {
-		setTimeout(() => {
+		setImmediate(() => {
 			loader._onAssetLoad(this);
-		}, 0);
+		});
 	}
 
 	play(): g.AudioPlayer {

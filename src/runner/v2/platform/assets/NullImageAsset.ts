@@ -5,9 +5,9 @@ export class NullImageAsset extends g.ImageAsset {
 	_surface: g.Surface | null = null;
 
 	_load(loader: g.AssetLoadHandler): void {
-		setTimeout(() => {
+		setImmediate(() => {
 			loader._onAssetLoad(this);
-		}, 0);
+		});
 	}
 
 	asSurface(): g.Surface {
