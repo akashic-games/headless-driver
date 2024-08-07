@@ -29,7 +29,7 @@
     "@akashic/trigger": "^2.0.0",
     "engine-files-v1": "npm:@akashic/engine-files@1.4.0",
     "engine-files-v2": "npm:@akashic/engine-files@2.4.0",
-    "engine-files-v3": "npm:@akashic/engine-files@3.8.5",
+    "engine-files-v3": "npm:@akashic/engine-files@3.9.0",
     "js-sha256": "^0.11.0",
     "lodash.clonedeep": "^4.5.0",
     "node-fetch": "^2.6.7"
