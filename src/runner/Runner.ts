@@ -246,7 +246,6 @@ export abstract class Runner {
 	}
 
 	protected onError(error: Error): void {
-		this.stop();
 		this.errorTrigger.fire(error);
 	}
 }

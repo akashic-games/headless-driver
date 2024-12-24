@@ -77,15 +77,16 @@ export class NodeScriptAsset extends Asset implements g.ScriptAsset {
 			)(console, execEnv);
 
 			runInContext(
-				`
-					(function(exports, require, module, __filename, __dirname) {
-					${this.script}
-					${postScript}
-					})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);
-				`,
+				[
+					"(function(exports, require, module, __filename, __dirname) {",
+					`${this.script}`,
+					`${postScript}`,
+					"})(g.module.exports, g.module.require, g.module, g.filename, g.dirname);"
+				].join("\n"),
 				context,
 				{
-					filename: `${this.path}`
+					filename: `${this.path}`,
+					lineOffset: -1
 				}
 			);
 		} catch (e) {
