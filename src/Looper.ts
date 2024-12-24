@@ -70,9 +70,9 @@ export class Looper {
 			this._errorHandler(e);
 			return;
 		}
-		this._prev = Date.now();
+		this._prev = performance.now();
 		this._timerId = setInterval(() => {
-			const now = Date.now();
+			const now = performance.now();
 			try {
 				this._fun(now - this._prev);
 			} catch (e) {
