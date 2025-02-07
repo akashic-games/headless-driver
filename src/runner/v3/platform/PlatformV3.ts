@@ -15,18 +15,12 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 	constructor(param: PlatformParameters) {
 		super(param);
 
-		// NOTE: このファイルの require() 時点で ResourceFactory 側の依存モジュールを読み込ませないよう、動的に require() する。
-		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
-		const ResourceFactory =
-			(this.renderingMode === "canvas" || this.renderingMode === "canvas_napi") && this.trusted
-				? require("./NodeCanvasResourceFactory").NodeCanvasResourceFactory
-				: require("./NullResourceFactory").NullResourceFactory;
-		/* eslint-enable */
-
 		let resourceFactory: g.ResourceFactory;
 
+		// NOTE: このファイルの require() 時点で ResourceFactory 側の依存モジュールを読み込ませないよう、動的に require() する。
+		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
 		if ((this.renderingMode === "canvas" || this.renderingMode === "canvas_napi") && this.trusted) {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/naming-convention
+			const ResourceFactory = require("./NodeCanvasResourceFactory").NodeCanvasResourceFactory;
 			const NodeCanvasFactory = require("./NodeCanvasFactory").NodeCanvasFactory;
 			const canvasFactory = new NodeCanvasFactory(this.renderingMode);
 			resourceFactory = new ResourceFactory({
@@ -35,11 +29,13 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 				loadFileHandler: param.loadFileHandler
 			});
 		} else {
+			const ResourceFactory = require("./NullResourceFactory").NullResourceFactory;
 			resourceFactory = new ResourceFactory({
 				errorHandler: (e: Error) => this.errorHandler(e),
 				loadFileHandler: param.loadFileHandler
 			});
 		}
+		/* eslint-enable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
 
 		this.resFac = resourceFactory;
 	}
