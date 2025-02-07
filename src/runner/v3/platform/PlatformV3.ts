@@ -18,7 +18,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 		// NOTE: このファイルの require() 時点で ResourceFactory 側の依存モジュールを読み込ませないよう、動的に require() する。
 		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
 		const ResourceFactory =
-			this.renderingMode === "canvas" || (this.renderingMode === "canvas_napi" && this.trusted)
+			(this.renderingMode === "canvas" || this.renderingMode === "canvas_napi") && this.trusted
 				? require("./NodeCanvasResourceFactory").NodeCanvasResourceFactory
 				: require("./NullResourceFactory").NullResourceFactory;
 		/* eslint-enable */
