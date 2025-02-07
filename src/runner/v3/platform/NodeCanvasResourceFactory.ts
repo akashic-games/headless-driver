@@ -1,4 +1,3 @@
-import { Canvas } from "canvas";
 import type { RunnerLoadFileHandler } from "../../types";
 import type { akashicEngine as g } from "../engineFiles";
 import { NodeBinaryAsset } from "./assets/NodeBinaryAsset";
@@ -9,28 +8,32 @@ import { NullAudioPlayer } from "./audios/NullAudioPlayer";
 import { NodeCanvasGlyphFactory } from "./graphics/canvas/NodeCanvasGlyphFactory";
 import { NodeCanvasImageAsset } from "./graphics/canvas/NodeCanvasImageAsset";
 import { NodeCanvasSurface } from "./graphics/canvas/NodeCanvasSurface";
+import type { NodeCanvasFactory } from "./NodeCanvasFactory";
 import { NullVideoAsset } from "./videos/NullVideoAsset";
 
 export interface NodeCanvasResourceFactoryParameters {
 	loadFileHandler: RunnerLoadFileHandler;
 	errorHandler: (err: Error) => void;
+	canvasFactory: NodeCanvasFactory;
 }
 
 /**
- * node-canvas への描画出力機能を持つ ResourceFactory の実装。
+ * 描画出力機能を持つ ResourceFactory の実装。
  * 音声再生には未対応。
  */
 export class NodeCanvasResourceFactory implements g.ResourceFactory {
 	private loadFileHandler: RunnerLoadFileHandler;
 	private errorHandler: (err: Error) => void;
+	private canvasFactory: NodeCanvasFactory;
 
-	constructor({ loadFileHandler, errorHandler }: NodeCanvasResourceFactoryParameters) {
+	constructor({ loadFileHandler, errorHandler, canvasFactory }: NodeCanvasResourceFactoryParameters) {
 		this.loadFileHandler = loadFileHandler;
 		this.errorHandler = errorHandler;
+		this.canvasFactory = canvasFactory;
 	}
 
-	createImageAsset(id: string, assetPath: string, width: number, height: number): g.ImageAsset {
-		return new NodeCanvasImageAsset(id, assetPath, width, height);
+	createImageAsset(id: string, path: string, width: number, height: number): g.ImageAsset {
+		return new NodeCanvasImageAsset({ canvasFactory: this.canvasFactory, id, path, width, height });
 	}
 
 	createVideoAsset(
@@ -88,7 +91,7 @@ export class NodeCanvasResourceFactory implements g.ResourceFactory {
 	}
 
 	createSurface(width: number, height: number): g.Surface {
-		const canvas = new Canvas(width, height);
+		const canvas = this.canvasFactory.createCanvas(width, height);
 		return new NodeCanvasSurface(canvas);
 	}
 
@@ -103,6 +106,7 @@ export class NodeCanvasResourceFactory implements g.ResourceFactory {
 		fontWeight?: g.FontWeightString
 	): g.GlyphFactory {
 		return new NodeCanvasGlyphFactory(
+			this.canvasFactory,
 			fontFamily,
 			fontSize,
 			baselineHeight,

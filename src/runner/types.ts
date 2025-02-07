@@ -4,7 +4,19 @@ export type RunnerExecutionMode = "active" | "passive";
 
 export type RunnerLoopMode = "realtime" | "replay";
 
-export type RunnerRenderingMode = "none" | "canvas";
+export type RunnerRenderingMode =
+	/**
+	 * レンダリングを行わない。
+	 */
+	| "none"
+	/**
+	 * node-canvas を使用する。
+	 */
+	| "canvas"
+	/**
+	 * @napi-rs/canvas を使用する。
+	 */
+	| "canvas_napi";
 
 export type RunnerAdvanceConditionFunc = () => boolean;
 

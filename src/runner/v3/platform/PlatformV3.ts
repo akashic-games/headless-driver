@@ -3,6 +3,9 @@ import type { PlatformParameters } from "../../Platform";
 import { Platform } from "../../Platform";
 import type { akashicEngine as g, pdi } from "../engineFiles";
 import { NullSurface } from "./graphics/null/NullSurface";
+import { NodeCanvasFactory } from "./NodeCanvasFactory";
+import { NodeCanvasResourceFactory } from "./NodeCanvasResourceFactory";
+import { NullResourceFactory } from "./NullResourceFactory";
 
 export class PlatformV3 extends Platform implements pdi.Platform {
 	private resFac: g.ResourceFactory;
@@ -15,19 +18,23 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 	constructor(param: PlatformParameters) {
 		super(param);
 
-		// NOTE: このファイルの require() 時点で ResourceFactory 側の依存モジュールを読み込ませないよう、動的に require() する。
-		// (このモジュールの利用元である headless-driver が NodeVM 上で起動する仕様上の制限のための苦肉の策)
-		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
-		const ResourceFactory =
-			this.renderingMode === "canvas" && this.trusted
-				? require("./NodeCanvasResourceFactory").NodeCanvasResourceFactory
-				: require("./NullResourceFactory").NullResourceFactory;
-		/* eslint-enable */
+		let resourceFactory: g.ResourceFactory;
 
-		this.resFac = new ResourceFactory({
-			errorHandler: (e: Error) => this.errorHandler(e),
-			loadFileHandler: param.loadFileHandler
-		});
+		if ((this.renderingMode === "canvas" || this.renderingMode === "canvas_napi") && this.trusted) {
+			const canvasFactory = new NodeCanvasFactory(this.renderingMode);
+			resourceFactory = new NodeCanvasResourceFactory({
+				canvasFactory,
+				errorHandler: (e: Error) => this.errorHandler(e),
+				loadFileHandler: param.loadFileHandler
+			});
+		} else {
+			resourceFactory = new NullResourceFactory({
+				errorHandler: (e: Error) => this.errorHandler(e),
+				loadFileHandler: param.loadFileHandler
+			});
+		}
+
+		this.resFac = resourceFactory;
 	}
 
 	getResourceFactory(): g.ResourceFactory {
@@ -37,17 +44,16 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 	setRendererRequirement(requirement: pdi.RendererRequirement): void {
 		this.rendererReq = requirement;
 
-		if (this.renderingMode === "canvas") {
+		if (this.renderingMode === "canvas" || this.renderingMode === "canvas_napi") {
 			if (this.trusted) {
-				/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
-				const Canvas = require("canvas").Canvas;
-				const NodeCanvasSurface = require("./graphics/canvas/NodeCanvasSurface").NodeCanvasSurface;
-				/* eslint-enable */
-
-				const canvas = new Canvas(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight);
-				this.primarySurface = new NodeCanvasSurface(canvas);
+				this.primarySurface = this.resFac.createSurface(
+					this.rendererReq.primarySurfaceWidth,
+					this.rendererReq.primarySurfaceHeight
+				);
 			} else {
-				throw Error("PlatformV3#setRendererRequirement(): Must given trusted === `true` if set renderingMode === 'canvas'");
+				throw Error(
+					"PlatformV3#setRendererRequirement(): 'trusted' must be true when 'renderingMode' is set to 'canvas' or 'canvas_napi'."
+				);
 			}
 		} else {
 			this.primarySurface = new NullSurface(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight);

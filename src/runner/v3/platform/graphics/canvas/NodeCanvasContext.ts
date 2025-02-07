@@ -1,7 +1,6 @@
-/** @ts-ignore */
-import type { CanvasRenderingContext2D, ImageData, GlobalCompositeOperation } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { RenderingState } from "./RenderingState";
+import type { CanvasRenderingContext2D, ImageData, GlobalCompositeOperation } from "./types";
 
 export class NodeCanvasContext {
 	protected _context: CanvasRenderingContext2D;

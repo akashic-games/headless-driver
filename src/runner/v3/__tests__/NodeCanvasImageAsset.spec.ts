@@ -1,29 +1,14 @@
 import * as path from "path";
 import { Canvas, loadImage } from "canvas";
-import sizeOf from "image-size";
 import * as pixelmatch from "pixelmatch";
-import { NodeCanvasImageAsset } from "../platform/graphics/canvas/NodeCanvasImageAsset";
+import type { RunnerRenderingMode } from "../../types";
+import { NodeCanvasFactory } from "../platform/NodeCanvasFactory";
+import { createImageAsset } from "./helpers/createImageAsset";
 
 const aksImagePath = path.join(__dirname, "fixtures", "akashic.png");
 
-describe("NodeCanvasImageAsset", () => {
-	async function createImageAsset(filepath: string): Promise<NodeCanvasImageAsset> {
-		return new Promise((resolve, reject) => {
-			const filename = path.basename(filepath);
-			const { width, height } = sizeOf(filepath);
-			// @ts-ignore
-			const asset = new NodeCanvasImageAsset(filename, filepath, width, height);
-			asset.initialize({});
-			asset._load({
-				_onAssetError(_asset: NodeCanvasImageAsset, error: Error): void {
-					reject(error);
-				},
-				_onAssetLoad(a: NodeCanvasImageAsset): void {
-					resolve(a);
-				}
-			});
-		});
-	}
+describe.each(["canvas", "canvas_napi"] satisfies RunnerRenderingMode[])("CanvasImageAsset: renderingMode: %s", (renderingMode) => {
+	const canvasFactory = new NodeCanvasFactory(renderingMode);
 
 	it("asSurface()", async () => {
 		const expectedImage = await loadImage(aksImagePath);
@@ -31,7 +16,7 @@ describe("NodeCanvasImageAsset", () => {
 		const expectedContext = expectedCanvas.getContext("2d");
 		expectedContext.drawImage(expectedImage, 0, 0);
 
-		const actualImageAsset = await createImageAsset(aksImagePath);
+		const actualImageAsset = await createImageAsset(canvasFactory, aksImagePath);
 		const actualSurface = actualImageAsset.asSurface();
 
 		expect(expectedImage.width).toBe(actualSurface.width);

@@ -80,7 +80,7 @@ describe("コンテンツのレンダリングテスト", () => {
 
 			const diffPNG = PNG.sync.write(diff);
 			fs.writeFileSync(path.join(diffPath, filenameTransformer(i)), diffPNG);
-			fs.writeFileSync(path.join(actualPath, filenameTransformer(i)), canvas.toBuffer());
+			fs.writeFileSync(path.join(actualPath, filenameTransformer(i)), canvas.toBuffer("image/png"));
 
 			await runner.step();
 		}

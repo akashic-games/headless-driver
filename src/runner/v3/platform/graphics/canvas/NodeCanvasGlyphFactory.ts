@@ -1,8 +1,8 @@
-import type { ImageData } from "canvas";
-import { Canvas } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
+import type { NodeCanvasFactory } from "../../NodeCanvasFactory";
 import { NodeCanvasGlyph } from "./NodeCanvasGlyph";
 import { NodeCanvasSurface } from "./NodeCanvasSurface";
+import type { ImageData } from "./types";
 
 interface GlyphRenderSurfaceResult {
 	surface: NodeCanvasSurface;
@@ -11,6 +11,7 @@ interface GlyphRenderSurfaceResult {
 }
 
 function createGlyphRenderedSurface(
+	canvasFactory: NodeCanvasFactory,
 	code: number,
 	fontSize: number,
 	cssFontFamily: string,
@@ -35,7 +36,7 @@ function createGlyphRenderedSurface(
 	// 理由:
 	// * Renderer#drawSystemText()を廃止または非推奨にしたいのでそれを用いず文字列を描画する
 	// * RenderingHelperがcontextの状態を復帰するためTextMetricsを取れない
-	const canvas = new Canvas(surfaceWidth, surfaceHeight);
+	const canvas = canvasFactory.createCanvas(surfaceWidth, surfaceHeight);
 	const context = canvas.getContext("2d");
 
 	const str = code & 0xffff0000 ? String.fromCharCode((code & 0xffff0000) >>> 16, code & 0xffff) : String.fromCharCode(code);
@@ -176,8 +177,10 @@ export class NodeCanvasGlyphFactory implements g.GlyphFactory {
 	_marginH: number;
 
 	_cssFontFamily: string;
+	_canvasFactory: NodeCanvasFactory;
 
 	constructor(
+		canvasFactory: NodeCanvasFactory,
 		fontFamily: string | string[],
 		fontSize: number,
 		baselineHeight: number = fontSize,
@@ -195,6 +198,7 @@ export class NodeCanvasGlyphFactory implements g.GlyphFactory {
 		this.strokeWidth = strokeWidth;
 		this.strokeColor = strokeColor;
 		this.strokeOnly = strokeOnly;
+		this._canvasFactory = canvasFactory;
 		this._glyphAreas = {};
 		this._cssFontFamily = fontFamily2CSSFontFamily(fontFamily);
 
@@ -226,6 +230,7 @@ export class NodeCanvasGlyphFactory implements g.GlyphFactory {
 
 		if (!glyphArea) {
 			result = createGlyphRenderedSurface(
+				this._canvasFactory,
 				code,
 				this.fontSize,
 				this._cssFontFamily,
@@ -256,6 +261,7 @@ export class NodeCanvasGlyphFactory implements g.GlyphFactory {
 			// いればここでは生成せずにそれを利用する。
 			if (!result) {
 				result = createGlyphRenderedSurface(
+					this._canvasFactory,
 					code,
 					this.fontSize,
 					this._cssFontFamily,
@@ -289,7 +295,7 @@ export class NodeCanvasGlyphFactory implements g.GlyphFactory {
 	measureMinimumFontSize(): number {
 		let fontSize = 1;
 		const str = "M";
-		const canvas = new Canvas(50, 50);
+		const canvas = this._canvasFactory.createCanvas(50, 50);
 		const context = canvas.getContext("2d");
 		if (context == null) {
 			throw new Error("cannot get canvas context");
