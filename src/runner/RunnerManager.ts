@@ -29,7 +29,7 @@ export interface CreateRunnerParameters {
 	trusted?: boolean;
 	/**
 	 * レンダリングモード。
-	 * `"canvas"` を指定するとプライマリサーフェスの描画内容を `Runner#getPrimarySurface()` を経由して取得できる。
+	 * `"canvas"` または `"@napi-rs/canvas"` を指定するとプライマリサーフェスの描画内容を `Runner#getPrimarySurface()` を経由して取得できる。
 	 * `"canvas"` を指定した場合、利用側で node-canvas をインストールしなければならない。
 	 * `"@napi-rs/canvas"` を指定した場合、利用側で @napi-rs/canvas をインストールしなければならない。
 	 * 初期値は `"none"` 。
