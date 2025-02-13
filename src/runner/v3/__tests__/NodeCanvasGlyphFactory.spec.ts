@@ -1,16 +1,28 @@
 import * as fs from "fs";
 import * as path from "path";
-import { Canvas } from "canvas";
+import type { RunnerRenderingMode } from "../../types";
 import { NodeCanvasGlyphFactory } from "../platform/graphics/canvas/NodeCanvasGlyphFactory";
 import { NodeCanvasSurface } from "../platform/graphics/canvas/NodeCanvasSurface";
+import { NodeCanvasFactory } from "../platform/NodeCanvasFactory";
 
 const outputPath = path.join(__dirname, "out");
 
-describe("NodeCanvasGlyphFactory", () => {
-	function drawChars(chars: string, fontFamily: string, output: string): void {
-		const glyphFactory = new NodeCanvasGlyphFactory(fontFamily, 30, 30, "white", 0, "black", false, "normal");
+describe.each(["canvas", "@napi-rs/canvas"] satisfies RunnerRenderingMode[])("CanvasGlyphFactory: renderingMode: %s", (renderingMode) => {
+	const canvasFactory = new NodeCanvasFactory(renderingMode);
+	const renderingName = renderingMode === "canvas" ? "canvas" : "napi";
 
-		const outputSurface = new NodeCanvasSurface(new Canvas(2048, 2048));
+	if (renderingMode === "@napi-rs/canvas") {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/naming-convention
+		const { GlobalFonts } = require("@napi-rs/canvas");
+		GlobalFonts.registerFromPath(path.join(__dirname, "fixtures", "fonts", "NotoSansJP-Regular.ttf"), "sans-serif");
+		GlobalFonts.registerFromPath(path.join(__dirname, "fixtures", "fonts", "NotoSerifJP-Regular.ttf"), "serif");
+		GlobalFonts.registerFromPath(path.join(__dirname, "fixtures", "fonts", "MPLUS1Code-Regular.ttf"), "monospace");
+	}
+
+	function drawChars(canvasFactory: NodeCanvasFactory, chars: string, fontFamily: string, output: string): void {
+		const glyphFactory = new NodeCanvasGlyphFactory(canvasFactory, fontFamily, 30, 30, "white", 0, "black", false, "normal");
+
+		const outputSurface = new NodeCanvasSurface(canvasFactory.createCanvas(2048, 2048));
 		const outputRenderer = outputSurface.renderer();
 
 		outputRenderer.begin();
@@ -37,60 +49,69 @@ describe("NodeCanvasGlyphFactory", () => {
 
 		outputRenderer.end();
 
-		fs.writeFileSync(output, outputSurface._drawable.toBuffer());
+		fs.writeFileSync(output, outputSurface._drawable.toBuffer("image/png"));
 	}
 
 	it("rendering - JIS第1水準", async () => {
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_jis_level_1.txt"), { encoding: "utf8" }),
 			"sans-serif",
-			path.join(outputPath, "glyph_factory_test_01_jis_level_1_sans-serif.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_jis_level_1_sans-serif.png`)
 		);
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_jis_level_1.txt"), { encoding: "utf8" }),
 			"serif",
-			path.join(outputPath, "glyph_factory_test_01_jis_level_1_serif.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_jis_level_1_serif.png`)
 		);
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_jis_level_1.txt"), { encoding: "utf8" }),
 			"monospace",
-			path.join(outputPath, "glyph_factory_test_01_jis_level_1_monospace.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_jis_level_1_monospace.png`)
 		);
 	});
 
 	it("rendering - ひらがな・カタカナ", () => {
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_katakana_hiragana.txt"), { encoding: "utf8" }),
 			"sans-serif",
-			path.join(outputPath, "glyph_factory_test_01_chars_katakana_hiragana_sans-serif.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_chars_katakana_hiragana_sans-serif.png`)
 		);
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_katakana_hiragana.txt"), { encoding: "utf8" }),
 			"serif",
-			path.join(outputPath, "glyph_factory_test_01_chars_katakana_hiragana_serif.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_chars_katakana_hiragana_serif.png`)
 		);
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_katakana_hiragana.txt"), { encoding: "utf8" }),
 			"monospace",
-			path.join(outputPath, "glyph_factory_test_01_chars_katakana_hiragana_monospace.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_chars_katakana_hiragana_monospace.png`)
 		);
 	});
 
 	it("rendering - ASCII", () => {
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_ascii.txt"), { encoding: "utf8" }),
 			"sans-serif",
-			path.join(outputPath, "glyph_factory_test_01_chars_ascii_sans-serif.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_chars_ascii_sans-serif.png`)
 		);
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_ascii.txt"), { encoding: "utf8" }),
 			"serif",
-			path.join(outputPath, "glyph_factory_test_01_chars_ascii_serif.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_chars_ascii_serif.png`)
 		);
 		drawChars(
+			canvasFactory,
 			fs.readFileSync(path.join(__dirname, "fixtures", "chars_ascii.txt"), { encoding: "utf8" }),
 			"monospace",
-			path.join(outputPath, "glyph_factory_test_01_chars_ascii_monospace.png")
+			path.join(outputPath, `glyph_factory_test_01_${renderingName}_chars_ascii_monospace.png`)
 		);
 	});
 });

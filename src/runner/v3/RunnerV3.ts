@@ -1,11 +1,10 @@
 import { setImmediate } from "node:timers/promises";
-/** @ts-ignore */
-import type { Canvas } from "canvas";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
 import type { RunnerPointEvent } from "../types";
 import { akashicEngine as g, gameDriver as gdr } from "./engineFiles";
 import type { NodeCanvasSurface } from "./platform/graphics/canvas/NodeCanvasSurface";
+import type { Canvas } from "./platform/graphics/canvas/types";
 import type { NullSurface } from "./platform/graphics/null/NullSurface";
 import { PlatformV3 } from "./platform/PlatformV3";
 
@@ -48,7 +47,7 @@ export class RunnerV3 extends Runner {
 
 	pause(): void {
 		if (this.platform == null) {
-			this.errorTrigger.fire(new Error("Cannot call Runner#pause() before initialized"));
+			this.errorTrigger.fire(new Error("Cannot call Runner#pause() before initialization"));
 			return;
 		}
 
@@ -59,7 +58,7 @@ export class RunnerV3 extends Runner {
 
 	resume(): void {
 		if (this.platform == null) {
-			this.errorTrigger.fire(new Error("Cannot call Runner#resume() before initialized"));
+			this.errorTrigger.fire(new Error("Cannot call Runner#resume() before initialization"));
 			return;
 		}
 
@@ -70,7 +69,7 @@ export class RunnerV3 extends Runner {
 
 	async step(): Promise<void> {
 		if (this.fps == null || this.platform == null) {
-			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialized"));
+			this.errorTrigger.fire(new Error("Cannot call Runner#step() before initialization"));
 			return;
 		}
 		if (this.running) {
@@ -90,11 +89,11 @@ export class RunnerV3 extends Runner {
 
 	async advance(ms: number): Promise<void> {
 		if (this.fps == null || this.platform == null || this.driver == null) {
-			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialized"));
+			this.errorTrigger.fire(new Error("Cannot call Runner#advance() before initialization"));
 			return;
 		}
 		if (this.running) {
-			this.errorTrigger.fire(new Error("Cannot call Runner#advance() in running"));
+			this.errorTrigger.fire(new Error("Cannot call Runner#advance() while running"));
 			return;
 		}
 
@@ -137,7 +136,7 @@ export class RunnerV3 extends Runner {
 
 	firePointEvent(event: RunnerPointEvent): void {
 		if (this.platform == null) {
-			this.errorTrigger.fire(new Error("Cannot call Runner#firePointEvent() before initialized"));
+			this.errorTrigger.fire(new Error("Cannot call Runner#firePointEvent() before initialization"));
 			return;
 		}
 
@@ -165,33 +164,30 @@ export class RunnerV3 extends Runner {
 	 */
 	getPrimarySurface(): NullSurface | NodeCanvasSurface {
 		if (!this.platform) {
-			throw new Error("RunnerV3#getPrimarySurface(): Platform has not been initialized");
-		}
-		if (this.renderingMode === "canvas") {
-			return this.platform.getPrimarySurface() as NodeCanvasSurface;
+			throw new Error("RunnerV3#getPrimarySurface(): Platform is not initialized");
 		}
 
-		return this.platform.getPrimarySurface() as NullSurface;
+		return this.platform.getPrimarySurface() as NullSurface | NodeCanvasSurface;
 	}
 
 	/**
 	 * プライマリサーフェスの Canvas インスタンスを取得する。
-	 * @returns node-canvas の Canvas
+	 * @returns Canvas
 	 */
 	getPrimarySurfaceCanvas(): Canvas {
-		if (this.renderingMode !== "canvas") {
-			throw Error("RunnerV3#getPrimarySurface(): Not supported except in the case of renderingMode === 'canvas");
+		if (this.renderingMode !== "canvas" && this.renderingMode !== "@napi-rs/canvas") {
+			throw Error("RunnerV3#getPrimarySurface(): Supported only when 'renderingMode' is 'canvas' or '@napi-rs/canvas'");
 		}
 		return this.getPrimarySurface()._drawable;
 	}
 
 	protected _stepMinimal(): void {
 		if (this.fps == null || this.platform == null) {
-			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() before initialized"));
+			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() before initialization"));
 			return;
 		}
 		if (this.running) {
-			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() in running"));
+			this.errorTrigger.fire(new Error("RunnerV3#_stepMinimal(): Cannot call Runner#step() while running"));
 			return;
 		}
 		// NOTE: 現状 PDI の API 仕様により this.step() では厳密なフレーム更新ができない。そこで、一フレームの 1/2 の時間で進行することでフレームが飛んでしまうことを防止する。

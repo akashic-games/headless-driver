@@ -1,8 +1,7 @@
-/** @ts-ignore */
-import type { ImageData } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { CompositeOperationConverter } from "./CompositeOperationConverter";
 import type { NodeCanvasContext } from "./NodeCanvasContext";
+import type { ImageData } from "./types";
 
 export class NodeCanvasRenderer implements g.Renderer {
 	private context: NodeCanvasContext;

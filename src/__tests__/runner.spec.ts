@@ -1,10 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
+import { setTimeout } from "timers/promises";
 import type { RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "../";
 import { RunnerV1_g, RunnerV2_g, RunnerV3_g } from "../";
-import { setSystemLogger } from "../Logger";
-import { PlayManager } from "../play/PlayManager";
-import { RunnerManager } from "../runner/RunnerManager";
 import { activePermission } from "./constants";
 import { SilentLogger } from "./helpers/SilentLogger";
 
@@ -12,15 +10,15 @@ const gameJsonUrlV1 = process.env.GAME_JSON_URL_V1!;
 const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2!;
 const gameJsonUrlV3 = process.env.GAME_JSON_URL_V3!;
 
-setSystemLogger(new SilentLogger());
-
-function sleep(duration: number): Promise<void> {
-	return new Promise((resolve, _reject) => {
-		setTimeout(resolve, duration);
-	});
-}
-
 async function readyRunner(gameJsonPath: string): Promise<(RunnerV1 | RunnerV2 | RunnerV3) | null> {
+	// NOTE: 環境変数 ENGINE_FILES_V3_PATH の設定よりも後にモジュールを読み込むために dynamic import を利用
+	/* eslint-disable @typescript-eslint/naming-convention */
+	const PlayManager = (await import("../play/PlayManager")).PlayManager;
+	const RunnerManager = (await import("../runner/RunnerManager")).RunnerManager;
+	const setSystemLogger = (await import("../Logger")).setSystemLogger;
+	setSystemLogger(new SilentLogger());
+	/* eslint-enable @typescript-eslint/naming-convention */
+
 	const playManager = new PlayManager();
 	const playId = await playManager.createPlay({
 		gameJsonPath
@@ -59,17 +57,17 @@ describe("Runner の動作確認 (v1)", () => {
 		const game = (await runner.start({ paused: true })) as RunnerV1Game;
 		await runner.advanceUntil(() => game.scene()!.name === "content-v1-entry-scene");
 
-		await sleep(500);
+		await setTimeout(500);
 		expect(updateLogs.length).toBe(0);
 
 		runner.resume();
 
-		await sleep(500);
+		await setTimeout(500);
 		runner.pause();
 		const logCount = updateLogs.length;
 		expect(logCount).toBeGreaterThan(10); // 500ms + 30fps で必ず進むであろうフレーム数
 
-		await sleep(100);
+		await setTimeout(100);
 		expect(updateLogs.length).toBeGreaterThanOrEqual(logCount); // 停止したままであることを確認
 
 		runner.stop();
@@ -150,17 +148,17 @@ describe("Runner の動作確認 (v2)", () => {
 		const game = (await runner.start({ paused: true })) as RunnerV2Game;
 		await runner.advanceUntil(() => game.scene()!.name === "content-v2-entry-scene");
 
-		await sleep(500);
+		await setTimeout(500);
 		expect(updateLogs.length).toBe(0);
 
 		runner.resume();
 
-		await sleep(500);
+		await setTimeout(500);
 		runner.pause();
 		const logCount = updateLogs.length;
 		expect(logCount).toBeGreaterThan(10); // 500ms + 30fps で必ず進むであろうフレーム数
 
-		await sleep(100);
+		await setTimeout(100);
 		expect(updateLogs.length).toBeGreaterThanOrEqual(logCount); // 停止したままであることを確認
 
 		runner.stop();
@@ -249,17 +247,17 @@ describe("Runner の動作確認 (v3)", () => {
 		const game = (await runner.start({ paused: true })) as RunnerV3Game;
 		await runner.advanceUntil(() => game.scene()!.name === "content-v3-entry-scene");
 
-		await sleep(500);
+		await setTimeout(500);
 		expect(updateLogs.length).toBe(0);
 
 		runner.resume();
 
-		await sleep(500);
+		await setTimeout(500);
 		runner.pause();
 		const logCount = updateLogs.length;
 		expect(logCount).toBeGreaterThan(10); // 500ms + 30fps で必ず進むであろうフレーム数
 
-		await sleep(100);
+		await setTimeout(100);
 		expect(updateLogs.length).toBeGreaterThanOrEqual(logCount); // 停止したままであることを確認
 
 		runner.stop();
@@ -378,7 +376,7 @@ describe("Runner の engine-files 上書き動作確認", () => {
 
 		// 読み込まれていることを確認するためテストコードを仕込んでおく
 		const randStr = Date.now() + "";
-		fs.writeFileSync(engineFilesToPath, `globalThis.__test_${randStr}__ = true; \n\n` + engineFilesStr);
+		fs.writeFileSync(engineFilesToPath, `globalThis.__test_${randStr}__ = true;\n\n` + engineFilesStr);
 
 		process.env.ENGINE_FILES_V3_PATH = engineFilesToPath;
 
@@ -406,7 +404,7 @@ describe("Runner の動作確認 (異常系)", () => {
 	it("(v1) Runner#pause() せずに Runner#advance() を呼ぶことはできない", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 		await runner.start();
-		await sleep(500);
+		await setTimeout(500);
 		let err: any;
 		runner.errorTrigger.add((e) => {
 			err = e;
@@ -420,7 +418,7 @@ describe("Runner の動作確認 (異常系)", () => {
 	it("(v1) Runner#pause() せずに Runner#step() を呼ぶことはできない", async () => {
 		const runner = (await readyRunner(gameJsonUrlV1)) as RunnerV1;
 		await runner.start();
-		await sleep(500);
+		await setTimeout(500);
 		let err: any;
 		runner.errorTrigger.add((e) => {
 			err = e;
@@ -434,7 +432,7 @@ describe("Runner の動作確認 (異常系)", () => {
 	it("(v2) Runner#pause() せずに Runner#advance() を呼ぶことはできない", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 		await runner.start();
-		await sleep(500);
+		await setTimeout(500);
 		let err: any;
 		runner.errorTrigger.add((e) => {
 			err = e;
@@ -448,7 +446,7 @@ describe("Runner の動作確認 (異常系)", () => {
 	it("(v2) Runner#pause() せずに Runner#step() を呼ぶことはできない", async () => {
 		const runner = (await readyRunner(gameJsonUrlV2)) as RunnerV2;
 		await runner.start();
-		await sleep(500);
+		await setTimeout(500);
 		let err: any;
 		runner.errorTrigger.add((e) => {
 			err = e;
@@ -462,7 +460,7 @@ describe("Runner の動作確認 (異常系)", () => {
 	it("(v3) Runner#pause() せずに Runner#advance() を呼ぶことはできない", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 		await runner.start();
-		await sleep(500);
+		await setTimeout(500);
 		let err: any;
 		runner.errorTrigger.add((e) => {
 			err = e;
@@ -476,7 +474,7 @@ describe("Runner の動作確認 (異常系)", () => {
 	it("(v3) Runner#pause() せずに Runner#step() を呼ぶことはできない", async () => {
 		const runner = (await readyRunner(gameJsonUrlV3)) as RunnerV3;
 		await runner.start();
-		await sleep(500);
+		await setTimeout(500);
 		let err: any;
 		runner.errorTrigger.add((e) => {
 			err = e;

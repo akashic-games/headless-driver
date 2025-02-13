@@ -1,8 +1,7 @@
-/** @ts-ignore */
-import type { Canvas } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { NodeCanvasContext } from "./NodeCanvasContext";
 import { NodeCanvasRenderer } from "./NodeCanvasRenderer";
+import type { Canvas } from "./types";
 
 export class NodeCanvasSurface implements g.Surface {
 	width: number;

@@ -1,7 +1,8 @@
-import { Canvas, Image } from "canvas";
 import type { akashicEngine as g } from "../../../engineFiles";
 import { Asset } from "../../assets/Asset";
+import type { NodeCanvasFactory } from "../../NodeCanvasFactory";
 import { NodeCanvasSurface } from "./NodeCanvasSurface";
+import type { Image } from "./types";
 
 interface ImageAssetDataCache {
 	data: Image;
@@ -13,6 +14,14 @@ interface ImageAssetDataCache {
 	height: number;
 }
 
+export interface NodeCanvasImageAssetParameters {
+	id: string;
+	path: string;
+	width: number;
+	height: number;
+	canvasFactory: NodeCanvasFactory;
+}
+
 export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 	type: "image" = "image";
 	width: number;
@@ -22,11 +31,13 @@ export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 	_surface: g.Surface | null = null;
 	private data: Image | null = null;
 	private dataCache: ImageAssetDataCache | null = null;
+	private canvasFactory: NodeCanvasFactory;
 
-	constructor(id: string, path: string, width: number, height: number) {
-		super(id, path);
-		this.width = width;
-		this.height = height;
+	constructor(param: NodeCanvasImageAssetParameters) {
+		super(param.id, param.path);
+		this.width = param.width;
+		this.height = param.height;
+		this.canvasFactory = param.canvasFactory;
 	}
 
 	destroy(): void {
@@ -50,7 +61,7 @@ export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 			this.height = this.dataCache.height;
 			loader._onAssetLoad(this);
 		} else {
-			const image = new Image();
+			const image = this.canvasFactory.createImage();
 			image.onerror = () => {
 				loader._onAssetError(this, {
 					name: "AssetLoadError",
@@ -80,7 +91,7 @@ export class NodeCanvasImageAsset extends Asset implements g.ImageAsset {
 			throw new Error("NodeCanvasImageAsset#asSurface(): not yet loaded.");
 		}
 		if (this._surface == null) {
-			const canvas = new Canvas(this.width, this.height);
+			const canvas = this.canvasFactory.createCanvas(this.width, this.height);
 			const context = canvas.getContext("2d");
 			context.drawImage(this.data, 0, 0, this.width, this.height);
 			this._surface = new NodeCanvasSurface(canvas);
