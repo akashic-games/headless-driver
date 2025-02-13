@@ -1,9 +1,14 @@
 import type { RunnerRenderingMode } from "../../types";
 import type { Canvas, Image } from "./graphics/canvas/types";
 
+interface CanvasCompatibilityModule {
+	createCanvas(width: number, height: number): Canvas;
+	Image: typeof Image;
+}
+
 export class NodeCanvasFactory {
 	renderingMode: RunnerRenderingMode;
-	module: any;
+	private module: CanvasCompatibilityModule;
 
 	constructor(renderingMode: RunnerRenderingMode) {
 		this.renderingMode = renderingMode;
