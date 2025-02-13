@@ -7,11 +7,11 @@ import { NodeCanvasFactory } from "../platform/NodeCanvasFactory";
 
 const outputPath = path.join(__dirname, "out");
 
-describe.each(["canvas", "canvas_napi"] satisfies RunnerRenderingMode[])("CanvasGlyphFactory: renderingMode: %s", (renderingMode) => {
+describe.each(["canvas", "@napi-rs/canvas"] satisfies RunnerRenderingMode[])("CanvasGlyphFactory: renderingMode: %s", (renderingMode) => {
 	const canvasFactory = new NodeCanvasFactory(renderingMode);
 	const renderingName = renderingMode === "canvas" ? "canvas" : "napi";
 
-	if (renderingMode === "canvas_napi") {
+	if (renderingMode === "@napi-rs/canvas") {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/naming-convention
 		const { GlobalFonts } = require("@napi-rs/canvas");
 		GlobalFonts.registerFromPath(path.join(__dirname, "fixtures", "fonts", "NotoSansJP-Regular.ttf"), "sans-serif");

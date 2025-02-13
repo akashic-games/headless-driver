@@ -7,7 +7,7 @@ import { createImageAsset } from "./helpers/createImageAsset";
 
 const aksImagePath = path.join(__dirname, "fixtures", "akashic.png");
 
-describe.each(["canvas", "canvas_napi"] satisfies RunnerRenderingMode[])("CanvasImageAsset: renderingMode: %s", (renderingMode) => {
+describe.each(["canvas", "@napi-rs/canvas"] satisfies RunnerRenderingMode[])("CanvasImageAsset: renderingMode: %s", (renderingMode) => {
 	const canvasFactory = new NodeCanvasFactory(renderingMode);
 
 	it("asSurface()", async () => {

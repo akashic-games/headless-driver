@@ -16,7 +16,7 @@ export type RunnerRenderingMode =
 	/**
 	 * @napi-rs/canvas を使用する。
 	 */
-	| "canvas_napi";
+	| "@napi-rs/canvas";
 
 export type RunnerAdvanceConditionFunc = () => boolean;
 

@@ -172,11 +172,11 @@ export class RunnerV3 extends Runner {
 
 	/**
 	 * プライマリサーフェスの Canvas インスタンスを取得する。
-	 * @returns node-canvas の Canvas
+	 * @returns Canvas
 	 */
 	getPrimarySurfaceCanvas(): Canvas {
-		if (this.renderingMode !== "canvas" && this.renderingMode !== "canvas_napi") {
-			throw Error("RunnerV3#getPrimarySurface(): Supported only when 'renderingMode' is 'canvas' or 'canvas_napi'");
+		if (this.renderingMode !== "canvas" && this.renderingMode !== "@napi-rs/canvas") {
+			throw Error("RunnerV3#getPrimarySurface(): Supported only when 'renderingMode' is 'canvas' or '@napi-rs/canvas'");
 		}
 		return this.getPrimarySurface()._drawable;
 	}

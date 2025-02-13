@@ -19,7 +19,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 
 		// NOTE: このファイルの require() 時点で ResourceFactory 側の依存モジュールを読み込ませないよう、動的に require() する。
 		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
-		if ((this.renderingMode === "canvas" || this.renderingMode === "canvas_napi") && this.trusted) {
+		if ((this.renderingMode === "canvas" || this.renderingMode === "@napi-rs/canvas") && this.trusted) {
 			const ResourceFactory = require("./NodeCanvasResourceFactory").NodeCanvasResourceFactory;
 			const NodeCanvasFactory = require("./NodeCanvasFactory").NodeCanvasFactory;
 			const canvasFactory = new NodeCanvasFactory(this.renderingMode);
@@ -47,7 +47,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 	setRendererRequirement(requirement: pdi.RendererRequirement): void {
 		this.rendererReq = requirement;
 
-		if (this.renderingMode === "canvas" || this.renderingMode === "canvas_napi") {
+		if (this.renderingMode === "canvas" || this.renderingMode === "@napi-rs/canvas") {
 			if (this.trusted) {
 				this.primarySurface = this.resFac.createSurface(
 					this.rendererReq.primarySurfaceWidth,
@@ -55,7 +55,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 				);
 			} else {
 				throw Error(
-					"PlatformV3#setRendererRequirement(): 'trusted' must be true when 'renderingMode' is set to 'canvas' or 'canvas_napi'."
+					"PlatformV3#setRendererRequirement(): 'trusted' must be true when 'renderingMode' is set to 'canvas' or '@napi-rs/canvas'."
 				);
 			}
 		} else {
