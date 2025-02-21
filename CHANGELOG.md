@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.17.0
+* 内部モジュールの更新
+
 ## 2.16.0
 * `renderingMode` に `@napi-rs/canvas` を追加
 
