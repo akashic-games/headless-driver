@@ -65,7 +65,7 @@ describe("プレイ周りの結合動作テスト", () => {
 		await runnerManager.stopRunner("0");
 		expect(runnerManager.getRunner("0")).toBe(null);
 
-		playManager.deletePlay("0");
+		await playManager.deletePlay("0");
 		expect(playManager.getPlay("0")).toBe(null);
 
 		const playId2 = await playManager.createPlay({

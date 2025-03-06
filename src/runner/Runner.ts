@@ -127,7 +127,7 @@ export abstract class Runner {
 	}
 
 	protected timekeeper: TimeKeeper = new TimeKeeper();
-	protected timekeeperTimerId: NodeJS.Timer | null = null;
+	protected timekeeperTimerId: NodeJS.Timeout | undefined = undefined;
 	protected timekeeperPrevTime: number = 0;
 
 	constructor(params: RunnerParameters) {
@@ -242,7 +242,7 @@ export abstract class Runner {
 			return;
 		}
 		clearInterval(this.timekeeperTimerId);
-		this.timekeeperTimerId = null;
+		this.timekeeperTimerId = undefined;
 	}
 
 	protected onError(error: Error): void {

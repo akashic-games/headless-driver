@@ -195,9 +195,9 @@ export class RunnerV3 extends Runner {
 	}
 
 	private initGameDriver(): Promise<RunnerV3Game> {
-		return new Promise<RunnerV3Game>((resolve, reject) => {
+		return new Promise<RunnerV3Game>(async (resolve, reject) => {
 			if (this.driver) {
-				this.driver.destroy();
+				await this.driver.destroy();
 				this.driver = null;
 			}
 

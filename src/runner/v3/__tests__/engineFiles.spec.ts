@@ -41,7 +41,6 @@ describe("engineFiles", () => {
 
 		let engineFiles: any;
 		jest.isolateModules(() => {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			engineFiles = require("../engineFiles");
 		});
 

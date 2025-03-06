@@ -182,9 +182,9 @@ export class RunnerManager {
 				runner = new RunnerV1(runnerParameter);
 			}
 
-			runner.errorTrigger.add((err) => {
+			runner.errorTrigger.add(async (err) => {
 				getSystemLogger().error(err);
-				this.stopRunner(runnerId);
+				await this.stopRunner(runnerId);
 				return true;
 			});
 

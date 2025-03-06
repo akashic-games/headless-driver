@@ -25,7 +25,7 @@ export async function loadFile(url: string, encoding: EncodingType = "utf-8"): P
 	const promise = new Promise<string | Uint8Array>((resolve, reject) => {
 		waitings.push({ url, encoding, resolve, reject });
 	});
-	processWaitingLoad();
+	void processWaitingLoad(); // 並列ロードのため void 演算子を使用
 	return promise;
 }
 
@@ -39,7 +39,7 @@ async function processWaitingLoad(): Promise<void> {
 		reject(e);
 	} finally {
 		--loadingCount;
-		processWaitingLoad();
+		void processWaitingLoad();
 	}
 }
 
