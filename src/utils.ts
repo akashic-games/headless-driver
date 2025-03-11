@@ -25,7 +25,8 @@ export async function loadFile(url: string, encoding: EncodingType = "utf-8"): P
 	const promise = new Promise<string | Uint8Array>((resolve, reject) => {
 		waitings.push({ url, encoding, resolve, reject });
 	});
-	void processWaitingLoad(); // 並列ロードのため void 演算子を使用
+	// eslint-disable-next-line @typescript-eslint/no-floating-promises
+	processWaitingLoad(); // TODO: processWaitingLoad() を async でなくする
 	return promise;
 }
 
@@ -39,7 +40,8 @@ async function processWaitingLoad(): Promise<void> {
 		reject(e);
 	} finally {
 		--loadingCount;
-		void processWaitingLoad();
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
+		processWaitingLoad(); // TODO: processWaitingLoad() を async でなくする
 	}
 }
 
