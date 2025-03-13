@@ -184,7 +184,7 @@ export class RunnerManager {
 
 			runner.errorTrigger.add((err) => {
 				getSystemLogger().error(err);
-				this.stopRunner(runnerId);
+				void this.stopRunner(runnerId);
 				return true;
 			});
 

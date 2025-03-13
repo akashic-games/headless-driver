@@ -16,7 +16,7 @@ describe("PlayManager の単体テスト", () => {
 		let playIds = playManager.getAllPlays().map((play) => play.playId);
 		expect(playIds).toEqual([playId1, playId2, playId3]);
 
-		playManager.suspendPlay(playId1);
+		await playManager.suspendPlay(playId1);
 
 		// すべてのPlay
 		playIds = playManager.getAllPlays().map((play) => play.playId);
@@ -28,7 +28,7 @@ describe("PlayManager の単体テスト", () => {
 		playIds = playManager.getPlays({ status: "suspending" }).map((play) => play.playId);
 		expect(playIds).toEqual([playId1]);
 
-		playManager.deletePlay(playId2);
+		await playManager.deletePlay(playId2);
 
 		// すべてのPlay
 		playIds = playManager.getAllPlays().map((play) => play.playId);
@@ -40,7 +40,7 @@ describe("PlayManager の単体テスト", () => {
 		playIds = playManager.getPlays({ status: "suspending" }).map((play) => play.playId);
 		expect(playIds).toEqual([playId1]);
 
-		playManager.resumePlay(playId1);
+		await playManager.resumePlay(playId1);
 
 		// すべてのPlay
 		playIds = playManager.getAllPlays().map((play) => play.playId);

@@ -1,7 +1,7 @@
 export class Looper {
 	private _running: boolean;
 	private _fun: (deltaTime: number) => number;
-	private _timerId: NodeJS.Timer | null;
+	private _timerId: NodeJS.Timeout | undefined;
 	private _prev: number;
 	private _errorHandler: (err: any) => void;
 
@@ -17,7 +17,7 @@ export class Looper {
 
 	constructor(fun: (deltaTime: number) => number, errorHandler: (err: any) => void) {
 		this._fun = fun;
-		this._timerId = null;
+		this._timerId = undefined;
 		this._prev = 0;
 		this._errorHandler = errorHandler;
 		this._running = false;
@@ -89,7 +89,7 @@ export class Looper {
 			clearInterval(this._timerId);
 		}
 		this._running = false;
-		this._timerId = null;
+		this._timerId = undefined;
 		this._prev = 0;
 	}
 }

@@ -141,7 +141,9 @@ describe("AMFlowClientManager の単体テスト", () => {
 							expect(e.name).toBe("BadRequest");
 						}
 					)
-				]).then(() => done());
+				])
+					.then(() => done())
+					.catch((e) => done.fail(e));
 
 				// getStartPoint() が非同期で待機することの確認のため意図的に遅延
 				await new Promise((resolve) => setTimeout(resolve, 100));
