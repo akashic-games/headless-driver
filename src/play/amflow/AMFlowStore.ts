@@ -3,7 +3,7 @@ import type { Event, Tick, TickList } from "@akashic/playlog";
 import { EventFlagsMask, EventIndex, TickIndex, TickListIndex } from "@akashic/playlog";
 import { Trigger } from "@akashic/trigger";
 import { sha256 } from "js-sha256";
-import cloneDeep = require("lodash.clonedeep");
+import cloneDeep = require("lodash.clonedeep"); // eslint-disable-line @typescript-eslint/no-require-imports
 import { createError } from "./ErrorFactory";
 import type { DumpedPlaylog } from "./types";
 

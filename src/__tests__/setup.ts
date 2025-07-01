@@ -2,7 +2,7 @@ import * as http from "http";
 import * as path from "path";
 import * as url from "url";
 import * as getPort from "get-port";
-const handler = require("serve-handler"); // eslint-disable-line @typescript-eslint/no-var-requires
+const handler = require("serve-handler"); // eslint-disable-line @typescript-eslint/no-require-imports
 
 declare global {
 	// eslint-disable-next-line no-var

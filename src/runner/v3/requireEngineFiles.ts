@@ -13,6 +13,7 @@ export function requireEngineFiles(): typeof engineFiles | undefined {
 		if (!fs.existsSync(engineFilesPath)) {
 			throw new Error(`ENGINE_FILES_V3_PATH: ${engineFilesPath} was not found.`);
 		}
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		return require(engineFilesPath);
 	}
 

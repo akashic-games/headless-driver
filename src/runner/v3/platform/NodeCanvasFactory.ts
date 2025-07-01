@@ -15,6 +15,7 @@ export class NodeCanvasFactory {
 
 		// NOTE: このファイルの require() 時点で不要な依存モジュールを読み込ませないよう、動的に require() する。
 		// "canvas" と "@napi-rs/canvas" は (このライブラリで使う部分では) API が互換なのでそのまま流用している。
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		this.module = require(this.renderingMode === "canvas" ? "canvas" : "@napi-rs/canvas");
 	}
 

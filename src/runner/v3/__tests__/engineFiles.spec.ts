@@ -21,12 +21,12 @@ describe("engineFiles", () => {
 		let gameDriver: any;
 		let pdi: any;
 		jest.isolateModules(() => {
-			/* eslint-disable @typescript-eslint/no-var-requires */
+			/* eslint-disable @typescript-eslint/no-require-imports */
 			akashicEngine = require("engine-files-v3").akashicEngine;
 			gameDriver = require("engine-files-v3").gameDriver;
 			pdi = require("engine-files-v3").pdi;
 			engineFiles = require("../engineFiles");
-			/* eslint-enable @typescript-eslint/no-var-requires */
+			/* eslint-enable @typescript-eslint/no-require-imports */
 		});
 
 		expect(engineFiles.akashicEngine).toBe(akashicEngine);
@@ -36,11 +36,13 @@ describe("engineFiles", () => {
 
 	it("can override engineFiles via trustedFunctions (absolute path)", async () => {
 		global.trustedFunctions = {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			engineFiles: () => require(path.join(__dirname, "fixtures", "engineFiles.dummy.js"))
 		};
 
 		let engineFiles: any;
 		jest.isolateModules(() => {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			engineFiles = require("../engineFiles");
 		});
 

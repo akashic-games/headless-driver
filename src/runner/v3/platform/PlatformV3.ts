@@ -18,7 +18,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 		let resourceFactory: g.ResourceFactory;
 
 		// NOTE: このファイルの require() 時点で ResourceFactory 側の依存モジュールを読み込ませないよう、動的に require() する。
-		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
+		/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-require-imports */
 		if ((this.renderingMode === "canvas" || this.renderingMode === "@napi-rs/canvas") && this.trusted) {
 			const ResourceFactory = require("./NodeCanvasResourceFactory").NodeCanvasResourceFactory;
 			const NodeCanvasFactory = require("./NodeCanvasFactory").NodeCanvasFactory;
@@ -35,7 +35,7 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 				loadFileHandler: param.loadFileHandler
 			});
 		}
-		/* eslint-enable @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires */
+		/* eslint-enable @typescript-eslint/naming-convention, @typescript-eslint/no-require-imports */
 
 		this.resFac = resourceFactory;
 	}
