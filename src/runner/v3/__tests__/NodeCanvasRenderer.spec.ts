@@ -16,7 +16,7 @@ describe.each(["canvas", "@napi-rs/canvas"] satisfies RunnerRenderingMode[])("Ca
 	const canvasFactory = new NodeCanvasFactory(renderingMode);
 
 	it("rendering - CanvasRenderer's implementation should be the same as node-canvas'", async () => {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const expectedCanvas = require("canvas").createCanvas(800, 800);
 		const expectedContext = expectedCanvas.getContext("2d");
 		const outputSurface = new NodeCanvasSurface(canvasFactory.createCanvas(800, 800));
@@ -58,7 +58,7 @@ describe.each(["canvas", "@napi-rs/canvas"] satisfies RunnerRenderingMode[])("Ca
 		expectedContext.restore();
 		outputRenderer.restore();
 
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const img = await require("canvas").loadImage(aksImagePath);
 		expectedContext.drawImage(img, 20, 20, 80, 80, 10, 300, 80, 80);
 
@@ -105,14 +105,14 @@ describe.each(["canvas", "@napi-rs/canvas"] satisfies RunnerRenderingMode[])("Ca
 			"xor"
 		];
 
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const expectedCanvas = require("canvas").createCanvas(800, 800);
 		const expectedContext = expectedCanvas.getContext("2d");
 		const outputSurface = new NodeCanvasSurface(canvasFactory.createCanvas(800, 800));
 		const outputRenderer = outputSurface.renderer();
 
 		for (let i = 0; i < ops.length; i++) {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const canvas = require("canvas").createCanvas(200, 200);
 			const context = canvas.getContext("2d");
 			const surface = new NodeCanvasSurface(canvasFactory.createCanvas(200, 200));

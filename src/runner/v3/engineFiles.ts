@@ -16,7 +16,7 @@ if (typeof trustedFunctions !== "undefined") {
 } else {
 	// (2)
 	// NodeVM 起動前もしくはその他環境であれば
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	e = require("./requireEngineFiles").requireEngineFiles();
 }
 

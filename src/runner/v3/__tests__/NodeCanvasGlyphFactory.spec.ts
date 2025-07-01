@@ -12,7 +12,7 @@ describe.each(["canvas", "@napi-rs/canvas"] satisfies RunnerRenderingMode[])("Ca
 	const renderingName = renderingMode === "canvas" ? "canvas" : "napi";
 
 	if (renderingMode === "@napi-rs/canvas") {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/naming-convention
+		// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/naming-convention
 		const { GlobalFonts } = require("@napi-rs/canvas");
 		GlobalFonts.registerFromPath(path.join(__dirname, "fixtures", "fonts", "NotoSansJP-Regular.ttf"), "sans-serif");
 		GlobalFonts.registerFromPath(path.join(__dirname, "fixtures", "fonts", "NotoSerifJP-Regular.ttf"), "serif");
