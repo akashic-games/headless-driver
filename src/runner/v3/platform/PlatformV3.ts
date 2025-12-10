@@ -51,7 +51,6 @@ export class PlatformV3 extends Platform implements pdi.Platform {
 				primarySurfaceHeight: 1
 			};
 		}
-
 		this.rendererReq = requirement;
 
 		if (this.renderingMode === "canvas" || this.renderingMode === "@napi-rs/canvas") {

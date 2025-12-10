@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.17.9
+* `Platform#setRendererRequirement()` の引数に undefined が渡るとエラーとなる問題を修正
+
 ## 2.17.8
 * 内部モジュールの更新
 
