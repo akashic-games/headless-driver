@@ -25,7 +25,13 @@ export class PlatformV2 extends Platform implements pdi.Platform {
 		return this.resFac;
 	}
 
-	setRendererRequirement(requirement: pdi.RendererRequirement): void {
+	setRendererRequirement(requirement?: pdi.RendererRequirement): void {
+		if (!requirement) {
+			requirement = {
+				primarySurfaceWidth: 1,
+				primarySurfaceHeight: 1
+			};
+		}
 		this.rendererReq = requirement;
 		this.primarySurface = new NullSurface(this.rendererReq.primarySurfaceWidth, this.rendererReq.primarySurfaceHeight, null);
 	}
