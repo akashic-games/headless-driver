@@ -122,6 +122,12 @@ export class RunnerV3 extends Runner {
 				skipThreshold
 			}
 		});
+
+		// Platform を進行させるとアセット読み込み・AMFlow のコールバックなどの setImmediate() が実行されるが、
+		// それらを Runner#advance() の完了タイミングで確実に処理するため、Runner#advance() の完了を setImmediate() で遅延させている。
+		// ここを単純な Promise で返しても microtask queue に積まれるため、macrotask queue に積まれる setImmediate() の処理の完了を待つことはできない。
+		// @see https://nodejs.org/en/learn/asynchronous-work/understanding-setimmediate
+		await setImmediate();
 	}
 
 	changeGameDriverState(param: gdr.GameDriverInitializeParameterObject): Promise<void> {
