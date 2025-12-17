@@ -1,8 +1,6 @@
 import * as path from "path";
 
 declare global {
-	// グローバルスコープのため var を許容
-	// eslint-disable-next-line no-var
 	var trustedFunctions: TrustedFunctions;
 }
 
