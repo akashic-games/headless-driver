@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.17.10
+* `RunnerVx#advance()` においてアセット読み込みや AMFlow のコールバックなどの `setImmediate()` 処理が確実に完了するように修正
+
 ## 2.17.9
 * `Platform#setRendererRequirement()` の引数に undefined が渡るとエラーとなる問題を修正
 
