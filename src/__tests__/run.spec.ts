@@ -1169,7 +1169,7 @@ describe("untrusted コンテンツの動作テスト: 異常系", () => {
 			});
 			fail();
 		} catch (err) {
-			expect(err.message).toMatch("Regexp must start with '^'");
+			expect((err as any).message).toMatch("Regexp must start with '^'");
 		}
 	});
 });
@@ -1205,7 +1205,7 @@ describe("trusted コンテンツの動作テスト", () => {
 
 		await runner.start();
 		await handleData();
-		expect(fn).toBeCalled();
+		expect(fn).toHaveBeenCalled();
 		runner.stop();
 	});
 
@@ -1239,7 +1239,7 @@ describe("trusted コンテンツの動作テスト", () => {
 
 		await runner.start();
 		await handleData();
-		expect(fn).toBeCalled();
+		expect(fn).toHaveBeenCalled();
 		runner.stop();
 	});
 
@@ -1273,7 +1273,7 @@ describe("trusted コンテンツの動作テスト", () => {
 
 		await runner.start();
 		await handleData();
-		expect(fn).toBeCalled();
+		expect(fn).toHaveBeenCalled();
 		runner.stop();
 	});
 });
