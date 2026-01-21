@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.17.11
+* 内部モジュールの更新
+
 ## 2.17.10
 * `RunnerVx#advance()` においてアセット読み込みや AMFlow のコールバックなどの `setImmediate()` 処理が確実に完了するように修正
 
