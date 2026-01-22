@@ -1,14 +1,20 @@
 import * as fs from "fs";
 import * as path from "path";
 import { setTimeout } from "timers/promises";
-import type { RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "../";
+import type { Runner, RunnerV1, RunnerV1Game, RunnerV2, RunnerV2Game, RunnerV3, RunnerV3Game } from "../";
 import { RunnerV1_g, RunnerV2_g, RunnerV3_g } from "../";
-import { activePermission } from "./constants";
+import { getSystemLogger } from "../Logger";
+import { PlayManager } from "../play/PlayManager";
+import { activePermission, passivePermission } from "./constants";
+import { MockRunnerManager } from "./helpers/MockRunnerManager";
 import { SilentLogger } from "./helpers/SilentLogger";
 
 const gameJsonUrlV1 = process.env.GAME_JSON_URL_V1!;
 const gameJsonUrlV2 = process.env.GAME_JSON_URL_V2!;
 const gameJsonUrlV3 = process.env.GAME_JSON_URL_V3!;
+const contentUrlV1 = process.env.CONTENT_URL_V1!;
+const contentUrlV2 = process.env.CONTENT_URL_V2!;
+const contentUrlV3 = process.env.CONTENT_URL_V3!;
 
 async function readyRunner(gameJsonPath: string): Promise<(RunnerV1 | RunnerV2 | RunnerV3) | null> {
 	// NOTE: 環境変数 ENGINE_FILES_V3_PATH の設定よりも後にモジュールを読み込むために dynamic import を利用
@@ -483,5 +489,97 @@ describe("Runner の動作確認 (異常系)", () => {
 		// trigger 経由でエラーが通知されることを確認
 		expect(err).not.toBeUndefined();
 		runner.stop();
+	});
+});
+
+describe("複数 Runner の動作確認", () => {
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+	async function createRunners(contentUrl: string) {
+		const playManager = new PlayManager();
+		const playId = await playManager.createPlay({
+			contentUrl
+		});
+
+		const activeAMFlow = playManager.createAMFlow(playId);
+		const passiveAMFlow = playManager.createAMFlow(playId);
+
+		const activePlayToken = playManager.createPlayToken(playId, activePermission);
+		const passivePlayToken = playManager.createPlayToken(playId, passivePermission);
+
+		const runnerManager = new MockRunnerManager(playManager);
+		const activeRunnerId = await runnerManager.createRunner({
+			playId,
+			amflow: activeAMFlow,
+			playToken: activePlayToken,
+			executionMode: "active",
+			allowedUrls: null
+		});
+
+		const passiveRunnerId = await runnerManager.createRunner({
+			playId,
+			amflow: passiveAMFlow,
+			playToken: passivePlayToken,
+			executionMode: "passive",
+			allowedUrls: null
+		});
+
+		const activeRunner = runnerManager.getRunner(activeRunnerId) as Runner;
+		const passiveRunner = runnerManager.getRunner(passiveRunnerId) as Runner;
+
+		return { activeRunner, passiveRunner };
+	}
+
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+	async function doAdvanceLatestTest(contentUrl: string) {
+		const { activeRunner, passiveRunner } = await createRunners(contentUrl);
+
+		const activeGame = await activeRunner.start();
+		const passiveGame = await passiveRunner.start({ paused: true });
+
+		await setTimeout(1000);
+		activeRunner.pause();
+
+		expect(activeGame!.age).toBeGreaterThan(passiveGame!.age);
+
+		await passiveRunner.advanceLatest();
+		expect(activeGame!.age).toBe(passiveGame!.age);
+
+		await passiveRunner.advanceLatest();
+
+		const warnSpy = jest.spyOn(getSystemLogger(), "warn");
+		await activeRunner.advanceLatest();
+		expect(warnSpy).toHaveBeenCalled();
+		expect(warnSpy.mock.calls[0][0]).toContain(
+			"advanceLatest() is only available when executionMode is 'passive' and loopMode is 'realtime'"
+		);
+		warnSpy.mockRestore();
+
+		activeRunner.stop();
+		passiveRunner.stop();
+	}
+
+	it("Akashic V1 コンテンツでは Runner#advanceLatest() が利用できないことを確認", async () => {
+		const { activeRunner, passiveRunner } = await createRunners(contentUrlV1);
+		await setTimeout(1000);
+		activeRunner.pause();
+
+		const errorSpy = jest.fn();
+		passiveRunner.errorTrigger.add((err: Error) => {
+			errorSpy(err);
+		});
+		await passiveRunner.advanceLatest();
+		expect(errorSpy).toHaveBeenCalled();
+		expect(errorSpy.mock.calls[0][0].message).toContain("advanceLatest() is not supported in RunnerV1");
+
+		activeRunner.stop();
+		passiveRunner.stop();
+	});
+
+	it("Akashic V2 コンテンツで Runner#advanceLatest() を利用して Passive が Active に追いつくことを確認", async () => {
+		await doAdvanceLatestTest(contentUrlV2);
+	});
+
+	it("Akashic V3 コンテンツで Runner#advanceLatest() を利用して Passive が Active に追いつくことを確認", async () => {
+		await doAdvanceLatestTest(contentUrlV3);
 	});
 });

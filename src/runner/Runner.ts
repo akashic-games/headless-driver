@@ -158,6 +158,12 @@ export abstract class Runner {
 	 */
 	abstract advance(ms: number): Promise<void>;
 	/**
+	 * Runner を最新状態となるまでできる限り進める。
+	 * passive かつリアルタイムでのみ利用可能。
+	 * @param timeout タイムアウトまでのミリ時間。省略時は `5000` 。ゲーム内時間ではなく実時間である点に注意。
+	 */
+	abstract advanceLatest(timeout?: number): Promise<void>;
+	/**
 	 * Runner を一フレーム進行する。
 	 */
 	abstract step(): Promise<void>;

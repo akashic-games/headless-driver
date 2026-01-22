@@ -128,6 +128,10 @@ export class RunnerV1 extends Runner {
 		await setImmediate();
 	}
 
+	async advanceLatest(_timeout?: number): Promise<void> {
+		this.errorTrigger.fire(new Error("Runner#advanceLatest() is not supported in RunnerV1"));
+	}
+
 	changeGameDriverState(param: gdr.GameDriverInitializeParameterObject): Promise<void> {
 		return new Promise((resolve, reject) => {
 			if (!this.driver) {
