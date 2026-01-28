@@ -179,12 +179,7 @@ export class RunnerV3 extends Runner {
 		tickBuffer.requestTicks();
 
 		// gotNoTickTrigger または gotNextTickTrigger が fire するまで待機
-		try {
-			await gotTickPromise;
-		} catch (e) {
-			this.errorTrigger.fire(e);
-			return;
-		}
+		await gotTickPromise;
 
 		// TickBuffer#currentAge === TickBuffer#knownLatestAge になるまで進める
 		while (tickBuffer.currentAge < tickBuffer.knownLatestAge) {
