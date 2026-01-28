@@ -1,5 +1,6 @@
 import { setImmediate } from "node:timers/promises";
 import { akashicEngine as g, gameDriver as gdr, pdi } from "engine-files-v2";
+import { getSystemLogger } from "../../Logger";
 import type { RunnerStartParameters } from "../Runner";
 import { Runner } from "../Runner";
 import type { RunnerPointEvent } from "../types";
@@ -113,6 +114,75 @@ export class RunnerV2 extends Runner {
 		// ここを単純な Promise で返しても microtask queue に積まれるため、macrotask queue に積まれる setImmediate() の処理の完了を待つことはできない。
 		// @see https://nodejs.org/en/learn/asynchronous-work/understanding-setimmediate
 		await setImmediate();
+	}
+
+	async advanceLatest(timeout: number = 5000): Promise<void> {
+		if (this.driver == null) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#advanceLatest() before initialization"));
+			return;
+		}
+		if (this.running) {
+			this.errorTrigger.fire(new Error("Cannot call Runner#advanceLatest() while running"));
+			return;
+		}
+		if (this.executionMode !== "passive" || this.loopMode !== "realtime") {
+			getSystemLogger().warn("RunnerV2#advanceLatest() is only available when executionMode is 'passive' and loopMode is 'realtime'");
+			return;
+		}
+
+		const tickBuffer = this.driver?._gameLoop?._tickBuffer;
+		if (!tickBuffer) {
+			this.errorTrigger.fire(new Error("RunnerV2#advanceLatest() aborted because tickBuffer does not exist"));
+			return;
+		}
+
+		const startTime = performance.now();
+
+		// 最新の Tick をリクエストして、トリガーを待機する Promise を準備
+		const gotTickPromise = new Promise<void>((resolve, reject) => {
+			const timeoutId = setTimeout(
+				() => {
+					reject(new Error("RunnerV2#advanceLatest() timeout: no tick response"));
+				},
+				Math.max(0, timeout - (performance.now() - startTime))
+			);
+
+			// 新しい Tick が存在した場合
+			tickBuffer.gotNextTickTrigger.addOnce(() => {
+				clearTimeout(timeoutId);
+				resolve();
+			});
+
+			// Tick がない場合
+			tickBuffer.gotNoTickTrigger.addOnce(() => {
+				clearTimeout(timeoutId);
+				resolve();
+			});
+		});
+
+		// 先に requestTicks を呼び出して、並行して Tick の取得を開始
+		tickBuffer.requestTicks();
+
+		// gotNoTickTrigger または gotNextTickTrigger が fire するまで待機
+		await gotTickPromise;
+
+		// TickBuffer#currentAge === TickBuffer#knownLatestAge になるまで進める
+		while (tickBuffer.currentAge < tickBuffer.knownLatestAge) {
+			if (performance.now() - startTime > timeout) {
+				this.errorTrigger.fire(new Error("RunnerV2#advanceLatest() timeout: failed to catch up to knownLatestAge"));
+				return;
+			}
+
+			// 一度に最大 100 ステップ実行
+			const batchSize = Math.min(100, tickBuffer.knownLatestAge - tickBuffer.currentAge);
+			for (let i = 0; i < batchSize; i++) {
+				if (tickBuffer.currentAge >= tickBuffer.knownLatestAge) {
+					break;
+				}
+				this._stepMinimal();
+			}
+			await setImmediate();
+		}
 	}
 
 	changeGameDriverState(param: gdr.GameDriverInitializeParameterObject): Promise<void> {
