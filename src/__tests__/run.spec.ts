@@ -1494,6 +1494,19 @@ describe("リプレイの動作確認", () => {
 		runner.stop();
 	});
 
+	it("Akashic V2 コンテンツで Runner#advanceLatest() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV2);
+		const game = (await runner.start({ paused: true })) as RunnerV2Game;
+
+		await runner.advanceLatest();
+
+		// 最後まで進行していることを確認
+		expect(game.age).toBe(1000);
+		expect(game.vars.messages.length).toBe(100);
+
+		runner.stop();
+	});
+
 	it("Akashic V3 コンテンツで Runner#step() を利用してリプレイが動作する", async () => {
 		const runner = await createRunner(contentUrlV3);
 		await doStepTest(runner, "content-v3-entry-scene");
@@ -1503,6 +1516,19 @@ describe("リプレイの動作確認", () => {
 	it("Akashic V3 コンテンツで Runner#advance() を利用してリプレイが動作する", async () => {
 		const runner = await createRunner(contentUrlV3);
 		await doAdvanceTest(runner, "content-v3-entry-scene");
+		runner.stop();
+	});
+
+	it("Akashic V3 コンテンツで Runner#advanceLatest() を利用してリプレイが動作する", async () => {
+		const runner = await createRunner(contentUrlV3);
+		const game = (await runner.start({ paused: true })) as RunnerV3Game;
+
+		await runner.advanceLatest();
+
+		// 最後まで進行していることを確認
+		expect(game.age).toBe(1000);
+		expect(game.vars.messages.length).toBe(100);
+
 		runner.stop();
 	});
 });

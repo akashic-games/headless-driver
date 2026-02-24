@@ -549,9 +549,7 @@ describe("複数 Runner の動作確認", () => {
 		const warnSpy = jest.spyOn(getSystemLogger(), "warn");
 		await activeRunner.advanceLatest();
 		expect(warnSpy).toHaveBeenCalled();
-		expect(warnSpy.mock.calls[0][0]).toContain(
-			"advanceLatest() is only available when executionMode is 'passive' and loopMode is 'realtime'"
-		);
+		expect(warnSpy.mock.calls[0][0]).toContain("advanceLatest() is only available when executionMode is 'passive'");
 		warnSpy.mockRestore();
 
 		activeRunner.stop();
