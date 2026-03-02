@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.18.1
+* 内部モジュールの更新
+
 ## 2.18.0
 `Runner#advanceLatest()` を追加
 
