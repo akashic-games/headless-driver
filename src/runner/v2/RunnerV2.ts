@@ -125,8 +125,8 @@ export class RunnerV2 extends Runner {
 			this.errorTrigger.fire(new Error("Cannot call Runner#advanceLatest() while running"));
 			return;
 		}
-		if (this.executionMode !== "passive" || this.loopMode !== "realtime") {
-			getSystemLogger().warn("RunnerV2#advanceLatest() is only available when executionMode is 'passive' and loopMode is 'realtime'");
+		if (this.executionMode !== "passive") {
+			getSystemLogger().warn("RunnerV2#advanceLatest() is only available when executionMode is 'passive'");
 			return;
 		}
 
@@ -178,6 +178,9 @@ export class RunnerV2 extends Runner {
 			for (let i = 0; i < batchSize; i++) {
 				if (tickBuffer.currentAge >= tickBuffer.knownLatestAge) {
 					break;
+				}
+				if (this.loopMode === "replay" && this.fps) {
+					this.timekeeper.advance(1000 / this.fps);
 				}
 				this._stepMinimal();
 			}

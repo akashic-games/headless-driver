@@ -1,7 +1,10 @@
 # CHANGELOG
 
+## 2.18.1
+* passive かつ replay において `Runner#advanceLatest()` が動作するように修正
+
 ## 2.18.0
-`Runner#advanceLatest()` を追加
+* `Runner#advanceLatest()` を追加
 
 ## 2.17.11
 * 内部モジュールの更新
