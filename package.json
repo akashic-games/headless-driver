@@ -41,7 +41,7 @@
   "devDependencies": {
     "@akashic/eslint-config": "^3.0.2",
     "@akashic/remark-preset-lint": "^0.1.2",
-    "@napi-rs/canvas": "^0.1.66",
+    "@napi-rs/canvas": "^1.0.0",
     "@types/jest": "^30.0.0",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/node": "^24.0.0",
