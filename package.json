@@ -46,7 +46,7 @@
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/node": "^24.0.0",
     "@types/node-fetch": "^2.6.2",
-    "@types/pixelmatch": "^5.2.4",
+    "@types/pixelmatch": "^7.0.0",
     "@types/pngjs": "^6.0.1",
     "canvas": "^3.2.0",
     "eslint-config-prettier": "^10.0.0",
