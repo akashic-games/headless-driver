@@ -87,6 +87,10 @@
       "@akashic/remark-preset-lint"
     ]
   },
+  "allowScripts": {
+    "canvas@3.2.0": true,
+    "unrs-resolver@1.11.1": true
+  },
   "devEngines": {
     "packageManager": {
       "name": "npm",
