@@ -8,23 +8,44 @@
   "automerge": true,
   "packageRules": [
     {
-      "matchPackagePatterns": ["eslint"],
+      "matchPackagePatterns": [
+        "eslint"
+      ],
       "groupName": "eslint packages"
     },
     {
-      "matchPackagePatterns": ["jest"],
+      "matchPackagePatterns": [
+        "jest"
+      ],
       "groupName": "jest packages"
     },
     {
-      "matchUpdateTypes": ["patch"],
-      "excludePackagePatterns": ["engine-files-v\\d+", "@akashic/", "eslint", "jest"],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "excludePackagePatterns": [
+        "engine-files-v\\d+",
+        "@akashic/",
+        "eslint",
+        "jest"
+      ],
       "groupName": "patch dependencies"
     },
     {
-      "matchUpdateTypes": ["minor"],
-      "excludePackagePatterns": ["engine-files-v\\d+", "@akashic/", "eslint", "jest"],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "excludePackagePatterns": [
+        "engine-files-v\\d+",
+        "@akashic/",
+        "eslint",
+        "jest"
+      ],
       "groupName": "minor dependencies"
     }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "minimumReleaseAge": null
+  }
 }
-
